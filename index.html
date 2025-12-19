@@ -53,47 +53,43 @@
             }
         }
 
-        /* Utah shape - CORRECT proportions */
+        /* New Utah shape with loading bar effect */
         .utah-container {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 200px;
-            height: 260px; /* 1.3:1 ratio */
             z-index: 0;
             opacity: 0.5;
         }
-
+        
         .utah-svg {
-            width: 100%;
-            height: 100%;
-            filter: drop-shadow(0 0 12px rgba(220, 20, 60, 0.5));
+            width: 260px;
+            height: auto;
+            transform: scale(1, -1);
         }
-
-        .utah-outline {
-            fill: none;
-            stroke: rgba(220, 20, 60, 0.3);
-            stroke-width: 2;
-        }
-
-        .utah-animated {
+        
+        .utah-path {
             fill: none;
             stroke: #dc143c;
-            stroke-width: 2.5;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
             stroke-dasharray: 1000;
             stroke-dashoffset: 1000;
-            animation: traceUtah 7s ease-in-out infinite;
+            animation: drawUtah 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 15px #dc143c);
         }
-
-        @keyframes traceUtah {
-            0%, 100% {
+        
+        @keyframes drawUtah {
+            0% {
                 stroke-dashoffset: 1000;
-                opacity: 0.3;
             }
-            45%, 55% {
+            50% {
                 stroke-dashoffset: 0;
-                opacity: 1;
+            }
+            100% {
+                stroke-dashoffset: -1000;
             }
         }
 
@@ -623,8 +619,7 @@
             }
 
             .utah-container {
-                width: 150px;
-                height: 195px;
+                transform: translate(-50%, -50%) scale(0.8);
             }
 
             .modal-box {
@@ -667,8 +662,7 @@
             }
 
             .utah-container {
-                width: 120px;
-                height: 156px;
+                transform: translate(-50%, -50%) scale(0.6);
             }
         }
     </style>
@@ -682,12 +676,10 @@
     <!-- Animated background -->
     <div class="bg-animation"></div>
 
-    <!-- Utah shape - CORRECT geometry -->
+    <!-- New Utah shape with loading bar effect -->
     <div class="utah-container">
-        <svg class="utah-svg" viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg">
-            <!-- Correct Utah: tall rectangle with left notch -->
-            <path class="utah-outline" d="M 20 10 L 80 10 L 80 120 L 20 120 L 20 75 L 30 75 L 30 62 L 20 62 Z"/>
-            <path class="utah-animated" d="M 20 10 L 80 10 L 80 120 L 20 120 L 20 75 L 30 75 L 30 62 L 20 62 Z"/>
+        <svg class="utah-svg" viewBox="0 0 200 240">
+            <path class="utah-path" d="M150 180 L120 180 L120 220 L40 220 L40 50 L150 50 Z"/>
         </svg>
     </div>
 
