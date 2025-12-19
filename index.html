@@ -12,15 +12,17 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: #000;
             color: #fff;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
+            position: relative;
         }
 
+        /* Smooth luminated background glow */
         .bg-animation {
             position: fixed;
             top: 0;
@@ -28,68 +30,135 @@
             width: 100%;
             height: 100%;
             z-index: 0;
-            overflow: hidden;
-            background: radial-gradient(circle at 50% 50%, #1a0000 0%, #000 70%);
-            animation: lightSway 6s ease-in-out infinite;
+            background: radial-gradient(circle at 50% 50%, rgba(220, 20, 60, 0.12) 0%, rgba(139, 0, 0, 0.06) 30%, transparent 60%);
+            animation: breathingGlow 10s ease-in-out infinite;
         }
 
-        @keyframes lightSway {
+        @keyframes breathingGlow {
             0%, 100% {
-                background: radial-gradient(circle at 30% 40%, #2a0000 0%, #000 60%);
+                background: radial-gradient(circle at 40% 35%, rgba(220, 20, 60, 0.15) 0%, rgba(139, 0, 0, 0.07) 28%, transparent 58%);
+                opacity: 1;
             }
             25% {
-                background: radial-gradient(circle at 70% 50%, #2a0000 0%, #000 60%);
+                background: radial-gradient(circle at 60% 45%, rgba(220, 20, 60, 0.18) 0%, rgba(139, 0, 0, 0.08) 32%, transparent 62%);
+                opacity: 0.95;
             }
             50% {
-                background: radial-gradient(circle at 50% 70%, #2a0000 0%, #000 60%);
+                background: radial-gradient(circle at 50% 65%, rgba(220, 20, 60, 0.16) 0%, rgba(139, 0, 0, 0.075) 30%, transparent 60%);
+                opacity: 1;
             }
             75% {
-                background: radial-gradient(circle at 20% 60%, #2a0000 0%, #000 60%);
+                background: radial-gradient(circle at 35% 55%, rgba(220, 20, 60, 0.17) 0%, rgba(139, 0, 0, 0.08) 31%, transparent 61%);
+                opacity: 0.97;
             }
         }
 
-        .utah-loading-container {
+        /* Utah shape - CORRECT proportions */
+        .utah-container {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 500px;
-            height: 600px;
+            width: 200px;
+            height: 260px; /* 1.3:1 ratio */
             z-index: 0;
+            opacity: 0.5;
         }
 
-        .utah-shape {
+        .utah-svg {
             width: 100%;
             height: 100%;
+            filter: drop-shadow(0 0 12px rgba(220, 20, 60, 0.5));
         }
 
         .utah-outline {
             fill: none;
-            stroke: #dc143c;
-            stroke-width: 4;
-            opacity: 0.3;
+            stroke: rgba(220, 20, 60, 0.3);
+            stroke-width: 2;
         }
 
-        .utah-fill {
+        .utah-animated {
             fill: none;
             stroke: #dc143c;
-            stroke-width: 4;
+            stroke-width: 2.5;
             stroke-dasharray: 1000;
             stroke-dashoffset: 1000;
-            animation: loadUtah 8s ease-in-out infinite;
-            filter: drop-shadow(0 0 10px #dc143c);
+            animation: traceUtah 7s ease-in-out infinite;
         }
 
-        @keyframes loadUtah {
+        @keyframes traceUtah {
             0%, 100% {
                 stroke-dashoffset: 1000;
+                opacity: 0.3;
             }
-            50% {
+            45%, 55% {
                 stroke-dashoffset: 0;
+                opacity: 1;
             }
         }
 
-        .content {
+        /* Header with admin button */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .admin-btn {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1.5px solid rgba(220, 20, 60, 0.6);
+            color: #dc143c;
+            padding: 0.7rem 1.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            letter-spacing: 0.5px;
+        }
+
+        .admin-btn:hover {
+            background: rgba(220, 20, 60, 0.15);
+            border-color: #dc143c;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(220, 20, 60, 0.3);
+        }
+
+        /* Music control */
+        .music-control {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1.5px solid rgba(220, 20, 60, 0.6);
+            color: #dc143c;
+            padding: 0.7rem 1.3rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .music-control:hover {
+            background: rgba(220, 20, 60, 0.15);
+            border-color: #dc143c;
+            transform: translateY(-2px);
+        }
+
+        /* Main content area */
+        .main-content {
             position: relative;
             z-index: 1;
             flex: 1;
@@ -97,140 +166,165 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
+            padding: 6rem 2rem 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
         }
 
-        .logo-container {
+        /* Logo section */
+        .logo-section {
             margin-bottom: 2rem;
-            animation: fadeInDown 1s ease-out;
+            animation: floatIn 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes floatIn {
+            from {
+                opacity: 0;
+                transform: translateY(-40px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
 
         .logo {
-            max-width: 300px;
-            width: 100%;
+            width: 240px;
             height: auto;
-            border-radius: 15px;
-            box-shadow: 0 0 30px rgba(220, 20, 60, 0.5);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(220, 20, 60, 0.4);
+            transition: transform 0.3s ease;
         }
 
-        h1 {
-            font-size: 3rem;
-            color: #dc143c;
-            text-align: center;
-            margin-bottom: 1rem;
-            text-shadow: 0 0 20px rgba(220, 20, 60, 0.8);
-            animation: fadeInUp 1s ease-out 0.3s both;
+        .logo:hover {
+            transform: scale(1.05);
         }
 
-        .coming-soon {
-            font-size: 1.5rem;
-            color: #fff;
+        /* Title and tagline */
+        .title-section {
             text-align: center;
             margin-bottom: 3rem;
-            animation: fadeInUp 1s ease-out 0.6s both;
         }
 
-        .volunteer-section {
-            background: rgba(220, 20, 60, 0.1);
-            border: 2px solid #dc143c;
-            border-radius: 15px;
-            padding: 2rem;
-            max-width: 600px;
-            width: 100%;
-            animation: fadeInUp 1s ease-out 0.9s both;
-        }
-
-        .volunteer-section h2 {
+        .main-title {
+            font-size: 4rem;
+            font-weight: 700;
             color: #dc143c;
-            margin-bottom: 1.5rem;
+            text-shadow: 0 0 30px rgba(220, 20, 60, 0.6);
+            margin-bottom: 0.5rem;
+            letter-spacing: 3px;
+            animation: floatIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 300;
+            letter-spacing: 2px;
+            animation: floatIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
+        }
+
+        /* Volunteer section */
+        .volunteer-wrapper {
+            width: 100%;
+            max-width: 700px;
+            animation: floatIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.6s both;
+        }
+
+        .volunteer-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(220, 20, 60, 0.4);
+            border-radius: 20px;
+            padding: 3rem 2.5rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .volunteer-title {
+            font-size: 2rem;
+            color: #dc143c;
             text-align: center;
-            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
         }
 
-        .volunteer-options {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
+        .volunteer-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.2rem;
+            margin-bottom: 2rem;
         }
 
-        .volunteer-btn {
-            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
-            color: #fff;
+        .volunteer-card {
+            background: linear-gradient(135deg, rgba(220, 20, 60, 0.8) 0%, rgba(139, 0, 0, 0.9) 100%);
             border: none;
-            padding: 1rem 2rem;
+            border-radius: 12px;
+            padding: 1.5rem;
+            color: #fff;
             font-size: 1.1rem;
-            border-radius: 8px;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(220, 20, 60, 0.3);
+            position: relative;
+            overflow: hidden;
         }
 
-        .volunteer-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 25px rgba(220, 20, 60, 0.5);
-            background: linear-gradient(135deg, #ff1744 0%, #dc143c 100%);
+        .volunteer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .volunteer-card:hover::before {
+            left: 100%;
+        }
+
+        .volunteer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(220, 20, 60, 0.5);
+            background: linear-gradient(135deg, rgba(255, 23, 68, 0.9) 0%, rgba(220, 20, 60, 0.95) 100%);
         }
 
         .volunteer-note {
             text-align: center;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            color: #ccc;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.95rem;
             font-style: italic;
+            margin-top: 1rem;
         }
 
-        footer {
+        /* Footer */
+        .footer {
             position: relative;
             z-index: 1;
             text-align: center;
             padding: 2rem;
-            color: #888;
-            border-top: 1px solid #dc143c;
+            color: rgba(255, 255, 255, 0.4);
+            border-top: 1px solid rgba(220, 20, 60, 0.2);
+            font-size: 0.9rem;
         }
 
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
+        /* Modal styles */
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 2000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .modal-content {
-            background: #1a1a1a;
-            margin: 5% auto;
-            padding: 2rem;
-            border: 2px solid #dc143c;
-            border-radius: 15px;
-            max-width: 500px;
-            width: 90%;
-            animation: slideIn 0.3s ease-out;
+            background: rgba(0, 0, 0, 0.9);
+            animation: fadeIn 0.3s ease;
+            overflow-y: auto;
+            padding: 2rem 1rem;
         }
 
         @keyframes fadeIn {
@@ -238,9 +332,21 @@
             to { opacity: 1; }
         }
 
-        @keyframes slideIn {
+        .modal-box {
+            background: #0a0a0a;
+            border: 2px solid rgba(220, 20, 60, 0.6);
+            border-radius: 20px;
+            max-width: 550px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2.5rem;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 20px 60px rgba(220, 20, 60, 0.3);
+        }
+
+        @keyframes slideUp {
             from {
-                transform: translateY(-50px);
+                transform: translateY(50px);
                 opacity: 0;
             }
             to {
@@ -249,170 +355,576 @@
             }
         }
 
-        .close {
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-title {
             color: #dc143c;
-            float: right;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: rgba(220, 20, 60, 0.7);
             font-size: 2rem;
-            font-weight: bold;
             cursor: pointer;
+            padding: 0;
             line-height: 1;
+            transition: all 0.3s ease;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
         }
 
-        .close:hover {
-            color: #ff1744;
-        }
-
-        .modal h3 {
+        .close-btn:hover {
             color: #dc143c;
-            margin-bottom: 1rem;
+            background: rgba(220, 20, 60, 0.1);
+            transform: rotate(90deg);
         }
 
-        .form-group {
+        .form-field {
             margin-bottom: 1.5rem;
         }
 
-        .form-group label {
+        .form-field label {
             display: block;
-            margin-bottom: 0.5rem;
-            color: #fff;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 0.6rem;
+            font-size: 0.95rem;
+            font-weight: 500;
         }
 
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .form-field input,
+        .form-field textarea {
             width: 100%;
-            padding: 0.8rem;
-            background: #000;
-            border: 1px solid #dc143c;
-            border-radius: 5px;
+            padding: 0.9rem 1.2rem;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1.5px solid rgba(220, 20, 60, 0.3);
+            border-radius: 10px;
             color: #fff;
             font-size: 1rem;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .submit-btn {
-            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
-            color: #fff;
-            border: none;
-            padding: 1rem 2rem;
-            font-size: 1.1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
+            font-family: inherit;
             transition: all 0.3s ease;
         }
 
-        .submit-btn:hover {
-            background: linear-gradient(135deg, #ff1744 0%, #dc143c 100%);
+        .form-field input:focus,
+        .form-field textarea:focus {
+            outline: none;
+            border-color: #dc143c;
+            background: rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 0 3px rgba(220, 20, 60, 0.1);
         }
 
+        .form-field textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1.1rem;
+            background: linear-gradient(135deg, rgba(220, 20, 60, 0.9) 0%, rgba(139, 0, 0, 0.95) 100%);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 20, 60, 0.4);
+            background: linear-gradient(135deg, rgba(255, 23, 68, 0.95) 0%, rgba(220, 20, 60, 1) 100%);
+        }
+
+        /* Admin panel */
+        .admin-panel {
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .back-btn {
+            background: rgba(139, 0, 0, 0.6);
+            border: 1.5px solid rgba(220, 20, 60, 0.5);
+            color: #fff;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(220, 20, 60, 0.6);
+            transform: translateX(-3px);
+        }
+
+        .admin-title {
+            color: #dc143c;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .app-card {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1.5px solid rgba(220, 20, 60, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .app-card:hover {
+            border-color: rgba(220, 20, 60, 0.6);
+            box-shadow: 0 5px 20px rgba(220, 20, 60, 0.2);
+        }
+
+        .app-card h3 {
+            color: #dc143c;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+
+        .app-card p {
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0.6rem 0;
+            line-height: 1.6;
+        }
+
+        .app-card strong {
+            color: #fff;
+        }
+
+        .no-apps {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1.2rem;
+            padding: 4rem;
+            font-style: italic;
+        }
+
+        .confirm-box {
+            text-align: center;
+        }
+
+        .confirm-title {
+            color: #dc143c;
+            font-size: 2rem;
+            margin-bottom: 3rem;
+            font-weight: 600;
+        }
+
+        .confirm-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        .confirm-btn {
+            padding: 1.2rem 3rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .confirm-yes {
+            background: linear-gradient(135deg, rgba(220, 20, 60, 0.9) 0%, rgba(139, 0, 0, 0.95) 100%);
+            color: #fff;
+        }
+
+        .confirm-yes:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(220, 20, 60, 0.4);
+        }
+
+        .confirm-no {
+            background: rgba(80, 80, 80, 0.8);
+            color: #fff;
+        }
+
+        .confirm-no:hover {
+            background: rgba(100, 100, 100, 0.9);
+            transform: translateY(-3px);
+        }
+
+        /* Mobile responsiveness */
         @media (max-width: 768px) {
-            h1 {
+            .header {
+                padding: 1rem 1.5rem;
+            }
+
+            .admin-btn {
+                padding: 0.6rem 1.3rem;
+                font-size: 0.85rem;
+            }
+
+            .music-control {
+                bottom: 1.5rem;
+                right: 1.5rem;
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .main-content {
+                padding: 5rem 1.5rem 3rem;
+            }
+
+            .logo {
+                width: 180px;
+            }
+
+            .main-title {
+                font-size: 2.5rem;
+                letter-spacing: 2px;
+            }
+
+            .tagline {
+                font-size: 1.1rem;
+                letter-spacing: 1px;
+            }
+
+            .volunteer-box {
+                padding: 2rem 1.5rem;
+            }
+
+            .volunteer-title {
+                font-size: 1.6rem;
+            }
+
+            .volunteer-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .volunteer-card {
+                padding: 1.3rem;
+                font-size: 1rem;
+            }
+
+            .utah-container {
+                width: 150px;
+                height: 195px;
+            }
+
+            .modal-box {
+                padding: 2rem 1.5rem;
+            }
+
+            .modal-title {
+                font-size: 1.5rem;
+            }
+
+            .confirm-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .confirm-btn {
+                width: 100%;
+            }
+
+            .app-card {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-title {
                 font-size: 2rem;
             }
-            .coming-soon {
-                font-size: 1.2rem;
+
+            .tagline {
+                font-size: 1rem;
             }
+
             .logo {
-                max-width: 200px;
+                width: 150px;
+            }
+
+            .volunteer-title {
+                font-size: 1.4rem;
+            }
+
+            .utah-container {
+                width: 120px;
+                height: 156px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Background music -->
+    <audio id="bgMusic" loop>
+        <source src="KC.wav" type="audio/wav">
+    </audio>
+
+    <!-- Animated background -->
     <div class="bg-animation"></div>
-    
-    <div class="utah-loading-container">
-        <svg class="utah-shape" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg">
-            <path class="utah-outline" d="M 40 20 L 160 20 L 160 50 L 180 50 L 180 240 L 160 270 L 100 290 L 40 270 L 20 240 L 20 50 Z"/>
-            <path class="utah-fill" d="M 40 20 L 160 20 L 160 50 L 180 50 L 180 240 L 160 270 L 100 290 L 40 270 L 20 240 L 20 50 Z"/>
+
+    <!-- Utah shape - CORRECT geometry -->
+    <div class="utah-container">
+        <svg class="utah-svg" viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg">
+            <!-- Correct Utah: tall rectangle with left notch -->
+            <path class="utah-outline" d="M 20 10 L 80 10 L 80 120 L 20 120 L 20 75 L 30 75 L 30 62 L 20 62 Z"/>
+            <path class="utah-animated" d="M 20 10 L 80 10 L 80 120 L 20 120 L 20 75 L 30 75 L 30 62 L 20 62 Z"/>
         </svg>
     </div>
 
-    <div class="content">
-        <div class="logo-container">
-            <img src="https://iili.io/flUxhKB.jpg" alt="Kirk Client Logo" class="logo">
+    <!-- Header -->
+    <div class="header">
+        <button class="admin-btn" onclick="showAdminLogin()">Admin Login</button>
+    </div>
+
+    <!-- Music control -->
+    <div class="music-control" onclick="toggleMusic()">
+        <span id="musicIcon">🔇</span>
+        <span id="musicText">Music Off</span>
+    </div>
+
+    <!-- Main content -->
+    <div class="main-content" id="mainContent">
+        <div class="logo-section">
+            <img src="https://iili.io/flUxhKB.jpg" alt="Kirk Client" class="logo">
         </div>
 
-        <h1>Kirk Client</h1>
-        <p class="coming-soon">Coming Soon</p>
+        <div class="title-section">
+            <h1 class="main-title">KIRK CLIENT</h1>
+            <p class="tagline">COMING SOON</p>
+        </div>
 
-        <div class="volunteer-section">
-            <h2>Apply to Volunteer</h2>
-            <div class="volunteer-options">
-                <button class="volunteer-btn" onclick="openModal('Discord Staff')">Discord Staff</button>
-                <button class="volunteer-btn" onclick="openModal('Client Developer')">Client Developer</button>
-                <button class="volunteer-btn" onclick="openModal('Artwork')">Artwork</button>
-                <button class="volunteer-btn" onclick="openModal('Other')">Other</button>
+        <div class="volunteer-wrapper">
+            <div class="volunteer-box">
+                <h2 class="volunteer-title">Apply to Volunteer</h2>
+                <div class="volunteer-grid">
+                    <button class="volunteer-card" onclick="openApplication('Discord Staff')">
+                        Discord Staff
+                    </button>
+                    <button class="volunteer-card" onclick="openApplication('Client Developer')">
+                        Client Developer
+                    </button>
+                    <button class="volunteer-card" onclick="openApplication('Artwork')">
+                        Artwork
+                    </button>
+                    <button class="volunteer-card" onclick="openApplication('Other')">
+                        Other
+                    </button>
+                </div>
+                <p class="volunteer-note">All positions are volunteer-based. We appreciate your support!</p>
             </div>
-            <p class="volunteer-note">All positions are volunteer-based. We appreciate your support!</p>
         </div>
     </div>
 
-    <footer>
+    <!-- Footer -->
+    <div class="footer">
         <p>KirkCEO ©2025</p>
-    </footer>
+    </div>
 
-    <div id="volunteerModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h3>Volunteer Application</h3>
-            <form id="volunteerForm" onsubmit="handleSubmit(event)">
-                <div class="form-group">
-                    <label for="position">Position:</label>
-                    <input type="text" id="position" name="position" readonly>
+    <!-- Application Modal -->
+    <div id="appModal" class="modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 class="modal-title">Volunteer Application</h2>
+                <button class="close-btn" onclick="closeModal('appModal')">&times;</button>
+            </div>
+            <form onsubmit="submitApplication(event)">
+                <div class="form-field">
+                    <label>Position</label>
+                    <input type="text" id="position" readonly>
                 </div>
-                <div class="form-group">
-                    <label for="name">Full Name:</label>
-                    <input type="text" id="name" name="name" required>
+                <div class="form-field">
+                    <label>Full Name *</label>
+                    <input type="text" id="name" required>
                 </div>
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
+                <div class="form-field">
+                    <label>Email Address *</label>
+                    <input type="email" id="email" required>
                 </div>
-                <div class="form-group">
-                    <label for="discord">Discord Username:</label>
-                    <input type="text" id="discord" name="discord">
+                <div class="form-field">
+                    <label>Discord Username</label>
+                    <input type="text" id="discord" placeholder="username#0000">
                 </div>
-                <div class="form-group">
-                    <label for="experience">Experience / Why you want to help:</label>
-                    <textarea id="experience" name="experience" required></textarea>
+                <div class="form-field">
+                    <label>Experience / Why You Want to Help *</label>
+                    <textarea id="experience" required placeholder="Tell us about your relevant experience..."></textarea>
                 </div>
                 <button type="submit" class="submit-btn">Submit Application</button>
             </form>
         </div>
     </div>
 
+    <!-- Admin Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 class="modal-title">Admin Login</h2>
+                <button class="close-btn" onclick="closeModal('loginModal')">&times;</button>
+            </div>
+            <form onsubmit="checkPassword(event)">
+                <div class="form-field">
+                    <label>Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="submit-btn">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- CEO Confirmation Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-box">
+            <div class="confirm-box">
+                <h2 class="confirm-title">Are You Really the CEO?</h2>
+                <div class="confirm-buttons">
+                    <button class="confirm-btn confirm-yes" onclick="confirmCEO(true)">Yes</button>
+                    <button class="confirm-btn confirm-no" onclick="confirmCEO(false)">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        function openModal(position) {
-            document.getElementById('position').value = position;
-            document.getElementById('volunteerModal').style.display = 'block';
-        }
+        let applications = [];
+        let musicPlaying = false;
 
-        function closeModal() {
-            document.getElementById('volunteerModal').style.display = 'none';
-            document.getElementById('volunteerForm').reset();
-        }
+        // Auto-start music on first interaction
+        document.addEventListener('click', function() {
+            if (!musicPlaying) {
+                document.getElementById('bgMusic').play().catch(e => console.log('Autoplay prevented'));
+                musicPlaying = true;
+                document.getElementById('musicIcon').textContent = '🔊';
+                document.getElementById('musicText').textContent = 'Music On';
+            }
+        }, { once: true });
 
-        window.onclick = function(event) {
-            const modal = document.getElementById('volunteerModal');
-            if (event.target === modal) {
-                closeModal();
+        function toggleMusic() {
+            const audio = document.getElementById('bgMusic');
+            const icon = document.getElementById('musicIcon');
+            const text = document.getElementById('musicText');
+            
+            if (musicPlaying) {
+                audio.pause();
+                icon.textContent = '🔇';
+                text.textContent = 'Music Off';
+                musicPlaying = false;
+            } else {
+                audio.play();
+                icon.textContent = '🔊';
+                text.textContent = 'Music On';
+                musicPlaying = true;
             }
         }
 
-        function handleSubmit(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            const data = Object.fromEntries(formData);
+        function openApplication(position) {
+            document.getElementById('position').value = position;
+            document.getElementById('appModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function submitApplication(e) {
+            e.preventDefault();
             
-            alert('Thank you for your application! We will review it and get back to you soon.\n\nNote: For a production site, you would connect this to a backend service or email system.');
+            const app = {
+                position: document.getElementById('position').value,
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                discord: document.getElementById('discord').value || 'Not provided',
+                experience: document.getElementById('experience').value,
+                timestamp: new Date().toLocaleString()
+            };
             
-            closeModal();
+            applications.push(app);
+            
+            alert('Thank you for applying! We will review your application and get back to you soon.');
+            closeModal('appModal');
+            e.target.reset();
+        }
+
+        function showAdminLogin() {
+            document.getElementById('loginModal').style.display = 'block';
+        }
+
+        function checkPassword(e) {
+            e.preventDefault();
+            const pwd = document.getElementById('password').value;
+            
+            if (pwd === 'CEO') {
+                closeModal('loginModal');
+                document.getElementById('confirmModal').style.display = 'block';
+                document.getElementById('password').value = '';
+            } else {
+                alert('Incorrect password!');
+                document.getElementById('password').value = '';
+            }
+        }
+
+        function confirmCEO(confirmed) {
+            closeModal('confirmModal');
+            
+            if (confirmed) {
+                showAdminPanel();
+            } else {
+                alert('Access denied!');
+            }
+        }
+
+        function showAdminPanel() {
+            const content = document.getElementById('mainContent');
+            const header = document.querySelector('.header');
+            
+            header.style.display = 'none';
+            
+            content.innerHTML = `
+                <div class="admin-panel">
+                    <button class="back-btn" onclick="location.reload()">
+                        ← Back to Home
+                    </button>
+                    <h1 class="admin-title">Application Dashboard</h1>
+                    ${applications.length === 0 ? 
+                        '<div class="no-apps">No applications have been submitted yet.</div>' :
+                        applications.map((app, i) => `
+                            <div class="app-card">
+                                <h3>Application #${i + 1} - ${app.position}</h3>
+                                <p><strong>Name:</strong> ${app.name}</p>
+                                <p><strong>Email:</strong> ${app.email}</p>
+                                <p><strong>Discord:</strong> ${app.discord}</p>
+                                <p><strong>Experience:</strong> ${app.experience}</p>
+                                <p><strong>Submitted:</strong> ${app.timestamp}</p>
+                            </div>
+                        `).join('')
+                    }
+                </div>
+            `;
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
         }
     </script>
 </body>
