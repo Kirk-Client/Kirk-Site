@@ -214,7 +214,7 @@
         .shop-button {
             position: fixed;
             top: 2rem;
-            right: 2rem;
+            right: 11rem;
             z-index: 100;
             padding: 0.8rem 2rem;
             font-size: 1rem;
@@ -589,7 +589,7 @@
         .logout-button {
             position: fixed;
             top: 2rem;
-            right: 11rem;
+            right: 22rem;
             z-index: 100;
             padding: 0.8rem 1.5rem;
             font-size: 1rem;
@@ -654,6 +654,16 @@
             .shop-button, .cart-button, .auth-buttons {
                 top: 1rem;
                 right: 1rem;
+            }
+
+            .shop-button {
+                right: 8rem;
+            }
+
+            .logout-button {
+                position: static;
+                width: 100%;
+                margin-top: 0.5rem;
             }
 
             .auth-buttons {
@@ -728,10 +738,63 @@
         Cart <span class="cart-count" id="cartCount">0</span>
     </button>
 
+    <!-- Logout button (shown when logged in) -->
+    <button class="logout-button" id="logoutBtn" onclick="handleLogout()">Logout</button>
+
     <!-- Login/Signup buttons in top right -->
     <div class="auth-buttons" id="authButtons">
-        <button class="btn btn-login" onclick="handleLogin()">Login</button>
-        <button class="btn btn-signup" onclick="handleSignup()">Sign Up</button>
+        <button class="btn btn-login" onclick="openLoginModal()">Login</button>
+        <button class="btn btn-signup" onclick="openSignupModal()">Sign Up</button>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="auth-modal">
+            <button class="modal-close" onclick="closeLoginModal()">&times;</button>
+            <h2>Login</h2>
+            <div id="loginError" style="display: none;"></div>
+            <form class="auth-form" onsubmit="handleLoginSubmit(event)">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="form-submit" id="loginSubmitBtn">Login</button>
+            </form>
+            <div class="auth-switch">
+                Don't have an account? <a onclick="switchToSignup()">Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal-overlay" id="signupModal">
+        <div class="auth-modal">
+            <button class="modal-close" onclick="closeSignupModal()">&times;</button>
+            <h2>Sign Up</h2>
+            <div id="signupError" style="display: none;"></div>
+            <form class="auth-form" onsubmit="handleSignupSubmit(event)">
+                <div class="form-group">
+                    <label for="signupUsername">Username</label>
+                    <input type="text" id="signupUsername" placeholder="Choose a username" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" placeholder="Create a password (min 6 characters)" required minlength="6">
+                </div>
+                <button type="submit" class="form-submit" id="signupSubmitBtn">Sign Up</button>
+            </form>
+            <div class="auth-switch">
+                Already have an account? <a onclick="switchToLogin()">Login</a>
+            </div>
+        </div>
     </div>
 
     <!-- Shop Modal -->
@@ -792,65 +855,298 @@
         <p>KirkCEO ©2025</p>
     </div>
 
-    <script>
-        let isLoggedIn = false;
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-analytics.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, setDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDnppB7CXp0eZLNhvXeyKNDvO0R1YVsf2I",
+            authDomain: "kirkclient.firebaseapp.com",
+            projectId: "kirkclient",
+            storageBucket: "kirkclient.firebasestorage.app",
+            messagingSenderId: "324941983054",
+            appId: "1:324941983054:web:2976a14fc5cc05d89d021f",
+            measurementId: "G-E0ZPPKNBD8"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
         let cart = [];
 
-        function handleLogin() {
-            // Simulate login
-            isLoggedIn = true;
-            updateUIForLogin();
-            alert('Successfully logged in!');
+        // Auth state observer
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                await loadCartFromFirestore();
+                updateUIForLogin();
+            } else {
+                currentUser = null;
+                cart = [];
+                updateUIForLogout();
+            }
+        });
+
+        // Modal functions
+        window.openLoginModal = function() {
+            document.getElementById('loginModal').classList.add('active');
+            document.getElementById('loginError').style.display = 'none';
         }
 
-        function handleSignup() {
-            // Simulate signup and login
-            isLoggedIn = true;
-            updateUIForLogin();
-            alert('Account created! You are now logged in.');
+        window.closeLoginModal = function() {
+            document.getElementById('loginModal').classList.remove('active');
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('loginError').style.display = 'none';
+        }
+
+        window.openSignupModal = function() {
+            document.getElementById('signupModal').classList.add('active');
+            document.getElementById('signupError').style.display = 'none';
+        }
+
+        window.closeSignupModal = function() {
+            document.getElementById('signupModal').classList.remove('active');
+            document.getElementById('signupUsername').value = '';
+            document.getElementById('signupEmail').value = '';
+            document.getElementById('signupPassword').value = '';
+            document.getElementById('signupError').style.display = 'none';
+        }
+
+        window.switchToSignup = function() {
+            closeLoginModal();
+            openSignupModal();
+        }
+
+        window.switchToLogin = function() {
+            closeSignupModal();
+            openLoginModal();
+        }
+
+        // Show error message
+        function showError(elementId, message) {
+            const errorEl = document.getElementById(elementId);
+            errorEl.textContent = message;
+            errorEl.className = 'error-message';
+            errorEl.style.display = 'block';
+        }
+
+        // Show success message
+        function showSuccess(elementId, message) {
+            const errorEl = document.getElementById(elementId);
+            errorEl.textContent = message;
+            errorEl.className = 'success-message';
+            errorEl.style.display = 'block';
+        }
+
+        // Login handler
+        window.handleLoginSubmit = async function(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const submitBtn = document.getElementById('loginSubmitBtn');
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Logging in...';
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                closeLoginModal();
+            } catch (error) {
+                console.error('Login error:', error);
+                let errorMessage = 'Login failed. Please try again.';
+                
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = 'No account found with this email.';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = 'Incorrect password.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Invalid email address.';
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMessage = 'Too many failed attempts. Please try again later.';
+                }
+                
+                showError('loginError', errorMessage);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Login';
+            }
+        }
+
+        // Signup handler
+        window.handleSignupSubmit = async function(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('signupUsername').value.trim();
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const submitBtn = document.getElementById('signupSubmitBtn');
+
+            // Validate username
+            if (username.length < 3) {
+                showError('signupError', 'Username must be at least 3 characters long.');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating account...';
+
+            try {
+                // Create user account
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Store user data in Firestore
+                await setDoc(doc(db, 'users', user.uid), {
+                    username: username,
+                    email: email,
+                    hwid: null, // Will be set when client authenticates
+                    createdAt: new Date(),
+                    lastLogin: new Date()
+                });
+
+                showSuccess('signupError', 'Account created successfully!');
+                
+                setTimeout(() => {
+                    closeSignupModal();
+                }, 1500);
+
+            } catch (error) {
+                console.error('Signup error:', error);
+                let errorMessage = 'Signup failed. Please try again.';
+                
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = 'An account with this email already exists.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Invalid email address.';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = 'Password should be at least 6 characters.';
+                }
+                
+                showError('signupError', errorMessage);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign Up';
+            }
+        }
+
+        // Logout handler
+        window.handleLogout = async function() {
+            try {
+                await signOut(auth);
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Failed to logout. Please try again.');
+            }
         }
 
         function updateUIForLogin() {
-            // Hide auth buttons
             document.getElementById('authButtons').style.display = 'none';
-            // Hide shop button, show cart button
-            document.getElementById('shopBtn').style.display = 'none';
+            document.getElementById('shopBtn').style.display = 'block';
             document.getElementById('cartBtn').style.display = 'block';
+            document.getElementById('logoutBtn').style.display = 'block';
         }
 
-        function openShop() {
+        function updateUIForLogout() {
+            document.getElementById('authButtons').style.display = 'flex';
+            document.getElementById('shopBtn').style.display = 'block';
+            document.getElementById('cartBtn').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'none';
+            updateCartCount();
+        }
+
+        window.openShop = function() {
             document.getElementById('shopModal').classList.add('active');
         }
 
-        function closeShop() {
+        window.closeShop = function() {
             document.getElementById('shopModal').classList.remove('active');
         }
 
-        function openCart() {
+        window.openCart = function() {
             updateCartDisplay();
             document.getElementById('cartModal').classList.add('active');
         }
 
-        function closeCart() {
+        window.closeCart = function() {
             document.getElementById('cartModal').classList.remove('active');
         }
 
-        function addToCart(productName, price) {
-            if (!isLoggedIn) {
+        // Add to cart with Firestore
+        window.addToCart = async function(productName, price) {
+            if (!currentUser) {
                 alert('Please log in to add items to cart');
                 return;
             }
             
-            cart.push({ name: productName, price: price });
-            updateCartCount();
-            alert(`${productName} added to cart!`);
-            closeShop();
+            try {
+                const cartItem = {
+                    userId: currentUser.uid,
+                    name: productName,
+                    price: price,
+                    timestamp: new Date()
+                };
+                
+                const docRef = await addDoc(collection(db, 'carts'), cartItem);
+                cart.push({ id: docRef.id, name: productName, price: price });
+                updateCartCount();
+                alert(`${productName} added to cart!`);
+                closeShop();
+            } catch (error) {
+                console.error('Error adding to cart:', error);
+                alert('Failed to add item to cart. Please try again.');
+            }
         }
 
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            updateCartCount();
-            updateCartDisplay();
+        // Load cart from Firestore
+        async function loadCartFromFirestore() {
+            if (!currentUser) return;
+            
+            try {
+                const q = query(collection(db, 'carts'), where('userId', '==', currentUser.uid));
+                const querySnapshot = await getDocs(q);
+                
+                cart = [];
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    cart.push({
+                        id: docSnap.id,
+                        name: data.name,
+                        price: data.price
+                    });
+                });
+                
+                updateCartCount();
+            } catch (error) {
+                console.error('Error loading cart:', error);
+            }
+        }
+
+        // Remove from cart
+        window.removeFromCart = async function(index) {
+            const item = cart[index];
+            
+            try {
+                if (item.id) {
+                    await deleteDoc(doc(db, 'carts', item.id));
+                }
+                cart.splice(index, 1);
+                updateCartCount();
+                updateCartDisplay();
+            } catch (error) {
+                console.error('Error removing from cart:', error);
+                alert('Failed to remove item. Please try again.');
+            }
         }
 
         function updateCartCount() {
@@ -872,7 +1168,7 @@
                         <div class="cart-item">
                             <div class="cart-item-info">
                                 <h4>${item.name}</h4>
-                                <p>$${item.price.toFixed(2)}</p>
+                                <p>${item.price.toFixed(2)}</p>
                             </div>
                             <button class="cart-item-remove" onclick="removeFromCart(${index})">Remove</button>
                         </div>
@@ -884,7 +1180,7 @@
             }
         }
 
-        function checkout() {
+        window.checkout = function() {
             if (cart.length === 0) return;
             alert('Checkout coming soon with beta release!');
         }
@@ -896,6 +1192,14 @@
 
         document.getElementById('cartModal').addEventListener('click', function(e) {
             if (e.target === this) closeCart();
+        });
+
+        document.getElementById('loginModal').addEventListener('click', function(e) {
+            if (e.target === this) closeLoginModal();
+        });
+
+        document.getElementById('signupModal').addEventListener('click', function(e) {
+            if (e.target === this) closeSignupModal();
         });
     </script>
 </body>
