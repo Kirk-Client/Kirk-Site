@@ -699,7 +699,7 @@
 
                 // Call your Firebase Cloud Function to create checkout session
                 // You'll need to create this function (see instructions below)
-                const response = await fetch('https://YOUR-CLOUD-FUNCTION-URL/createCheckoutSession', {
+                const response = await fetch('https://us-central1-kirkclient.cloudfunctions.net/createCheckoutSession', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
