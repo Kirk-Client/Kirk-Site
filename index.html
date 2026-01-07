@@ -22,7 +22,7 @@
             position: relative;
         }
 
-        /* Smooth luminated background glow */
+        /* Background animation */
         .bg-animation {
             position: fixed;
             top: 0;
@@ -39,21 +39,13 @@
                 background: radial-gradient(circle at 40% 35%, rgba(220, 20, 60, 0.15) 0%, rgba(139, 0, 0, 0.07) 28%, transparent 58%);
                 opacity: 1;
             }
-            25% {
-                background: radial-gradient(circle at 60% 45%, rgba(220, 20, 60, 0.18) 0%, rgba(139, 0, 0, 0.08) 32%, transparent 62%);
-                opacity: 0.95;
-            }
             50% {
                 background: radial-gradient(circle at 50% 65%, rgba(220, 20, 60, 0.16) 0%, rgba(139, 0, 0, 0.075) 30%, transparent 60%);
                 opacity: 1;
             }
-            75% {
-                background: radial-gradient(circle at 35% 55%, rgba(220, 20, 60, 0.17) 0%, rgba(139, 0, 0, 0.08) 31%, transparent 61%);
-                opacity: 0.97;
-            }
         }
 
-        /* Utah shape with loading bar effect */
+        /* Utah shape */
         .utah-container {
             position: fixed;
             top: 50%;
@@ -82,18 +74,125 @@
         }
         
         @keyframes drawUtah {
-            0% {
-                stroke-dashoffset: 1000;
-            }
-            50% {
-                stroke-dashoffset: 0;
-            }
-            100% {
-                stroke-dashoffset: -1000;
-            }
+            0% { stroke-dashoffset: 1000; }
+            50% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: -1000; }
         }
 
-        /* Main content area */
+        /* Navigation bar */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(220, 20, 60, 0.2);
+        }
+
+        .nav-brand {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #dc143c;
+            letter-spacing: 1px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .btn-login {
+            background: transparent;
+            border: 2px solid #dc143c;
+            color: #dc143c;
+        }
+
+        .btn-login:hover {
+            background: rgba(220, 20, 60, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-signup {
+            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+            color: #fff;
+        }
+
+        .btn-signup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.4);
+        }
+
+        .btn-shop {
+            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+            color: #fff;
+        }
+
+        .btn-shop:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.4);
+        }
+
+        .btn-cart {
+            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+            color: #fff;
+            display: none;
+            position: relative;
+        }
+
+        .btn-cart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.4);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #fff;
+            color: #dc143c;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .btn-logout {
+            background: transparent;
+            border: 2px solid #dc143c;
+            color: #dc143c;
+            display: none;
+        }
+
+        .btn-logout:hover {
+            background: rgba(220, 20, 60, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Main content */
         .main-content {
             position: relative;
             z-index: 1;
@@ -106,12 +205,11 @@
             margin: 0 auto;
             width: 100%;
             min-height: 100vh;
+            padding-top: 100px;
         }
 
-        /* Logo section */
         .logo-section {
             margin-bottom: 2rem;
-            margin-top: 2rem;
             animation: floatIn 1.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -138,7 +236,6 @@
             transform: scale(1.05);
         }
 
-        /* Title and tagline */
         .title-section {
             text-align: center;
         }
@@ -161,131 +258,6 @@
             animation: floatIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
         }
 
-        /* Button container */
-        .button-container {
-            display: flex;
-            gap: 1.5rem;
-            margin-top: 3rem;
-            animation: floatIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.6s both;
-        }
-
-        .btn {
-            padding: 1rem 2.5rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-login {
-            background: transparent;
-            border: 2px solid #dc143c;
-            color: #dc143c;
-        }
-
-        .btn-login:hover {
-            background: rgba(220, 20, 60, 0.1);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.3);
-        }
-
-        .btn-signup {
-            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
-            color: #fff;
-            box-shadow: 0 4px 16px rgba(220, 20, 60, 0.4);
-        }
-
-        .btn-signup:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(220, 20, 60, 0.6);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        /* Shop button */
-        .shop-button {
-            position: fixed;
-            top: 2rem;
-            right: 11rem;
-            z-index: 100;
-            padding: 0.8rem 2rem;
-            font-size: 1rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            box-shadow: 0 4px 16px rgba(220, 20, 60, 0.4);
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .shop-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(220, 20, 60, 0.6);
-        }
-
-        /* Cart button (shown when logged in) */
-        .cart-button {
-            position: fixed;
-            top: 2rem;
-            right: 2rem;
-            z-index: 100;
-            padding: 0.8rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            box-shadow: 0 4px 16px rgba(220, 20, 60, 0.4);
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: none;
-        }
-
-        .cart-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(220, 20, 60, 0.6);
-        }
-
-        .cart-count {
-            background: #fff;
-            color: #dc143c;
-            border-radius: 50%;
-            padding: 0.2rem 0.5rem;
-            font-size: 0.8rem;
-            margin-left: 0.5rem;
-            font-weight: 700;
-        }
-
-        /* Login/Signup buttons in top right */
-        .auth-buttons {
-            position: fixed;
-            top: 2rem;
-            right: 2rem;
-            z-index: 100;
-            display: flex;
-            gap: 1rem;
-        }
-
-        .auth-buttons .btn {
-            padding: 0.8rem 1.8rem;
-            font-size: 0.95rem;
-        }
-
         /* Modal overlay */
         .modal-overlay {
             position: fixed;
@@ -305,7 +277,6 @@
             display: flex;
         }
 
-        /* Modal content */
         .modal {
             background: #1a1a1a;
             border: 2px solid #dc143c;
@@ -313,7 +284,7 @@
             padding: 2.5rem;
             max-width: 600px;
             width: 90%;
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
             box-shadow: 0 20px 60px rgba(220, 20, 60, 0.5);
             position: relative;
@@ -356,132 +327,7 @@
             text-align: center;
         }
 
-        /* Product grid */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .product-card {
-            background: rgba(220, 20, 60, 0.1);
-            border: 2px solid rgba(220, 20, 60, 0.3);
-            border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            border-color: #dc143c;
-            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.4);
-        }
-
-        .product-card h3 {
-            color: #fff;
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .product-card p {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9rem;
-        }
-
-        /* Cart items */
-        .cart-items {
-            margin-top: 1rem;
-        }
-
-        .cart-item {
-            background: rgba(220, 20, 60, 0.1);
-            border: 1px solid rgba(220, 20, 60, 0.3);
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .cart-item-info h4 {
-            color: #fff;
-            margin-bottom: 0.3rem;
-        }
-
-        .cart-item-info p {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.9rem;
-        }
-
-        .cart-item-remove {
-            background: #dc143c;
-            border: none;
-            color: #fff;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .cart-item-remove:hover {
-            background: #8b0000;
-        }
-
-        .cart-empty {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.5);
-            padding: 2rem;
-            font-size: 1.1rem;
-        }
-
-        .cart-total {
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 2px solid rgba(220, 20, 60, 0.3);
-            text-align: right;
-        }
-
-        .cart-total h3 {
-            color: #dc143c;
-            font-size: 1.5rem;
-        }
-
-        .checkout-btn {
-            width: 100%;
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
-            border: none;
-            color: #fff;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .checkout-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.6);
-        }
-
-        /* Auth Modal Styles */
-        .auth-modal {
-            background: #1a1a1a;
-            border: 2px solid #dc143c;
-            border-radius: 20px;
-            padding: 2.5rem;
-            max-width: 450px;
-            width: 90%;
-            box-shadow: 0 20px 60px rgba(220, 20, 60, 0.5);
-            position: relative;
-            animation: modalSlideIn 0.3s ease;
-        }
-
+        /* Auth forms */
         .auth-form {
             display: flex;
             flex-direction: column;
@@ -565,49 +411,138 @@
             text-decoration: underline;
         }
 
-        .error-message {
-            background: rgba(220, 20, 60, 0.2);
-            border: 1px solid #dc143c;
-            color: #fff;
+        .error-message, .success-message {
             padding: 0.8rem;
             border-radius: 8px;
             font-size: 0.9rem;
             text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .error-message {
+            background: rgba(220, 20, 60, 0.2);
+            border: 1px solid #dc143c;
+            color: #fff;
         }
 
         .success-message {
             background: rgba(34, 197, 94, 0.2);
             border: 1px solid #22c55e;
             color: #fff;
-            padding: 0.8rem;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            text-align: center;
         }
 
-        /* Logout button */
-        .logout-button {
-            position: fixed;
-            top: 2rem;
-            right: 22rem;
-            z-index: 100;
-            padding: 0.8rem 1.5rem;
-            font-size: 1rem;
+        /* Product grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .product-card {
+            background: rgba(220, 20, 60, 0.1);
+            border: 2px solid rgba(220, 20, 60, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: #dc143c;
+            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.4);
+        }
+
+        .product-card h3 {
+            color: #fff;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-card p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
             font-weight: 600;
-            background: transparent;
-            border: 2px solid #dc143c;
+        }
+
+        /* Cart */
+        .cart-items {
+            margin-top: 1rem;
+        }
+
+        .cart-item {
+            background: rgba(220, 20, 60, 0.1);
+            border: 1px solid rgba(220, 20, 60, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-item-info h4 {
+            color: #fff;
+            margin-bottom: 0.3rem;
+        }
+
+        .cart-item-info p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .cart-item-remove {
+            background: #dc143c;
+            border: none;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cart-item-remove:hover {
+            background: #8b0000;
+        }
+
+        .cart-empty {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .cart-total {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid rgba(220, 20, 60, 0.3);
+            text-align: right;
+        }
+
+        .cart-total h3 {
             color: #dc143c;
+            font-size: 1.5rem;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+            border: none;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 600;
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            display: none;
         }
 
-        .logout-button:hover {
-            background: rgba(220, 20, 60, 0.1);
+        .checkout-btn:hover {
             transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.6);
         }
 
         /* Footer */
@@ -619,71 +554,46 @@
             color: rgba(255, 255, 255, 0.4);
             border-top: 1px solid rgba(220, 20, 60, 0.2);
             font-size: 0.9rem;
+            margin-top: auto;
         }
 
         /* Mobile responsiveness */
         @media (max-width: 768px) {
-            .main-content {
-                padding: 3rem 1.5rem;
-            }
-
-            .logo {
-                width: 180px;
-            }
-
-            .main-title {
-                font-size: 2.5rem;
-                letter-spacing: 2px;
-            }
-
-            .tagline {
-                font-size: 1.1rem;
-                letter-spacing: 1px;
-            }
-
-            .button-container {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .btn {
-                width: 100%;
-                padding: 0.9rem 2rem;
-            }
-
-            .shop-button, .cart-button, .auth-buttons {
-                top: 1rem;
-                right: 1rem;
-            }
-
-            .shop-button {
-                right: 8rem;
-            }
-
-            .logout-button {
-                position: static;
-                width: 100%;
-                margin-top: 0.5rem;
-            }
-
-            .auth-buttons {
-                flex-direction: column;
+            nav {
+                padding: 1rem;
+                flex-wrap: wrap;
                 gap: 0.5rem;
             }
 
-            .auth-buttons .btn {
-                padding: 0.6rem 1.2rem;
+            .nav-brand {
+                font-size: 1rem;
+            }
+
+            .nav-buttons {
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+
+            .btn {
+                padding: 0.6rem 1rem;
                 font-size: 0.85rem;
-                width: auto;
             }
 
-            .shop-button, .cart-button {
-                padding: 0.6rem 1.5rem;
-                font-size: 0.9rem;
+            .main-content {
+                padding: 1.5rem;
+                padding-top: 120px;
             }
 
-            .product-grid {
-                grid-template-columns: 1fr;
+            .logo {
+                width: 150px;
+            }
+
+            .main-title {
+                font-size: 2rem;
+            }
+
+            .tagline {
+                font-size: 1rem;
             }
 
             .modal {
@@ -695,22 +605,8 @@
                 font-size: 1.5rem;
             }
 
-            .utah-container {
-                transform: translate(-50%, -50%) scale(0.8);
-            }
-        }
-
-        @media (max-width: 480px) {
-            .main-title {
-                font-size: 2rem;
-            }
-
-            .tagline {
-                font-size: 1rem;
-            }
-
-            .logo {
-                width: 150px;
+            .product-grid {
+                grid-template-columns: 1fr;
             }
 
             .utah-container {
@@ -720,36 +616,52 @@
     </style>
 </head>
 <body>
-    <!-- Animated background -->
+    <!-- Background animation -->
     <div class="bg-animation"></div>
 
-    <!-- Utah shape with loading bar effect -->
+    <!-- Utah shape -->
     <div class="utah-container">
         <svg class="utah-svg" viewBox="0 0 200 240">
             <path class="utah-path" d="M150 180 L120 180 L120 220 L40 220 L40 50 L150 50 Z"/>
         </svg>
     </div>
 
-    <!-- Shop button (hidden when logged in) -->
-    <button class="shop-button" id="shopBtn" onclick="openShop()">Shop</button>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-brand">KIRK CLIENT</div>
+        <div class="nav-buttons">
+            <button class="btn btn-shop" id="shopBtn" onclick="openShop()">Shop</button>
+            <button class="btn btn-cart" id="cartBtn" onclick="openCart()">
+                Cart <span class="cart-count" id="cartCount">0</span>
+            </button>
+            <button class="btn btn-logout" id="logoutBtn" onclick="handleLogout()">Logout</button>
+            <div id="authButtons">
+                <button class="btn btn-login" onclick="openLoginModal()">Login</button>
+                <button class="btn btn-signup" onclick="openSignupModal()">Sign Up</button>
+            </div>
+        </div>
+    </nav>
 
-    <!-- Cart button (shown when logged in) -->
-    <button class="cart-button" id="cartBtn" onclick="openCart()">
-        Cart <span class="cart-count" id="cartCount">0</span>
-    </button>
+    <!-- Main content -->
+    <div class="main-content">
+        <div class="logo-section">
+            <img src="https://iili.io/flUxhKB.jpg" alt="Kirk Client" class="logo">
+        </div>
 
-    <!-- Logout button (shown when logged in) -->
-    <button class="logout-button" id="logoutBtn" onclick="handleLogout()">Logout</button>
+        <div class="title-section">
+            <h1 class="main-title">KIRK CLIENT</h1>
+            <p class="tagline">BETA TESTING COMING SOON</p>
+        </div>
+    </div>
 
-    <!-- Login/Signup buttons in top right -->
-    <div class="auth-buttons" id="authButtons">
-        <button class="btn btn-login" onclick="openLoginModal()">Login</button>
-        <button class="btn btn-signup" onclick="openSignupModal()">Sign Up</button>
+    <!-- Footer -->
+    <div class="footer">
+        <p>KirkCEO ©2025</p>
     </div>
 
     <!-- Login Modal -->
     <div class="modal-overlay" id="loginModal">
-        <div class="auth-modal">
+        <div class="modal">
             <button class="modal-close" onclick="closeLoginModal()">&times;</button>
             <h2>Login</h2>
             <div id="loginError" style="display: none;"></div>
@@ -772,7 +684,7 @@
 
     <!-- Signup Modal -->
     <div class="modal-overlay" id="signupModal">
-        <div class="auth-modal">
+        <div class="modal">
             <button class="modal-close" onclick="closeSignupModal()">&times;</button>
             <h2>Sign Up</h2>
             <div id="signupError" style="display: none;"></div>
@@ -838,32 +750,13 @@
         </div>
     </div>
 
-    <!-- Main content -->
-    <div class="main-content">
-        <div class="logo-section">
-            <img src="https://iili.io/flUxhKB.jpg" alt="Kirk Client" class="logo">
-        </div>
-
-        <div class="title-section">
-            <h1 class="main-title">KIRK CLIENT</h1>
-            <p class="tagline">BETA TESTING COMING SOON</p>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="footer">
-        <p>KirkCEO ©2025</p>
-    </div>
-
     <!-- Firebase SDK -->
     <script type="module">
-        // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-analytics.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, setDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
-        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDnppB7CXp0eZLNhvXeyKNDvO0R1YVsf2I",
             authDomain: "kirkclient.firebaseapp.com",
@@ -874,7 +767,6 @@
             measurementId: "G-E0ZPPKNBD8"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
         const auth = getAuth(app);
@@ -883,12 +775,92 @@
         let currentUser = null;
         let cart = [];
 
+        // Generate unique HWID
+        function generateHWID() {
+            let hwid = localStorage.getItem('kirk_hwid');
+            
+            if (!hwid) {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.textBaseline = 'top';
+                ctx.font = '14px Arial';
+                ctx.fillText('Kirk Client', 0, 0);
+                const canvasData = canvas.toDataURL();
+                
+                const fingerprint = [
+                    navigator.userAgent,
+                    navigator.language,
+                    screen.colorDepth,
+                    screen.width + 'x' + screen.height,
+                    new Date().getTimezoneOffset(),
+                    canvasData
+                ].join('|');
+                
+                hwid = btoa(fingerprint).substring(0, 32);
+                localStorage.setItem('kirk_hwid', hwid);
+            }
+            
+            return hwid;
+        }
+
+        // Create/update user document
+        async function createUserDocument(user, username, email) {
+            const hwid = generateHWID();
+            const userDocRef = doc(db, 'users', user.uid);
+            
+            try {
+                const userDoc = await getDoc(userDocRef);
+                
+                if (!userDoc.exists()) {
+                    await setDoc(userDocRef, {
+                        uid: user.uid,
+                        username: username,
+                        email: email,
+                        hwid: hwid,
+                        createdAt: serverTimestamp(),
+                        lastLogin: serverTimestamp(),
+                        accountStatus: 'active',
+                        subscriptionType: 'free',
+                        purchases: []
+                    });
+                    console.log('✅ User document created');
+                } else {
+                    const userData = userDoc.data();
+                    const updates = { lastLogin: serverTimestamp() };
+                    
+                    if (!userData.hwid || userData.hwid !== hwid) {
+                        updates.hwid = hwid;
+                    }
+                    
+                    await setDoc(userDocRef, updates, { merge: true });
+                    console.log('✅ User document updated');
+                }
+                
+                return { success: true, hwid };
+            } catch (error) {
+                console.error('❌ Error with user document:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
         // Auth state observer
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
+                
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    await createUserDocument(user, userData.username || 'User', user.email);
+                }
+                
                 await loadCartFromFirestore();
                 updateUIForLogin();
+                
+                console.log('🔐 Logged in:', user.email);
+                console.log('🆔 User ID:', user.uid);
+                console.log('💻 HWID:', generateHWID());
             } else {
                 currentUser = null;
                 cart = [];
@@ -897,310 +869,24 @@
         });
 
         // Modal functions
-        window.openLoginModal = function() {
+        window.openLoginModal = () => {
             document.getElementById('loginModal').classList.add('active');
             document.getElementById('loginError').style.display = 'none';
-        }
+        };
 
-        window.closeLoginModal = function() {
+        window.closeLoginModal = () => {
             document.getElementById('loginModal').classList.remove('active');
             document.getElementById('loginEmail').value = '';
             document.getElementById('loginPassword').value = '';
             document.getElementById('loginError').style.display = 'none';
-        }
+        };
 
-        window.openSignupModal = function() {
+        window.openSignupModal = () => {
             document.getElementById('signupModal').classList.add('active');
             document.getElementById('signupError').style.display = 'none';
-        }
+        };
 
-        window.closeSignupModal = function() {
+        window.closeSignupModal = () => {
             document.getElementById('signupModal').classList.remove('active');
             document.getElementById('signupUsername').value = '';
-            document.getElementById('signupEmail').value = '';
-            document.getElementById('signupPassword').value = '';
-            document.getElementById('signupError').style.display = 'none';
-        }
-
-        window.switchToSignup = function() {
-            closeLoginModal();
-            openSignupModal();
-        }
-
-        window.switchToLogin = function() {
-            closeSignupModal();
-            openLoginModal();
-        }
-
-        // Show error message
-        function showError(elementId, message) {
-            const errorEl = document.getElementById(elementId);
-            errorEl.textContent = message;
-            errorEl.className = 'error-message';
-            errorEl.style.display = 'block';
-        }
-
-        // Show success message
-        function showSuccess(elementId, message) {
-            const errorEl = document.getElementById(elementId);
-            errorEl.textContent = message;
-            errorEl.className = 'success-message';
-            errorEl.style.display = 'block';
-        }
-
-        // Login handler
-        window.handleLoginSubmit = async function(event) {
-            event.preventDefault();
-            
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const submitBtn = document.getElementById('loginSubmitBtn');
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Logging in...';
-
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-                closeLoginModal();
-            } catch (error) {
-                console.error('Login error:', error);
-                let errorMessage = 'Login failed. Please try again.';
-                
-                if (error.code === 'auth/user-not-found') {
-                    errorMessage = 'No account found with this email.';
-                } else if (error.code === 'auth/wrong-password') {
-                    errorMessage = 'Incorrect password.';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = 'Invalid email address.';
-                } else if (error.code === 'auth/too-many-requests') {
-                    errorMessage = 'Too many failed attempts. Please try again later.';
-                }
-                
-                showError('loginError', errorMessage);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Login';
-            }
-        }
-
-        // Signup handler
-        window.handleSignupSubmit = async function(event) {
-            event.preventDefault();
-            
-            const username = document.getElementById('signupUsername').value.trim();
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-            const submitBtn = document.getElementById('signupSubmitBtn');
-
-            // Validate username
-            if (username.length < 3) {
-                showError('signupError', 'Username must be at least 3 characters long.');
-                return;
-            }
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Creating account...';
-
-            try {
-                // Create user account
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                // Store user data in Firestore
-                await setDoc(doc(db, 'users', user.uid), {
-                    username: username,
-                    email: email,
-                    hwid: null, // Will be set when client authenticates
-                    createdAt: new Date(),
-                    lastLogin: new Date()
-                });
-
-                showSuccess('signupError', 'Account created successfully!');
-                
-                setTimeout(() => {
-                    closeSignupModal();
-                }, 1500);
-
-            } catch (error) {
-                console.error('Signup error:', error);
-                let errorMessage = 'Signup failed. Please try again.';
-                
-                if (error.code === 'auth/email-already-in-use') {
-                    errorMessage = 'An account with this email already exists.';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = 'Invalid email address.';
-                } else if (error.code === 'auth/weak-password') {
-                    errorMessage = 'Password should be at least 6 characters.';
-                }
-                
-                showError('signupError', errorMessage);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Sign Up';
-            }
-        }
-
-        // Logout handler
-        window.handleLogout = async function() {
-            try {
-                await signOut(auth);
-            } catch (error) {
-                console.error('Logout error:', error);
-                alert('Failed to logout. Please try again.');
-            }
-        }
-
-        function updateUIForLogin() {
-            document.getElementById('authButtons').style.display = 'none';
-            document.getElementById('shopBtn').style.display = 'block';
-            document.getElementById('cartBtn').style.display = 'block';
-            document.getElementById('logoutBtn').style.display = 'block';
-        }
-
-        function updateUIForLogout() {
-            document.getElementById('authButtons').style.display = 'flex';
-            document.getElementById('shopBtn').style.display = 'block';
-            document.getElementById('cartBtn').style.display = 'none';
-            document.getElementById('logoutBtn').style.display = 'none';
-            updateCartCount();
-        }
-
-        window.openShop = function() {
-            document.getElementById('shopModal').classList.add('active');
-        }
-
-        window.closeShop = function() {
-            document.getElementById('shopModal').classList.remove('active');
-        }
-
-        window.openCart = function() {
-            updateCartDisplay();
-            document.getElementById('cartModal').classList.add('active');
-        }
-
-        window.closeCart = function() {
-            document.getElementById('cartModal').classList.remove('active');
-        }
-
-        // Add to cart with Firestore
-        window.addToCart = async function(productName, price) {
-            if (!currentUser) {
-                alert('Please log in to add items to cart');
-                return;
-            }
-            
-            try {
-                const cartItem = {
-                    userId: currentUser.uid,
-                    name: productName,
-                    price: price,
-                    timestamp: new Date()
-                };
-                
-                const docRef = await addDoc(collection(db, 'carts'), cartItem);
-                cart.push({ id: docRef.id, name: productName, price: price });
-                updateCartCount();
-                alert(`${productName} added to cart!`);
-                closeShop();
-            } catch (error) {
-                console.error('Error adding to cart:', error);
-                alert('Failed to add item to cart. Please try again.');
-            }
-        }
-
-        // Load cart from Firestore
-        async function loadCartFromFirestore() {
-            if (!currentUser) return;
-            
-            try {
-                const q = query(collection(db, 'carts'), where('userId', '==', currentUser.uid));
-                const querySnapshot = await getDocs(q);
-                
-                cart = [];
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    cart.push({
-                        id: docSnap.id,
-                        name: data.name,
-                        price: data.price
-                    });
-                });
-                
-                updateCartCount();
-            } catch (error) {
-                console.error('Error loading cart:', error);
-            }
-        }
-
-        // Remove from cart
-        window.removeFromCart = async function(index) {
-            const item = cart[index];
-            
-            try {
-                if (item.id) {
-                    await deleteDoc(doc(db, 'carts', item.id));
-                }
-                cart.splice(index, 1);
-                updateCartCount();
-                updateCartDisplay();
-            } catch (error) {
-                console.error('Error removing from cart:', error);
-                alert('Failed to remove item. Please try again.');
-            }
-        }
-
-        function updateCartCount() {
-            document.getElementById('cartCount').textContent = cart.length;
-        }
-
-        function updateCartDisplay() {
-            const cartItemsContainer = document.getElementById('cartItems');
-            const cartTotal = document.getElementById('cartTotal');
-            
-            if (cart.length === 0) {
-                cartItemsContainer.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
-                cartTotal.style.display = 'none';
-            } else {
-                let total = 0;
-                cartItemsContainer.innerHTML = cart.map((item, index) => {
-                    total += item.price;
-                    return `
-                        <div class="cart-item">
-                            <div class="cart-item-info">
-                                <h4>${item.name}</h4>
-                                <p>${item.price.toFixed(2)}</p>
-                            </div>
-                            <button class="cart-item-remove" onclick="removeFromCart(${index})">Remove</button>
-                        </div>
-                    `;
-                }).join('');
-                
-                document.getElementById('totalAmount').textContent = total.toFixed(2);
-                cartTotal.style.display = 'block';
-            }
-        }
-
-        window.checkout = function() {
-            if (cart.length === 0) return;
-            alert('Checkout coming soon with beta release!');
-        }
-
-        // Close modals when clicking outside
-        document.getElementById('shopModal').addEventListener('click', function(e) {
-            if (e.target === this) closeShop();
-        });
-
-        document.getElementById('cartModal').addEventListener('click', function(e) {
-            if (e.target === this) closeCart();
-        });
-
-        document.getElementById('loginModal').addEventListener('click', function(e) {
-            if (e.target === this) closeLoginModal();
-        });
-
-        document.getElementById('signupModal').addEventListener('click', function(e) {
-            if (e.target === this) closeSignupModal();
-        });
-    </script>
-</body>
-</html>
+            document.getElementById('signupEmail').value
