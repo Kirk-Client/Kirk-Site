@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kirk Client - Coming Soon</title>
+    <script src="https://js.stripe.com/v3/"></script>
     <style>
         * {
             margin: 0;
@@ -22,7 +23,6 @@
             position: relative;
         }
 
-        /* Background animation */
         .bg-animation {
             position: fixed;
             top: 0;
@@ -45,7 +45,6 @@
             }
         }
 
-        /* Utah shape */
         .utah-container {
             position: fixed;
             top: 50%;
@@ -79,7 +78,6 @@
             100% { stroke-dashoffset: -1000; }
         }
 
-        /* Navigation bar */
         nav {
             position: fixed;
             top: 0;
@@ -142,16 +140,6 @@
             box-shadow: 0 8px 24px rgba(220, 20, 60, 0.4);
         }
 
-        .btn-shop {
-            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
-            color: #fff;
-        }
-
-        .btn-shop:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.4);
-        }
-
         .btn-cart {
             background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
             color: #fff;
@@ -192,7 +180,6 @@
             transform: translateY(-2px);
         }
 
-        /* Main content */
         .main-content {
             position: relative;
             z-index: 1;
@@ -280,7 +267,6 @@
             box-shadow: 0 8px 32px rgba(220, 20, 60, 0.6);
         }
 
-        /* Modal overlay */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -323,10 +309,6 @@
                 opacity: 1;
                 transform: translateY(0) scale(1);
             }
-        }
-
-        .auth-modal {
-            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
         }
 
         .modal-close {
@@ -373,7 +355,6 @@
             font-weight: 400;
         }
 
-        /* Auth forms */
         .auth-form {
             display: flex;
             flex-direction: column;
@@ -394,10 +375,6 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-        }
-
-        .form-group label svg {
-            color: #dc143c;
         }
 
         .form-group input {
@@ -422,12 +399,6 @@
             color: rgba(255, 255, 255, 0.3);
         }
 
-        .input-hint {
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 0.85rem;
-            margin-top: -0.3rem;
-        }
-
         .form-submit {
             padding: 1.1rem;
             background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
@@ -442,23 +413,6 @@
             letter-spacing: 1.5px;
             margin-top: 0.5rem;
             box-shadow: 0 4px 15px rgba(220, 20, 60, 0.4);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .form-submit::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .form-submit:hover::before {
-            left: 100%;
         }
 
         .form-submit:hover {
@@ -466,18 +420,9 @@
             box-shadow: 0 8px 25px rgba(220, 20, 60, 0.6);
         }
 
-        .form-submit:active {
-            transform: translateY(0);
-        }
-
         .form-submit:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            transform: none;
-        }
-
-        .form-submit:disabled:hover {
-            box-shadow: 0 4px 15px rgba(220, 20, 60, 0.4);
         }
 
         .auth-divider {
@@ -524,9 +469,6 @@
             cursor: pointer;
             font-size: 1rem;
             transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
         }
 
         .auth-switch a:hover {
@@ -541,18 +483,6 @@
             text-align: center;
             margin-bottom: 1.5rem;
             font-weight: 500;
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         .error-message {
@@ -567,7 +497,6 @@
             color: #51cf66;
         }
 
-        /* Product grid */
         .product-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -603,7 +532,6 @@
             font-weight: 600;
         }
 
-        /* Cart */
         .cart-items {
             margin-top: 1rem;
         }
@@ -674,6 +602,8 @@
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .checkout-btn:hover {
@@ -681,7 +611,11 @@
             box-shadow: 0 8px 24px rgba(220, 20, 60, 0.6);
         }
 
-        /* Footer */
+        .checkout-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         .footer {
             position: relative;
             z-index: 1;
@@ -693,7 +627,6 @@
             margin-top: auto;
         }
 
-        /* Mobile responsiveness */
         @media (max-width: 768px) {
             nav {
                 padding: 1rem;
@@ -766,17 +699,14 @@
     </style>
 </head>
 <body>
-    <!-- Background animation -->
     <div class="bg-animation"></div>
 
-    <!-- Utah shape -->
     <div class="utah-container">
         <svg class="utah-svg" viewBox="0 0 200 240">
             <path class="utah-path" d="M150 180 L120 180 L120 220 L40 220 L40 50 L150 50 Z"/>
         </svg>
     </div>
 
-    <!-- Navigation -->
     <nav>
         <div class="nav-brand">KIRK CLIENT</div>
         <div class="nav-buttons">
@@ -791,7 +721,6 @@
         </div>
     </nav>
 
-    <!-- Main content -->
     <div class="main-content">
         <div class="logo-section">
             <img src="https://iili.io/flUxhKB.jpg" alt="Kirk Client" class="logo">
@@ -804,14 +733,13 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <div class="footer">
         <p>KirkCEO ©2025</p>
     </div>
 
     <!-- Login Modal -->
     <div class="modal-overlay" id="loginModal">
-        <div class="modal auth-modal">
+        <div class="modal">
             <button class="modal-close" onclick="closeLoginModal()">&times;</button>
             <div class="auth-header">
                 <h2>Welcome Back</h2>
@@ -820,26 +748,14 @@
             <div id="loginError" style="display: none;"></div>
             <form class="auth-form" onsubmit="handleLoginSubmit(event)">
                 <div class="form-group">
-                    <label for="loginEmail">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383l-4.708 2.825L15 11.105V5.383zm-.034 6.876l-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741zM1 11.105l4.708-2.897L1 5.383v5.722z"/>
-                        </svg>
-                        Email Address
-                    </label>
-                    <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="you@example.com" required>
                 </div>
                 <div class="form-group">
-                    <label for="loginPassword">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                            <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
-                        </svg>
-                        Password
-                    </label>
-                    <input type="password" id="loginPassword" placeholder="Enter your password" required autocomplete="current-password">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
                 </div>
-                <button type="submit" class="form-submit" id="loginSubmitBtn">
-                    <span>Sign In</span>
-                </button>
+                <button type="submit" class="form-submit" id="loginSubmitBtn">Sign In</button>
             </form>
             <div class="auth-divider">
                 <span>New to Kirk Client?</span>
@@ -852,7 +768,7 @@
 
     <!-- Signup Modal -->
     <div class="modal-overlay" id="signupModal">
-        <div class="modal auth-modal">
+        <div class="modal">
             <button class="modal-close" onclick="closeSignupModal()">&times;</button>
             <div class="auth-header">
                 <h2>Create Account</h2>
@@ -861,37 +777,18 @@
             <div id="signupError" style="display: none;"></div>
             <form class="auth-form" onsubmit="handleSignupSubmit(event)">
                 <div class="form-group">
-                    <label for="signupUsername">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
-                        </svg>
-                        Username
-                    </label>
-                    <input type="text" id="signupUsername" placeholder="Choose a username" required autocomplete="username" minlength="3" maxlength="20">
-                    <small class="input-hint">3-20 characters, letters and numbers only</small>
+                    <label for="signupUsername">Username</label>
+                    <input type="text" id="signupUsername" placeholder="Choose a username" required minlength="3">
                 </div>
                 <div class="form-group">
-                    <label for="signupEmail">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383l-4.708 2.825L15 11.105V5.383zm-.034 6.876l-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741zM1 11.105l4.708-2.897L1 5.383v5.722z"/>
-                        </svg>
-                        Email Address
-                    </label>
-                    <input type="email" id="signupEmail" placeholder="you@example.com" required autocomplete="email">
+                    <label for="signupEmail">Email Address</label>
+                    <input type="email" id="signupEmail" placeholder="you@example.com" required>
                 </div>
                 <div class="form-group">
-                    <label for="signupPassword">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                            <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
-                        </svg>
-                        Password
-                    </label>
-                    <input type="password" id="signupPassword" placeholder="Create a secure password" required autocomplete="new-password" minlength="6">
-                    <small class="input-hint">Minimum 6 characters</small>
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" placeholder="Create a secure password" required minlength="6">
                 </div>
-                <button type="submit" class="form-submit" id="signupSubmitBtn">
-                    <span>Create Account</span>
-                </button>
+                <button type="submit" class="form-submit" id="signupSubmitBtn">Create Account</button>
             </form>
             <div class="auth-divider">
                 <span>Already have an account?</span>
@@ -938,17 +835,18 @@
             </div>
             <div class="cart-total" id="cartTotal" style="display: none;">
                 <h3>Total: $<span id="totalAmount">0.00</span></h3>
-                <button class="checkout-btn" onclick="checkout()">Checkout</button>
+                <button class="checkout-btn" onclick="checkout()" id="checkoutBtn">Checkout with Stripe</button>
             </div>
         </div>
     </div>
 
-    <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-analytics.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+
+        // Initialize Stripe
+        const stripe = Stripe('pk_live_51Smqfp88HpBl6MXX1uooT67De9HgP6ERhfzpI4sLzMbgSLHr4fCzfqp5lZiCtHaiupf3p4tEXCfwWISEraebp2ki00ytftKEuG');
 
         const firebaseConfig = {
             apiKey: "AIzaSyDnppB7CXp0eZLNhvXeyKNDvO0R1YVsf2I",
@@ -960,470 +858,4 @@
             measurementId: "G-E0ZPPKNBD8"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        let currentUser = null;
-        let cart = [];
-
-        // Generate unique HWID (set to N/A for new accounts)
-        function generateHWID() {
-            // For new accounts, we return N/A
-            // The actual HWID will be set when they first open the client
-            return 'N/A';
-        }
-
-        // Create/update user document
-        async function createUserDocument(user, username, email, isNewUser = false) {
-            const userDocRef = doc(db, 'users', user.uid);
-            
-            try {
-                const userDoc = await getDoc(userDocRef);
-                
-                if (!userDoc.exists() || isNewUser) {
-                    // Create new user with N/A HWID
-                    await setDoc(userDocRef, {
-                        uid: user.uid,
-                        username: username,
-                        email: email,
-                        hwid: 'N/A',
-                        createdAt: serverTimestamp(),
-                        lastLogin: serverTimestamp(),
-                        accountStatus: 'active',
-                        subscriptionType: 'free',
-                        purchases: []
-                    });
-                    console.log('✅ User document created');
-                    console.log('📝 User Data:', {
-                        uid: user.uid,
-                        username: username,
-                        email: email,
-                        hwid: 'N/A',
-                        accountStatus: 'active'
-                    });
-                } else {
-                    // Update last login only
-                    await setDoc(userDocRef, {
-                        lastLogin: serverTimestamp()
-                    }, { merge: true });
-                    console.log('✅ User document updated');
-                }
-                
-                return { success: true };
-            } catch (error) {
-                console.error('❌ Error with user document:', error);
-                return { success: false, error: error.message };
-            }
-        }
-
-        // Auth state observer
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                const userDocRef = doc(db, 'users', user.uid);
-                const userDoc = await getDoc(userDocRef);
-                
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    await createUserDocument(user, userData.username || 'User', user.email);
-                }
-                
-                await loadCartFromFirestore();
-                updateUIForLogin();
-                
-                console.log('🔐 Logged in:', user.email);
-                console.log('🆔 User ID:', user.uid);
-                console.log('💻 HWID:', userDoc.exists() ? userDoc.data().hwid : 'N/A');
-            } else {
-                currentUser = null;
-                cart = [];
-                updateUIForLogout();
-            }
-        });
-
-        // Show error message
-        function showError(elementId, message) {
-            const errorEl = document.getElementById(elementId);
-            errorEl.textContent = message;
-            errorEl.className = 'error-message';
-            errorEl.style.display = 'block';
-        }
-
-        // Show success message
-        function showSuccess(elementId, message) {
-            const successEl = document.getElementById(elementId);
-            successEl.textContent = message;
-            successEl.className = 'success-message';
-            successEl.style.display = 'block';
-        }
-        window.openLoginModal = () => {
-            document.getElementById('loginModal').classList.add('active');
-            document.getElementById('loginError').style.display = 'none';
-        };
-
-        window.closeLoginModal = () => {
-            document.getElementById('loginModal').classList.remove('active');
-            document.getElementById('loginEmail').value = '';
-            document.getElementById('loginPassword').value = '';
-            document.getElementById('loginError').style.display = 'none';
-        };
-
-        window.openSignupModal = () => {
-            document.getElementById('signupModal').classList.add('active');
-            document.getElementById('signupError').style.display = 'none';
-        };
-
-        window.closeSignupModal = () => {
-            document.getElementById('signupModal').classList.remove('active');
-            document.getElementById('signupUsername').value = '';
-            document.getElementById('signupEmail').value = '';
-            document.getElementById('signupPassword').value = '';
-            document.getElementById('signupError').style.display = 'none';
-        };
-
-        window.switchToSignup = () => {
-            closeLoginModal();
-            openSignupModal();
-        };
-
-        window.switchToLogin = () => {
-            closeSignupModal();
-            openLoginModal();
-        };
-
-        // Login handler
-        window.handleLoginSubmit = async (event) => {
-            event.preventDefault();
-            
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const submitBtn = document.getElementById('loginSubmitBtn');
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Logging in...';
-
-            try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-                
-                const userDocRef = doc(db, 'users', user.uid);
-                const userDoc = await getDoc(userDocRef);
-                
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    await createUserDocument(user, userData.username, user.email, false);
-                }
-                
-                closeLoginModal();
-                showSuccess('loginError', 'Login successful!');
-            } catch (error) {
-                console.error('❌ Login error:', error);
-                let errorMessage = 'Login failed. Please try again.';
-                
-                if (error.code === 'auth/user-not-found') {
-                    errorMessage = 'No account found with this email.';
-                } else if (error.code === 'auth/wrong-password') {
-                    errorMessage = 'Incorrect password.';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = 'Invalid email address.';
-                } else if (error.code === 'auth/too-many-requests') {
-                    errorMessage = 'Too many failed attempts. Please try again later.';
-                } else if (error.code === 'auth/invalid-credential') {
-                    errorMessage = 'Invalid email or password.';
-                }
-                
-                showError('loginError', errorMessage);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Login';
-            }
-        };
-
-        // Signup handler
-        window.handleSignupSubmit = async (event) => {
-            event.preventDefault();
-            
-            const username = document.getElementById('signupUsername').value.trim();
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-            const submitBtn = document.getElementById('signupSubmitBtn');
-
-            if (username.length < 3) {
-                showError('signupError', 'Username must be at least 3 characters long.');
-                return;
-            }
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Creating account...';
-
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                await updateProfile(user, {
-                    displayName: username
-                });
-
-                const result = await createUserDocument(user, username, email, true);
-                
-                if (result.success) {
-                    showSuccess('signupError', 'Account created successfully! HWID will be set when you open the client.');
-                    
-                    setTimeout(() => {
-                        closeSignupModal();
-                    }, 2000);
-                } else {
-                    showError('signupError', 'Account created but failed to save user data: ' + result.error);
-                }
-
-            } catch (error) {
-                console.error('❌ Signup error:', error);
-                let errorMessage = 'Signup failed. Please try again.';
-                
-                if (error.code === 'auth/email-already-in-use') {
-                    errorMessage = 'An account with this email already exists.';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = 'Invalid email address.';
-                } else if (error.code === 'auth/weak-password') {
-                    errorMessage = 'Password should be at least 6 characters.';
-                }
-                
-                showError('signupError', errorMessage);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<span>Create Account</span>';
-            }
-        };
-
-        // Logout handler
-        window.handleLogout = async () => {
-            try {
-                await signOut(auth);
-                console.log('✅ Logged out successfully');
-            } catch (error) {
-                console.error('❌ Logout error:', error);
-                alert('Failed to logout. Please try again.');
-            }
-        };
-
-        function updateUIForLogin() {
-            document.getElementById('authButtons').style.display = 'none';
-            document.getElementById('cartBtn').style.display = 'block';
-            document.getElementById('logoutBtn').style.display = 'block';
-        }
-
-        function updateUIForLogout() {
-            document.getElementById('authButtons').style.display = 'flex';
-            document.getElementById('cartBtn').style.display = 'none';
-            document.getElementById('logoutBtn').style.display = 'none';
-            updateCartCount();
-        }
-
-        window.openShop = () => {
-            if (!currentUser) {
-                alert('Please log in to access the shop');
-                openLoginModal();
-                return;
-            }
-            document.getElementById('shopModal').classList.add('active');
-        };
-
-        window.closeShop = () => {
-            document.getElementById('shopModal').classList.remove('active');
-        };
-
-        window.openCart = () => {
-            updateCartDisplay();
-            document.getElementById('cartModal').classList.add('active');
-        };
-
-        window.closeCart = () => {
-            document.getElementById('cartModal').classList.remove('active');
-        };
-
-        window.addToCart = async (productName, price) => {
-            if (!currentUser) {
-                alert('Please log in to add items to cart');
-                return;
-            }
-            
-            try {
-                const cartItem = {
-                    userId: currentUser.uid,
-                    name: productName,
-                    price: price,
-                    timestamp: new Date()
-                };
-                
-                const docRef = await addDoc(collection(db, 'carts'), cartItem);
-                cart.push({ id: docRef.id, name: productName, price: price });
-                updateCartCount();
-                alert(`${productName} added to cart!`);
-                closeShop();
-            } catch (error) {
-                console.error('Error adding to cart:', error);
-                alert('Failed to add item to cart. Please try again.');
-            }
-        };
-
-        async function loadCartFromFirestore() {
-            if (!currentUser) return;
-            
-            try {
-                const q = query(collection(db, 'carts'), where('userId', '==', currentUser.uid));
-                const querySnapshot = await getDocs(q);
-                
-                cart = [];
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    cart.push({
-                        id: docSnap.id,
-                        name: data.name,
-                        price: data.price
-                    });
-                });
-                
-                updateCartCount();
-            } catch (error) {
-                console.error('Error loading cart:', error);
-            }
-        }
-
-        window.removeFromCart = async (index) => {
-            const item = cart[index];
-            
-            try {
-                if (item.id) {
-                    await deleteDoc(doc(db, 'carts', item.id));
-                }
-                cart.splice(index, 1);
-                updateCartCount();
-                updateCartDisplay();
-            } catch (error) {
-                console.error('Error removing from cart:', error);
-                alert('Failed to remove item. Please try again.');
-            }
-        };
-
-        function updateCartCount() {
-            document.getElementById('cartCount').textContent = cart.length;
-        }
-
-        function updateCartDisplay() {
-            const cartItemsContainer = document.getElementById('cartItems');
-            const cartTotal = document.getElementById('cartTotal');
-            
-            if (cart.length === 0) {
-                cartItemsContainer.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
-                cartTotal.style.display = 'none';
-            } else {
-                let total = 0;
-                cartItemsContainer.innerHTML = cart.map((item, index) => {
-                    total += item.price;
-                    return `
-                        <div class="cart-item">
-                            <div class="cart-item-info">
-                                <h4>${item.name}</h4>
-                                <p>${item.price.toFixed(2)}</p>
-                            </div>
-                            <button class="cart-item-remove" onclick="removeFromCart(${index})">Remove</button>
-                        </div>
-                    `;
-                }).join('');
-                
-                document.getElementById('totalAmount').textContent = total.toFixed(2);
-                cartTotal.style.display = 'block';
-            }
-        }
-
-        window.checkout = () => {
-            if (cart.length === 0) return;
-            alert('Checkout coming soon with beta release!');
-        };
-
-        // Close modals when clicking outside
-        document.getElementById('shopModal').addEventListener('click', function(e) {
-            if (e.target === this) closeShop();
-        });
-
-        document.getElementById('cartModal').addEventListener('click', function(e) {
-            if (e.target === this) closeCart();
-        });
-
-        document.getElementById('loginModal').addEventListener('click', function(e) {
-            if (e.target === this) closeLoginModal();
-        });
-
-        document.getElementById('signupModal').addEventListener('click', function(e) {
-            if (e.target === this) closeSignupModal();
-        });
-    </script>
-</body>
-</html>
-            event.preventDefault();
-            
-            const username = document.getElementById('signupUsername').value.trim();
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-            const submitBtn = document.getElementById('signupSubmitBtn');
-
-            if (username.length < 3) {
-                showError('signupError', 'Username must be at least 3 characters long.');
-                return;
-            }
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Creating account...';
-
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                await updateProfile(user, {
-                    displayName: username
-                });
-
-                const result = await createUserDocument(user, username, email, true);
-                
-                if (result.success) {
-                    showSuccess('signupError', 'Account created successfully! HWID will be set when you open the client.');
-                    
-                    setTimeout(() => {
-                        closeSignupModal();
-                    }, 2000);
-                } else {
-                    showError('signupError', 'Account created but failed to save user data: ' + result.error);
-                }
-
-            } catch (error) {
-                console.error('❌ Signup error:', error);
-                let errorMessage = 'Signup failed. Please try again.';
-                
-                if (error.code === 'auth/email-already-in-use') {
-                    errorMessage = 'An account with this email already exists.';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = 'Invalid email address.';
-                } else if (error.code === 'auth/weak-password') {
-                    errorMessage = 'Password should be at least 6 characters.';
-                }
-                
-                showError('signupError', errorMessage);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Sign Up';
-            }
-        };
-
-        // Logout handler
-        window.handleLogout = async () => {
-            try {
-                await signOut(auth);
-                console.log('✅ Logged out successfully');
-            } catch (error) {
-                console.error('❌ Logout error:', error);
-                alert('Failed to logout. Please try again.');
-            }
-        }; '';
-            document.getElementById('signupEmail').value
+        const app
