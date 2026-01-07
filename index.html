@@ -100,11 +100,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 4rem 2rem;
+            justify-content: center;
+            padding: 2rem;
             max-width: 1400px;
             margin: 0 auto;
             width: 100%;
-            min-height: 200vh;
+            min-height: 100vh;
         }
 
         /* Logo section */
@@ -140,7 +141,6 @@
         /* Title and tagline */
         .title-section {
             text-align: center;
-            margin-top: 80vh;
         }
 
         .main-title {
@@ -269,6 +269,21 @@
             font-size: 0.8rem;
             margin-left: 0.5rem;
             font-weight: 700;
+        }
+
+        /* Login/Signup buttons in top right */
+        .auth-buttons {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 100;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .auth-buttons .btn {
+            padding: 0.8rem 1.8rem;
+            font-size: 0.95rem;
         }
 
         /* Modal overlay */
@@ -495,9 +510,23 @@
                 padding: 0.9rem 2rem;
             }
 
-            .shop-button, .cart-button {
+            .shop-button, .cart-button, .auth-buttons {
                 top: 1rem;
                 right: 1rem;
+            }
+
+            .auth-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .auth-buttons .btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.85rem;
+                width: auto;
+            }
+
+            .shop-button, .cart-button {
                 padding: 0.6rem 1.5rem;
                 font-size: 0.9rem;
             }
@@ -558,6 +587,12 @@
         Cart <span class="cart-count" id="cartCount">0</span>
     </button>
 
+    <!-- Login/Signup buttons in top right -->
+    <div class="auth-buttons" id="authButtons">
+        <button class="btn btn-login" onclick="handleLogin()">Login</button>
+        <button class="btn btn-signup" onclick="handleSignup()">Sign Up</button>
+    </div>
+
     <!-- Shop Modal -->
     <div class="modal-overlay" id="shopModal">
         <div class="modal">
@@ -608,10 +643,6 @@
         <div class="title-section">
             <h1 class="main-title">KIRK CLIENT</h1>
             <p class="tagline">BETA TESTING COMING SOON</p>
-            <div class="button-container">
-                <button class="btn btn-login" onclick="handleLogin()">Login</button>
-                <button class="btn btn-signup" onclick="handleSignup()">Sign Up</button>
-            </div>
         </div>
     </div>
 
@@ -639,8 +670,8 @@
         }
 
         function updateUIForLogin() {
-            // Hide login/signup buttons
-            document.querySelector('.button-container').style.display = 'none';
+            // Hide auth buttons
+            document.getElementById('authButtons').style.display = 'none';
             // Hide shop button, show cart button
             document.getElementById('shopBtn').style.display = 'none';
             document.getElementById('cartBtn').style.display = 'block';
