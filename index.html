@@ -657,7 +657,6 @@
     <nav>
         <div class="nav-brand">KIRK CLIENT</div>
         <div class="nav-buttons">
-            <button class="btn btn-shop" id="shopBtn" onclick="openShop()">Shop</button>
             <button class="btn btn-cart" id="cartBtn" onclick="openCart()">
                 Cart <span class="cart-count" id="cartCount">0</span>
             </button>
@@ -803,48 +802,27 @@
         let currentUser = null;
         let cart = [];
 
-        // Generate unique HWID
+        // Generate unique HWID (set to N/A for new accounts)
         function generateHWID() {
-            let hwid = localStorage.getItem('kirk_hwid');
-            
-            if (!hwid) {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                ctx.textBaseline = 'top';
-                ctx.font = '14px Arial';
-                ctx.fillText('Kirk Client', 0, 0);
-                const canvasData = canvas.toDataURL();
-                
-                const fingerprint = [
-                    navigator.userAgent,
-                    navigator.language,
-                    screen.colorDepth,
-                    screen.width + 'x' + screen.height,
-                    new Date().getTimezoneOffset(),
-                    canvasData
-                ].join('|');
-                
-                hwid = btoa(fingerprint).substring(0, 32);
-                localStorage.setItem('kirk_hwid', hwid);
-            }
-            
-            return hwid;
+            // For new accounts, we return N/A
+            // The actual HWID will be set when they first open the client
+            return 'N/A';
         }
 
         // Create/update user document
-        async function createUserDocument(user, username, email) {
-            const hwid = generateHWID();
+        async function createUserDocument(user, username, email, isNewUser = false) {
             const userDocRef = doc(db, 'users', user.uid);
             
             try {
                 const userDoc = await getDoc(userDocRef);
                 
-                if (!userDoc.exists()) {
+                if (!userDoc.exists() || isNewUser) {
+                    // Create new user with N/A HWID
                     await setDoc(userDocRef, {
                         uid: user.uid,
                         username: username,
                         email: email,
-                        hwid: hwid,
+                        hwid: 'N/A',
                         createdAt: serverTimestamp(),
                         lastLogin: serverTimestamp(),
                         accountStatus: 'active',
@@ -852,19 +830,22 @@
                         purchases: []
                     });
                     console.log('✅ User document created');
+                    console.log('📝 User Data:', {
+                        uid: user.uid,
+                        username: username,
+                        email: email,
+                        hwid: 'N/A',
+                        accountStatus: 'active'
+                    });
                 } else {
-                    const userData = userDoc.data();
-                    const updates = { lastLogin: serverTimestamp() };
-                    
-                    if (!userData.hwid || userData.hwid !== hwid) {
-                        updates.hwid = hwid;
-                    }
-                    
-                    await setDoc(userDocRef, updates, { merge: true });
+                    // Update last login only
+                    await setDoc(userDocRef, {
+                        lastLogin: serverTimestamp()
+                    }, { merge: true });
                     console.log('✅ User document updated');
                 }
                 
-                return { success: true, hwid };
+                return { success: true };
             } catch (error) {
                 console.error('❌ Error with user document:', error);
                 return { success: false, error: error.message };
@@ -888,7 +869,7 @@
                 
                 console.log('🔐 Logged in:', user.email);
                 console.log('🆔 User ID:', user.uid);
-                console.log('💻 HWID:', generateHWID());
+                console.log('💻 HWID:', userDoc.exists() ? userDoc.data().hwid : 'N/A');
             } else {
                 currentUser = null;
                 cart = [];
@@ -896,7 +877,21 @@
             }
         });
 
-        // Modal functions
+        // Show error message
+        function showError(elementId, message) {
+            const errorEl = document.getElementById(elementId);
+            errorEl.textContent = message;
+            errorEl.className = 'error-message';
+            errorEl.style.display = 'block';
+        }
+
+        // Show success message
+        function showSuccess(elementId, message) {
+            const successEl = document.getElementById(elementId);
+            successEl.textContent = message;
+            successEl.className = 'success-message';
+            successEl.style.display = 'block';
+        }
         window.openLoginModal = () => {
             document.getElementById('loginModal').classList.add('active');
             document.getElementById('loginError').style.display = 'none';
@@ -917,4 +912,133 @@
         window.closeSignupModal = () => {
             document.getElementById('signupModal').classList.remove('active');
             document.getElementById('signupUsername').value = '';
+            document.getElementById('signupEmail').value = '';
+            document.getElementById('signupPassword').value = '';
+            document.getElementById('signupError').style.display = 'none';
+        };
+
+        window.switchToSignup = () => {
+            closeLoginModal();
+            openSignupModal();
+        };
+
+        window.switchToLogin = () => {
+            closeSignupModal();
+            openLoginModal();
+        };
+
+        // Login handler
+        window.handleLoginSubmit = async (event) => {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const submitBtn = document.getElementById('loginSubmitBtn');
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Logging in...';
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
+                
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    await createUserDocument(user, userData.username, user.email, false);
+                }
+                
+                closeLoginModal();
+                showSuccess('loginError', 'Login successful!');
+            } catch (error) {
+                console.error('❌ Login error:', error);
+                let errorMessage = 'Login failed. Please try again.';
+                
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = 'No account found with this email.';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = 'Incorrect password.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Invalid email address.';
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMessage = 'Too many failed attempts. Please try again later.';
+                } else if (error.code === 'auth/invalid-credential') {
+                    errorMessage = 'Invalid email or password.';
+                }
+                
+                showError('loginError', errorMessage);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Login';
+            }
+        };
+
+        // Signup handler
+        window.handleSignupSubmit = async (event) => {
+            event.preventDefault();
+            
+            const username = document.getElementById('signupUsername').value.trim();
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const submitBtn = document.getElementById('signupSubmitBtn');
+
+            if (username.length < 3) {
+                showError('signupError', 'Username must be at least 3 characters long.');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating account...';
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                await updateProfile(user, {
+                    displayName: username
+                });
+
+                const result = await createUserDocument(user, username, email, true);
+                
+                if (result.success) {
+                    showSuccess('signupError', 'Account created successfully! HWID will be set when you open the client.');
+                    
+                    setTimeout(() => {
+                        closeSignupModal();
+                    }, 2000);
+                } else {
+                    showError('signupError', 'Account created but failed to save user data: ' + result.error);
+                }
+
+            } catch (error) {
+                console.error('❌ Signup error:', error);
+                let errorMessage = 'Signup failed. Please try again.';
+                
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = 'An account with this email already exists.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Invalid email address.';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = 'Password should be at least 6 characters.';
+                }
+                
+                showError('signupError', errorMessage);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign Up';
+            }
+        };
+
+        // Logout handler
+        window.handleLogout = async () => {
+            try {
+                await signOut(auth);
+                console.log('✅ Logged out successfully');
+            } catch (error) {
+                console.error('❌ Logout error:', error);
+                alert('Failed to logout. Please try again.');
+            }
+        }; '';
             document.getElementById('signupEmail').value
