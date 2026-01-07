@@ -287,12 +287,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.9);
             z-index: 200;
             display: none;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
         }
 
         .modal-overlay.active {
@@ -300,23 +301,23 @@
         }
 
         .modal {
-            background: #1a1a1a;
-            border: 2px solid #dc143c;
-            border-radius: 20px;
-            padding: 2.5rem;
-            max-width: 600px;
-            width: 90%;
-            max-height: 85vh;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+            border: 2px solid rgba(220, 20, 60, 0.5);
+            border-radius: 24px;
+            padding: 3rem;
+            max-width: 480px;
+            width: 100%;
+            max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(220, 20, 60, 0.5);
+            box-shadow: 0 25px 70px rgba(220, 20, 60, 0.4), 0 0 100px rgba(220, 20, 60, 0.2);
             position: relative;
-            animation: modalSlideIn 0.3s ease;
+            animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         @keyframes modalSlideIn {
             from {
                 opacity: 0;
-                transform: translateY(-50px) scale(0.9);
+                transform: translateY(-40px) scale(0.92);
             }
             to {
                 opacity: 1;
@@ -324,29 +325,52 @@
             }
         }
 
+        .auth-modal {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+        }
+
         .modal-close {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: transparent;
-            border: none;
-            color: #fff;
-            font-size: 2rem;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: rgba(220, 20, 60, 0.1);
+            border: 1px solid rgba(220, 20, 60, 0.3);
+            color: #dc143c;
+            font-size: 1.5rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
             cursor: pointer;
-            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
             line-height: 1;
-            transition: color 0.3s ease;
         }
 
         .modal-close:hover {
-            color: #dc143c;
+            background: rgba(220, 20, 60, 0.2);
+            border-color: #dc143c;
+            transform: rotate(90deg);
         }
 
-        .modal h2 {
-            color: #dc143c;
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
+        .auth-header {
             text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-header h2 {
+            color: #dc143c;
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .auth-subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1rem;
+            font-weight: 400;
         }
 
         /* Auth forms */
@@ -354,72 +378,143 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
-            margin-top: 2rem;
+            margin-top: 0;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.6rem;
         }
 
         .form-group label {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 0.95rem;
-            font-weight: 500;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group label svg {
+            color: #dc143c;
         }
 
         .form-group input {
-            padding: 0.9rem;
-            background: rgba(220, 20, 60, 0.1);
-            border: 2px solid rgba(220, 20, 60, 0.3);
-            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(220, 20, 60, 0.2);
+            border-radius: 12px;
             color: #fff;
             font-size: 1rem;
             transition: all 0.3s ease;
+            font-family: inherit;
         }
 
         .form-group input:focus {
             outline: none;
             border-color: #dc143c;
-            background: rgba(220, 20, 60, 0.15);
+            background: rgba(220, 20, 60, 0.05);
+            box-shadow: 0 0 0 4px rgba(220, 20, 60, 0.1);
         }
 
         .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .input-hint {
             color: rgba(255, 255, 255, 0.4);
+            font-size: 0.85rem;
+            margin-top: -0.3rem;
         }
 
         .form-submit {
-            padding: 1rem;
+            padding: 1.1rem;
             background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
             border: none;
             color: #fff;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             margin-top: 0.5rem;
+            box-shadow: 0 4px 15px rgba(220, 20, 60, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-submit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .form-submit:hover::before {
+            left: 100%;
         }
 
         .form-submit:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.6);
+            box-shadow: 0 8px 25px rgba(220, 20, 60, 0.6);
+        }
+
+        .form-submit:active {
+            transform: translateY(0);
         }
 
         .form-submit:disabled {
-            opacity: 0.5;
+            opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
 
+        .form-submit:disabled:hover {
+            box-shadow: 0 4px 15px rgba(220, 20, 60, 0.4);
+        }
+
+        .auth-divider {
+            text-align: center;
+            margin: 1.5rem 0 1rem;
+            position: relative;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: rgba(220, 20, 60, 0.2);
+        }
+
+        .auth-divider::before {
+            left: 0;
+        }
+
+        .auth-divider::after {
+            right: 0;
+        }
+
+        .auth-divider span {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            background: #1a1a1a;
+            padding: 0 1rem;
+            position: relative;
+        }
+
         .auth-switch {
             text-align: center;
-            margin-top: 1.5rem;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.95rem;
+            margin-top: 0;
         }
 
         .auth-switch a {
@@ -427,30 +522,49 @@
             text-decoration: none;
             font-weight: 600;
             cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
         }
 
         .auth-switch a:hover {
+            color: #ff1744;
             text-decoration: underline;
         }
 
         .error-message, .success-message {
-            padding: 0.8rem;
-            border-radius: 8px;
+            padding: 1rem;
+            border-radius: 12px;
             font-size: 0.9rem;
             text-align: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .error-message {
-            background: rgba(220, 20, 60, 0.2);
-            border: 1px solid #dc143c;
-            color: #fff;
+            background: rgba(220, 20, 60, 0.15);
+            border: 2px solid rgba(220, 20, 60, 0.5);
+            color: #ff6b6b;
         }
 
         .success-message {
-            background: rgba(34, 197, 94, 0.2);
-            border: 1px solid #22c55e;
-            color: #fff;
+            background: rgba(34, 197, 94, 0.15);
+            border: 2px solid rgba(34, 197, 94, 0.5);
+            color: #51cf66;
         }
 
         /* Product grid */
@@ -624,12 +738,21 @@
             }
 
             .modal {
-                padding: 1.5rem;
+                padding: 2rem 1.5rem;
                 width: 95%;
+                border-radius: 20px;
             }
 
-            .modal h2 {
-                font-size: 1.5rem;
+            .auth-header h2 {
+                font-size: 1.8rem;
+            }
+
+            .modal-close {
+                top: 1rem;
+                right: 1rem;
+                width: 32px;
+                height: 32px;
+                font-size: 1.3rem;
             }
 
             .product-grid {
@@ -688,50 +811,93 @@
 
     <!-- Login Modal -->
     <div class="modal-overlay" id="loginModal">
-        <div class="modal">
+        <div class="modal auth-modal">
             <button class="modal-close" onclick="closeLoginModal()">&times;</button>
-            <h2>Login</h2>
+            <div class="auth-header">
+                <h2>Welcome Back</h2>
+                <p class="auth-subtitle">Sign in to your Kirk Client account</p>
+            </div>
             <div id="loginError" style="display: none;"></div>
             <form class="auth-form" onsubmit="handleLoginSubmit(event)">
                 <div class="form-group">
-                    <label for="loginEmail">Email</label>
-                    <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                    <label for="loginEmail">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383l-4.708 2.825L15 11.105V5.383zm-.034 6.876l-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741zM1 11.105l4.708-2.897L1 5.383v5.722z"/>
+                        </svg>
+                        Email Address
+                    </label>
+                    <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email">
                 </div>
                 <div class="form-group">
-                    <label for="loginPassword">Password</label>
-                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    <label for="loginPassword">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                        </svg>
+                        Password
+                    </label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required autocomplete="current-password">
                 </div>
-                <button type="submit" class="form-submit" id="loginSubmitBtn">Login</button>
+                <button type="submit" class="form-submit" id="loginSubmitBtn">
+                    <span>Sign In</span>
+                </button>
             </form>
+            <div class="auth-divider">
+                <span>New to Kirk Client?</span>
+            </div>
             <div class="auth-switch">
-                Don't have an account? <a onclick="switchToSignup()">Sign Up</a>
+                <a onclick="switchToSignup()">Create an account →</a>
             </div>
         </div>
     </div>
 
     <!-- Signup Modal -->
     <div class="modal-overlay" id="signupModal">
-        <div class="modal">
+        <div class="modal auth-modal">
             <button class="modal-close" onclick="closeSignupModal()">&times;</button>
-            <h2>Sign Up</h2>
+            <div class="auth-header">
+                <h2>Create Account</h2>
+                <p class="auth-subtitle">Join Kirk Client today</p>
+            </div>
             <div id="signupError" style="display: none;"></div>
             <form class="auth-form" onsubmit="handleSignupSubmit(event)">
                 <div class="form-group">
-                    <label for="signupUsername">Username</label>
-                    <input type="text" id="signupUsername" placeholder="Choose a username" required>
+                    <label for="signupUsername">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                        </svg>
+                        Username
+                    </label>
+                    <input type="text" id="signupUsername" placeholder="Choose a username" required autocomplete="username" minlength="3" maxlength="20">
+                    <small class="input-hint">3-20 characters, letters and numbers only</small>
                 </div>
                 <div class="form-group">
-                    <label for="signupEmail">Email</label>
-                    <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                    <label for="signupEmail">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383l-4.708 2.825L15 11.105V5.383zm-.034 6.876l-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741zM1 11.105l4.708-2.897L1 5.383v5.722z"/>
+                        </svg>
+                        Email Address
+                    </label>
+                    <input type="email" id="signupEmail" placeholder="you@example.com" required autocomplete="email">
                 </div>
                 <div class="form-group">
-                    <label for="signupPassword">Password</label>
-                    <input type="password" id="signupPassword" placeholder="Create a password (min 6 characters)" required minlength="6">
+                    <label for="signupPassword">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                        </svg>
+                        Password
+                    </label>
+                    <input type="password" id="signupPassword" placeholder="Create a secure password" required autocomplete="new-password" minlength="6">
+                    <small class="input-hint">Minimum 6 characters</small>
                 </div>
-                <button type="submit" class="form-submit" id="signupSubmitBtn">Sign Up</button>
+                <button type="submit" class="form-submit" id="signupSubmitBtn">
+                    <span>Create Account</span>
+                </button>
             </form>
+            <div class="auth-divider">
+                <span>Already have an account?</span>
+            </div>
             <div class="auth-switch">
-                Already have an account? <a onclick="switchToLogin()">Login</a>
+                <a onclick="switchToLogin()">Sign in instead →</a>
             </div>
         </div>
     </div>
