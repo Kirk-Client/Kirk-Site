@@ -138,6 +138,17 @@
             box-shadow: 0 8px 24px rgba(220, 20, 60, 0.4);
         }
 
+        .btn-profile {
+            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+            color: #fff;
+            display: none;
+        }
+
+        .btn-profile:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.4);
+        }
+
         .btn-cart {
             background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
             color: #fff;
@@ -451,6 +462,85 @@
             cursor: not-allowed;
         }
 
+        .profile-info {
+            margin: 1.5rem 0;
+        }
+
+        .profile-field {
+            background: rgba(220, 20, 60, 0.1);
+            border: 1px solid rgba(220, 20, 60, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .profile-field label {
+            color: #dc143c;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-field p {
+            color: #fff;
+            font-size: 1.1rem;
+        }
+
+        .transactions-section {
+            margin-top: 2rem;
+        }
+
+        .transactions-section h3 {
+            color: #dc143c;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .transactions-list {
+            max-height: 300px;
+            overflow-y: auto;
+            background: rgba(220, 20, 60, 0.05);
+            border: 1px solid rgba(220, 20, 60, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .transaction-item {
+            background: rgba(220, 20, 60, 0.1);
+            border: 1px solid rgba(220, 20, 60, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .transaction-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .transaction-item h4 {
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .transaction-item p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin: 0.2rem 0;
+        }
+
+        .transaction-empty {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 2rem;
+            font-size: 1rem;
+        }
+
         .footer {
             position: relative;
             z-index: 1;
@@ -533,6 +623,7 @@
     <nav>
         <div class="nav-brand">KIRK CLIENT</div>
         <div class="nav-buttons">
+            <button class="btn btn-profile" id="profileBtn" onclick="openProfile()">Profile</button>
             <button class="btn btn-cart" id="cartBtn" onclick="openCart()">
                 Cart <span class="cart-count" id="cartCount">0</span>
             </button>
@@ -603,12 +694,39 @@
         </div>
     </div>
 
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeProfile()">&times;</button>
+            <h2>Your Profile</h2>
+            <div class="profile-info">
+                <div class="profile-field">
+                    <label>Username</label>
+                    <p id="profileUsername">Loading...</p>
+                </div>
+                <div class="profile-field">
+                    <label>User ID</label>
+                    <p id="profileUID">Loading...</p>
+                </div>
+                <div class="profile-field">
+                    <label>Subscription Level</label>
+                    <p id="profileSubscription">Free</p>
+                </div>
+            </div>
+            <div class="transactions-section">
+                <h3>Transaction History</h3>
+                <div class="transactions-list" id="transactionsList">
+                    <div class="transaction-empty">You have not made any purchases</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
-        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-functions.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
-        // Your Firebase config
         const firebaseConfig = {
             apiKey: "AIzaSyDnppB7CXp0eZLNhvXeyKNDvO0R1YVsf2I",
             authDomain: "kirkclient.firebaseapp.com",
@@ -621,24 +739,22 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const functions = getFunctions(app);
-
-        // Initialize Stripe with your publishable key
-        const stripe = Stripe('pk_live_51Smqfp88HpBl6MXX1uooT67De9HgP6ERhfzpI4sLzMbgSLHr4fCzfqp5lZiCtHaiupf3p4tEXCfwWISEraebp2ki00ytftKEuG');
+        const db = getFirestore(app);
 
         let cart = [];
         let currentUser = null;
 
-        // Listen for auth state
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
                 document.getElementById('authButtons').style.display = 'none';
                 document.getElementById('logoutBtn').style.display = 'block';
+                document.getElementById('profileBtn').style.display = 'block';
             } else {
                 currentUser = null;
                 document.getElementById('authButtons').style.display = 'flex';
                 document.getElementById('logoutBtn').style.display = 'none';
+                document.getElementById('profileBtn').style.display = 'none';
                 cart = [];
                 updateCartCount();
             }
@@ -664,6 +780,56 @@
         window.closeCart = () => {
             document.getElementById('cartModal').classList.remove('active');
         };
+
+        window.openProfile = async () => {
+            if (!currentUser) return;
+            
+            document.getElementById('profileUsername').textContent = currentUser.email.split('@')[0];
+            document.getElementById('profileUID').textContent = currentUser.uid;
+            
+            await loadTransactions();
+            document.getElementById('profileModal').classList.add('active');
+        };
+
+        window.closeProfile = () => {
+            document.getElementById('profileModal').classList.remove('active');
+        };
+
+        async function loadTransactions() {
+            const transactionsList = document.getElementById('transactionsList');
+            
+            try {
+                const q = query(
+                    collection(db, 'transactions'),
+                    where('userId', '==', currentUser.uid)
+                );
+                
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    transactionsList.innerHTML = '<div class="transaction-empty">You have not made any purchases</div>';
+                } else {
+                    const transactions = [];
+                    querySnapshot.forEach((doc) => {
+                        transactions.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    transactions.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                    
+                    transactionsList.innerHTML = transactions.map(trans => `
+                        <div class="transaction-item">
+                            <h4>${trans.productName || 'Purchase'}</h4>
+                            <p>Amount: $${(trans.amount / 100).toFixed(2)}</p>
+                            <p>Date: ${trans.timestamp ? new Date(trans.timestamp).toLocaleDateString() : 'N/A'}</p>
+                            ${trans.status ? `<p>Status: ${trans.status}</p>` : ''}
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+                transactionsList.innerHTML = '<div class="transaction-empty">Error loading transactions</div>';
+            }
+        }
 
         window.addToCart = (productName, priceInCents, priceId) => {
             cart.push({
@@ -705,78 +871,4 @@
                                 <h4>${item.name}</h4>
                                 <p>$${item.price.toFixed(2)}</p>
                             </div>
-                            <button class="cart-item-remove" onclick="removeFromCart(${index})">Remove</button>
-                        </div>
-                    `;
-                }).join('');
-                
-                document.getElementById('totalAmount').textContent = total.toFixed(2);
-                cartTotal.style.display = 'block';
-            }
-        }
-
-        window.checkout = async () => {
-            if (cart.length === 0) return;
-            if (!currentUser) {
-                alert('Please log in to checkout');
-                return;
-            }
-
-            const checkoutBtn = document.getElementById('checkoutBtn');
-            checkoutBtn.disabled = true;
-            checkoutBtn.textContent = 'Processing...';
-
-            try {
-                // Create line items for Stripe
-                const lineItems = cart.map(item => ({
-                    price_data: {
-                        currency: 'usd',
-                        product_data: {
-                            name: item.name,
-                        },
-                        unit_amount: item.priceInCents,
-                    },
-                    quantity: 1,
-                }));
-
-                // Call Firebase Cloud Function
-                const createCheckoutSession = httpsCallable(functions, 'createCheckoutSession');
-                const result = await createCheckoutSession({
-                    lineItems: lineItems,
-                    customerEmail: currentUser.email,
-                    userId: currentUser.uid
-                });
-
-                // Redirect to Stripe Checkout
-                const stripeResult = await stripe.redirectToCheckout({
-                    sessionId: result.data.sessionId
-                });
-
-                if (stripeResult.error) {
-                    alert(stripeResult.error.message);
-                }
-
-            } catch (error) {
-                console.error('Checkout error:', error);
-                alert('Checkout failed: ' + error.message);
-            } finally {
-                checkoutBtn.disabled = false;
-                checkoutBtn.textContent = 'Proceed to Checkout';
-            }
-        };
-
-        window.handleLogout = () => {
-            alert('Logout functionality from your existing code');
-        };
-
-        // Close modals when clicking outside
-        document.getElementById('shopModal').addEventListener('click', function(e) {
-            if (e.target === this) closeShop();
-        });
-
-        document.getElementById('cartModal').addEventListener('click', function(e) {
-            if (e.target === this) closeCart();
-        });
-    </script>
-</body>
-</html>
+                            <button class="cart-item-remove" onclick="removeFromCart(${index})">Remove</button
