@@ -6,6 +6,7 @@ const KirkClientApp = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState('login');
   const [showShopModal, setShowShopModal] = useState(false);
+  const [showCartModal, setShowCartModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
   const [cart, setCart] = useState([]);
@@ -14,6 +15,7 @@ const KirkClientApp = () => {
   const [username, setUsername] = useState('');
   const [authError, setAuthError] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userCount, setUserCount] = useState(1); // Track user count for UIDs
 
   const [userData, setUserData] = useState({
     transactions: [],
@@ -28,34 +30,24 @@ const KirkClientApp = () => {
 
   const handleAuth = () => {
     setAuthError('');
-
     if (authMode === 'login') {
       if (email && password) {
-        const mockUser = {
-          uid: 'user123',
-          email: email,
-          displayName: username || email.split('@')[0]
-        };
-        setUser(mockUser);
+        // For login, use existing UID (in production, get from database)
+        setUser({ uid: 1, email: email, displayName: username || email.split('@')[0] });
         setShowAuthModal(false);
-        setEmail('');
-        setPassword('');
-        setUsername('');
+        setEmail(''); setPassword(''); setUsername('');
       } else {
         setAuthError('Please enter email and password');
       }
     } else {
       if (email && password && username) {
-        const mockUser = {
-          uid: 'user123',
-          email: email,
-          displayName: username
-        };
-        setUser(mockUser);
+        // For signup, assign new numerical UID based on order
+        const newUID = userCount;
+        setUser({ uid: newUID, email: email, displayName: username });
+        setUserCount(userCount + 1); // Increment for next user
         setShowAuthModal(false);
-        setEmail('');
-        setPassword('');
-        setUsername('');
+        setEmail(''); setPassword(''); setUsername('');
+        console.log(`New user created with UID: ${newUID}`);
       } else {
         setAuthError('Please fill all fields');
       }
@@ -74,6 +66,8 @@ const KirkClientApp = () => {
       setShowFormModal(true);
     } else {
       setCart([...cart, product]);
+      alert(`${product.name} added to cart!`);
+      setShowShopModal(false);
     }
   };
 
@@ -87,38 +81,32 @@ const KirkClientApp = () => {
       items: cart.map(item => item.name).join(', '),
       total: cart.reduce((sum, item) => sum + item.price, 0)
     };
-    
     setUserData({
       ...userData,
       transactions: [newTransaction, ...userData.transactions],
       subscription: cart.find(item => item.type === 'monthly') ? 'KirkLite' : userData.subscription
     });
-    
     setCart([]);
-    setShowShopModal(false);
+    setShowCartModal(false);
     alert('Purchase successful! Check your profile for details.');
   };
 
   const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-x-hidden">
-      {/* Animated Background */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className="absolute inset-0 opacity-100" 
+    <div className="min-h-screen bg-black text-white">
+      {/* Background Animation */}
+      <div className="fixed inset-0 z-0">
+        <div className="absolute inset-0" 
              style={{
-               background: 'radial-gradient(circle at 50% 50%, rgba(220, 20, 60, 0.15) 0%, rgba(139, 0, 0, 0.08) 30%, transparent 60%)',
-               animation: 'breathing 10s ease-in-out infinite'
+               background: 'radial-gradient(circle at 50% 50%, rgba(220, 20, 60, 0.12) 0%, rgba(139, 0, 0, 0.06) 30%, transparent 60%)',
+               animation: 'breathingGlow 10s ease-in-out infinite'
              }} />
       </div>
 
-      {/* Utah SVG - VISIBLE AND ANIMATED */}
-      <div className="fixed top-1/2 left-1/2 z-0 pointer-events-none"
-           style={{
-             transform: 'translate(-50%, -50%)',
-             opacity: 0.5
-           }}>
-        <svg width="260" height="312" viewBox="0 0 200 240" style={{ transform: 'scaleY(-1)' }}>
+      {/* Utah SVG */}
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0 opacity-50">
+        <svg width="260" height="auto" viewBox="0 0 200 240" style={{ transform: 'scaleY(-1)' }}>
           <path 
             d="M150 180 L120 180 L120 220 L40 220 L40 50 L150 50 Z"
             fill="none"
@@ -128,6 +116,7 @@ const KirkClientApp = () => {
             strokeLinejoin="round"
             style={{
               strokeDasharray: '1000',
+              strokeDashoffset: '1000',
               animation: 'drawUtah 3s ease-in-out infinite',
               filter: 'drop-shadow(0 0 15px #dc143c)'
             }}
@@ -136,179 +125,166 @@ const KirkClientApp = () => {
       </div>
 
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-lg border-b border-red-900/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="text-xl font-bold text-red-600 tracking-wider">KIRK CLIENT</div>
-            
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-3">
-              {user ? (
-                <>
-                  {cart.length > 0 && (
-                    <button
-                      onClick={() => setShowShopModal(true)}
-                      className="relative px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-800 rounded-lg hover:shadow-lg hover:shadow-red-600/50 transition-all font-semibold"
-                    >
-                      <ShoppingCart className="w-5 h-5 inline mr-2" />
-                      Cart
-                      <span className="absolute -top-2 -right-2 bg-white text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
-                        {cart.length}
-                      </span>
-                    </button>
-                  )}
-                  <button
-                    onClick={() => setShowProfileModal(true)}
-                    className="px-5 py-2.5 border-2 border-red-600 text-red-600 rounded-lg hover:bg-red-600/10 transition-all font-semibold"
-                  >
-                    <User className="w-5 h-5 inline mr-2" />
-                    Profile
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    className="px-5 py-2.5 border-2 border-red-600 text-red-600 rounded-lg hover:bg-red-600/10 transition-all font-semibold"
-                  >
-                    <LogOut className="w-5 h-5 inline mr-2" />
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => { setAuthMode('login'); setShowAuthModal(true); }}
-                    className="px-5 py-2.5 border-2 border-red-600 text-red-600 rounded-lg hover:bg-red-600/10 transition-all font-semibold"
-                  >
-                    Login
-                  </button>
-                  <button
-                    onClick={() => { setAuthMode('signup'); setShowAuthModal(true); }}
-                    className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-800 rounded-lg hover:shadow-lg hover:shadow-red-600/50 transition-all font-semibold"
-                  >
-                    Sign Up
-                  </button>
-                </>
-              )}
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-red-600 hover:bg-red-600/10 rounded-lg"
-            >
-              <Menu className="w-6 h-6" />
-            </button>
-          </div>
-
-          {/* Mobile Navigation */}
-          {mobileMenuOpen && (
-            <div className="md:hidden py-4 space-y-2 border-t border-red-900/20">
-              {user ? (
-                <>
-                  {cart.length > 0 && (
-                    <button
-                      onClick={() => { setShowShopModal(true); setMobileMenuOpen(false); }}
-                      className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-600/10 rounded-lg font-semibold"
-                    >
-                      <ShoppingCart className="w-5 h-5 inline mr-2" />
-                      Cart ({cart.length})
-                    </button>
-                  )}
-                  <button
-                    onClick={() => { setShowProfileModal(true); setMobileMenuOpen(false); }}
-                    className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-600/10 rounded-lg font-semibold"
-                  >
-                    <User className="w-5 h-5 inline mr-2" />
-                    Profile
-                  </button>
-                  <button
-                    onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
-                    className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-600/10 rounded-lg font-semibold"
-                  >
-                    <LogOut className="w-5 h-5 inline mr-2" />
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => { setAuthMode('login'); setShowAuthModal(true); setMobileMenuOpen(false); }}
-                    className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-600/10 rounded-lg font-semibold"
-                  >
-                    Login
-                  </button>
-                  <button
-                    onClick={() => { setAuthMode('signup'); setShowAuthModal(true); setMobileMenuOpen(false); }}
-                    className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-600/10 rounded-lg font-semibold"
-                  >
-                    Sign Up
-                  </button>
-                </>
-              )}
-            </div>
-          )}
-        </div>
-      </nav>
-
-      {/* Main Content */}
-      <main className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 pt-24 pb-12">
-        <div className="text-center space-y-8" style={{ animation: 'floatIn 1.2s ease-out' }}>
-          <img
-            src="https://iili.io/flUxhKB.jpg"
-            alt="Kirk Client"
-            className="w-48 md:w-60 mx-auto rounded-2xl shadow-2xl shadow-red-600/40 hover:scale-105 transition-transform duration-300"
-          />
-          
-          <div>
-            <h1 className="text-5xl md:text-7xl font-bold text-red-600 mb-4 tracking-wider"
-                style={{ textShadow: '0 0 30px rgba(220, 20, 60, 0.6)' }}>
-              KIRK CLIENT
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-300 tracking-widest font-light">
-              BETA TESTING COMING SOON
-            </p>
-          </div>
-
-          {user && (
-            <button
-              onClick={() => setShowShopModal(true)}
-              className="px-10 py-4 bg-gradient-to-r from-red-600 to-red-800 rounded-xl text-lg font-bold hover:shadow-xl hover:shadow-red-600/60 transition-all transform hover:-translate-y-1 uppercase tracking-wider"
-            >
-              SHOP NOW
-            </button>
-          )}
-
-          {!user && (
-            <div className="flex gap-4 justify-center flex-wrap">
+      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center bg-black/50 backdrop-blur-md border-b border-red-900/20">
+        <div className="text-xl font-bold text-red-600 tracking-wider">KIRK CLIENT</div>
+        
+        <div className="hidden md:flex gap-3 items-center">
+          {user ? (
+            <>
+              <button
+                onClick={() => setShowCartModal(true)}
+                className="relative px-4 py-2 bg-gradient-to-r from-red-600 to-red-800 rounded-lg hover:shadow-lg hover:shadow-red-600/50 transition-all font-semibold uppercase tracking-wide text-sm"
+              >
+                <ShoppingCart className="w-4 h-4 inline mr-1" />
+                Cart
+                {cart.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-white text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
+                    {cart.length}
+                  </span>
+                )}
+              </button>
+              <button
+                onClick={() => setShowProfileModal(true)}
+                className="px-4 py-2 bg-gradient-to-r from-red-600 to-red-800 rounded-lg hover:shadow-lg hover:shadow-red-600/50 transition-all font-semibold uppercase tracking-wide text-sm"
+              >
+                <User className="w-4 h-4 inline mr-1" />
+                Profile
+              </button>
+            </>
+          ) : (
+            <>
               <button
                 onClick={() => { setAuthMode('login'); setShowAuthModal(true); }}
-                className="px-8 py-3 border-2 border-red-600 text-red-600 rounded-xl hover:bg-red-600/10 transition-all font-semibold uppercase tracking-wider"
+                className="px-4 py-2 border-2 border-red-600 text-red-600 rounded-lg hover:bg-red-600/10 transition-all font-semibold uppercase tracking-wide text-sm"
               >
                 Login
               </button>
               <button
                 onClick={() => { setAuthMode('signup'); setShowAuthModal(true); }}
-                className="px-8 py-3 bg-gradient-to-r from-red-600 to-red-800 rounded-xl hover:shadow-xl hover:shadow-red-600/60 transition-all font-semibold uppercase tracking-wider"
+                className="px-4 py-2 bg-gradient-to-r from-red-600 to-red-800 rounded-lg hover:shadow-lg hover:shadow-red-600/50 transition-all font-semibold uppercase tracking-wide text-sm"
               >
                 Sign Up
               </button>
-            </div>
+            </>
           )}
+        </div>
+
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="md:hidden p-2 text-red-600"
+        >
+          <Menu className="w-6 h-6" />
+        </button>
+
+        {mobileMenuOpen && (
+          <div className="absolute top-full left-0 right-0 bg-black/95 backdrop-blur-md border-b border-red-900/20 md:hidden py-4 px-6 space-y-2">
+            {user ? (
+              <>
+                <button
+                  onClick={() => { setShowCartModal(true); setMobileMenuOpen(false); }}
+                  className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-600/10 rounded-lg flex items-center gap-2"
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  Cart {cart.length > 0 && `(${cart.length})`}
+                </button>
+                <button
+                  onClick={() => { setShowProfileModal(true); setMobileMenuOpen(false); }}
+                  className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-600/10 rounded-lg flex items-center gap-2"
+                >
+                  <User className="w-4 h-4" />
+                  Profile
+                </button>
+                <button
+                  onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
+                  className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-600/10 rounded-lg flex items-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => { setAuthMode('login'); setShowAuthModal(true); setMobileMenuOpen(false); }}
+                  className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-600/10 rounded-lg"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => { setAuthMode('signup'); setShowAuthModal(true); setMobileMenuOpen(false); }}
+                  className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-600/10 rounded-lg"
+                >
+                  Sign Up
+                </button>
+              </>
+            )}
+          </div>
+        )}
+      </nav>
+
+      {/* Main Content */}
+      <main className="relative z-[10] flex flex-col items-center justify-center min-h-screen px-6 pt-24 pb-12">
+        <div className="text-center space-y-8" style={{ animation: 'floatIn 1.2s ease-out' }}>
+          <div>
+            <img
+              src="https://iili.io/flUxhKB.jpg"
+              alt="Kirk Client"
+              className="w-60 mx-auto rounded-2xl shadow-2xl shadow-red-600/40 hover:scale-105 transition-transform"
+            />
+          </div>
+          
+          <div>
+            <h1 className="text-6xl font-bold text-red-600 mb-4 tracking-wider"
+                style={{ textShadow: '0 0 30px rgba(220, 20, 60, 0.6)' }}>
+              KIRK CLIENT
+            </h1>
+            <p className="text-2xl text-gray-300 tracking-widest font-light">
+              BETA TESTING COMING SOON
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            {user ? (
+              <button
+                onClick={() => setShowShopModal(true)}
+                className="px-10 py-4 bg-gradient-to-r from-red-600 to-red-800 rounded-xl text-lg font-bold hover:shadow-xl hover:shadow-red-600/60 transition-all transform hover:-translate-y-1 uppercase tracking-wider"
+              >
+                SHOP NOW
+              </button>
+            ) : (
+              <>
+                <button
+                  onClick={() => { setAuthMode('login'); setShowAuthModal(true); }}
+                  className="px-8 py-3 border-2 border-red-600 text-red-600 rounded-xl hover:bg-red-600/10 transition-all font-semibold uppercase tracking-wider hover:shadow-lg hover:shadow-red-600/40 transform hover:-translate-y-1"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => { setAuthMode('signup'); setShowAuthModal(true); }}
+                  className="px-8 py-3 bg-gradient-to-r from-red-600 to-red-800 rounded-xl hover:shadow-xl hover:shadow-red-600/60 transition-all font-semibold uppercase tracking-wider transform hover:-translate-y-1"
+                >
+                  Sign Up
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 text-center py-6 border-t border-red-900/20 text-gray-500">
-        <p>KirkCEO ©2025</p>
+      <footer className="relative z-10 text-center py-6 border-t border-red-900/20 text-gray-500 text-sm">
+        <p>KirkCEO ©2026</p>
       </footer>
 
       {/* Auth Modal */}
       {showAuthModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
-          <div className="relative bg-gradient-to-br from-gray-900 to-black border-2 border-red-600/50 rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl shadow-red-600/40"
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black backdrop-blur-md">
+          <div className="relative bg-gradient-to-br from-gray-900 to-black border-2 border-red-600/50 rounded-3xl p-8 w-full max-w-md shadow-2xl shadow-red-600/40 z-[100000]"
                style={{ animation: 'modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
             <button
               onClick={() => setShowAuthModal(false)}
-              className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center bg-red-600/20 hover:bg-red-600/30 rounded-full text-red-600 transition-all hover:rotate-90"
+              className="absolute top-6 right-6 w-9 h-9 flex items-center justify-center bg-red-600/20 hover:bg-red-600/30 rounded-full text-red-600 transition-all hover:rotate-90 z-[100001] cursor-pointer"
+              type="button"
             >
               <X className="w-5 h-5" />
             </button>
@@ -324,7 +300,7 @@ const KirkClientApp = () => {
                   placeholder="Username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-4 py-3 bg-black/50 border border-red-600/30 rounded-lg focus:border-red-600 focus:outline-none text-white placeholder-gray-500"
+                  className="w-full px-4 py-3 bg-black/50 border border-red-600/30 rounded-lg focus:border-red-600 focus:outline-none text-white"
                 />
               )}
               <input
@@ -332,23 +308,22 @@ const KirkClientApp = () => {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-black/50 border border-red-600/30 rounded-lg focus:border-red-600 focus:outline-none text-white placeholder-gray-500"
+                className="w-full px-4 py-3 bg-black/50 border border-red-600/30 rounded-lg focus:border-red-600 focus:outline-none text-white"
               />
               <input
                 type="password"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-black/50 border border-red-600/30 rounded-lg focus:border-red-600 focus:outline-none text-white placeholder-gray-500"
+                className="w-full px-4 py-3 bg-black/50 border border-red-600/30 rounded-lg focus:border-red-600 focus:outline-none text-white"
               />
               
-              {authError && (
-                <p className="text-red-500 text-sm">{authError}</p>
-              )}
+              {authError && <p className="text-red-500 text-sm">{authError}</p>}
               
               <button
                 onClick={handleAuth}
                 className="w-full py-3 bg-gradient-to-r from-red-600 to-red-800 rounded-lg font-semibold hover:shadow-lg hover:shadow-red-600/50 transition-all uppercase tracking-wide"
+                type="button"
               >
                 {authMode === 'login' ? 'Login' : 'Sign Up'}
               </button>
@@ -356,6 +331,7 @@ const KirkClientApp = () => {
               <button
                 onClick={() => setAuthMode(authMode === 'login' ? 'signup' : 'login')}
                 className="w-full text-red-600 text-sm hover:underline"
+                type="button"
               >
                 {authMode === 'login' ? "Don't have an account? Sign up" : 'Already have an account? Login'}
               </button>
@@ -366,60 +342,86 @@ const KirkClientApp = () => {
 
       {/* Shop Modal */}
       {showShopModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm overflow-y-auto">
-          <div className="relative bg-gradient-to-br from-gray-900 to-black border-2 border-red-600/50 rounded-3xl p-6 md:p-8 w-full max-w-4xl shadow-2xl shadow-red-600/40 my-8"
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md overflow-y-auto">
+          <div className="relative bg-gradient-to-br from-gray-900 to-black border-2 border-red-600/50 rounded-3xl p-8 w-full max-w-4xl shadow-2xl shadow-red-600/40 my-8"
                style={{ animation: 'modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
             <button
               onClick={() => setShowShopModal(false)}
-              className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center bg-red-600/20 hover:bg-red-600/30 rounded-full text-red-600 transition-all hover:rotate-90 z-10"
+              className="absolute top-6 right-6 w-9 h-9 flex items-center justify-center bg-red-600/20 hover:bg-red-600/30 rounded-full text-red-600 transition-all hover:rotate-90 z-10 cursor-pointer"
+              type="button"
             >
               <X className="w-5 h-5" />
             </button>
             
             <h2 className="text-3xl font-bold text-red-600 mb-6">Shop Kirk Client</h2>
             
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {products.map((product) => (
+                <div
+                  key={product.id}
+                  onClick={() => addToCart(product)}
+                  className="bg-red-600/10 border-2 border-red-600/30 rounded-xl p-6 text-center hover:border-red-600 hover:shadow-lg hover:shadow-red-600/40 transition-all cursor-pointer transform hover:-translate-y-1"
+                >
+                  <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
+                  <p className="text-3xl font-bold text-red-600 mb-2">
+                    {product.price === 0 ? 'FREE' : `$${product.price}`}
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    {product.type === 'monthly' ? 'Monthly' : product.type === 'approval' ? 'Requires Approval' : 'One-time'}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cart Modal */}
+      {showCartModal && (
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black backdrop-blur-md overflow-y-auto">
+          <div className="relative bg-gradient-to-br from-gray-900 to-black border-2 border-red-600/50 rounded-3xl p-8 w-full max-w-2xl shadow-2xl shadow-red-600/40 my-8 z-[100000]"
+               style={{ animation: 'modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
+            <button
+              onClick={() => setShowCartModal(false)}
+              className="absolute top-6 right-6 w-9 h-9 flex items-center justify-center bg-red-600/20 hover:bg-red-600/30 rounded-full text-red-600 transition-all hover:rotate-90 z-[100001] cursor-pointer"
+              type="button"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <h2 className="text-3xl font-bold text-red-600 mb-6">Your Cart</h2>
+            
             {cart.length === 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {products.map((product) => (
-                  <button
-                    key={product.id}
-                    onClick={() => addToCart(product)}
-                    className="bg-red-600/10 border-2 border-red-600/30 rounded-xl p-6 text-center hover:border-red-600 hover:shadow-lg hover:shadow-red-600/40 transition-all transform hover:-translate-y-2 cursor-pointer"
-                  >
-                    <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
-                    <p className="text-3xl font-bold text-red-600 mb-2">
-                      {product.price === 0 ? 'FREE' : `$${product.price}`}
-                    </p>
-                    <p className="text-sm text-gray-400">
-                      {product.type === 'monthly' ? 'Monthly Subscription' : product.type === 'approval' ? 'Requires Approval' : 'One-time Purchase'}
-                    </p>
-                  </button>
-                ))}
+              <div className="text-center py-12">
+                <ShoppingCart className="w-16 h-16 mx-auto mb-4 text-gray-600" />
+                <p className="text-gray-500 text-lg">Your cart is empty</p>
+                <button
+                  onClick={() => { setShowCartModal(false); setShowShopModal(true); }}
+                  className="mt-6 px-6 py-3 bg-gradient-to-r from-red-600 to-red-800 rounded-lg hover:shadow-lg hover:shadow-red-600/50 transition-all font-semibold uppercase tracking-wide"
+                  type="button"
+                >
+                  Start Shopping
+                </button>
               </div>
             ) : (
               <div className="space-y-4">
-                <h3 className="text-xl font-semibold mb-4">Your Cart</h3>
                 {cart.map((item, index) => (
-                  <div
-                    key={index}
-                    className="bg-red-600/10 border border-red-600/30 rounded-lg p-4 flex justify-between items-center"
-                  >
+                  <div key={index} className="bg-red-600/10 border border-red-600/30 rounded-lg p-4 flex justify-between items-center">
                     <div>
                       <h4 className="font-semibold text-lg">{item.name}</h4>
-                      <p className="text-sm text-gray-400">
-                        ${item.price} {item.type === 'monthly' && '/ month'}
-                      </p>
+                      <p className="text-sm text-gray-400">${item.price} {item.type === 'monthly' && '/ month'}</p>
                     </div>
                     <button
                       onClick={() => removeFromCart(index)}
-                      className="px-4 py-2 bg-red-600 rounded-lg hover:bg-red-700 transition-all font-semibold"
+                      className="px-4 py-2 bg-red-600 rounded-lg hover:bg-red-700 transition-all"
+                      type="button"
                     >
                       Remove
                     </button>
                   </div>
                 ))}
                 
-                <div className="border-t-2 border-red-600/30 pt-4 mt-4">
+                <div className="border-t-2 border-red-600/30 pt-4 mt-6">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-2xl font-bold text-red-600">Total:</h3>
                     <p className="text-2xl font-bold text-red-600">${cartTotal}</p>
@@ -427,9 +429,11 @@ const KirkClientApp = () => {
                   <button
                     onClick={handleCheckout}
                     className="w-full py-4 bg-gradient-to-r from-red-600 to-red-800 rounded-lg font-bold text-lg hover:shadow-lg hover:shadow-red-600/50 transition-all uppercase tracking-wide"
+                    type="button"
                   >
                     Proceed to Checkout
                   </button>
+                  <p className="text-center text-gray-500 text-sm mt-3">Secure payment via Stripe</p>
                 </div>
               </div>
             )}
@@ -439,64 +443,112 @@ const KirkClientApp = () => {
 
       {/* Profile Modal */}
       {showProfileModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm overflow-y-auto">
-          <div className="relative bg-gradient-to-br from-gray-900 to-black border-2 border-red-600/50 rounded-3xl p-6 md:p-8 w-full max-w-2xl shadow-2xl shadow-red-600/40 my-8"
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black backdrop-blur-md overflow-y-auto">
+          <div className="relative bg-gradient-to-br from-gray-900 to-black border-2 border-red-600/50 rounded-3xl p-8 w-full max-w-3xl shadow-2xl shadow-red-600/40 my-8 z-[100000]"
                style={{ animation: 'modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
             <button
               onClick={() => setShowProfileModal(false)}
-              className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center bg-red-600/20 hover:bg-red-600/30 rounded-full text-red-600 transition-all hover:rotate-90"
+              className="absolute top-6 right-6 w-9 h-9 flex items-center justify-center bg-red-600/20 hover:bg-red-600/30 rounded-full text-red-600 transition-all hover:rotate-90 z-[100001] cursor-pointer"
+              type="button"
             >
               <X className="w-5 h-5" />
             </button>
             
-            <h2 className="text-3xl font-bold text-red-600 mb-6">Profile</h2>
-            
-            <div className="space-y-6">
-              <div className="bg-red-600/10 border border-red-600/30 rounded-lg p-4">
-                <h3 className="text-lg font-semibold mb-2 text-red-500">Username</h3>
-                <p className="text-gray-300 text-xl">{user?.displayName}</p>
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-16 h-16 bg-gradient-to-br from-red-600 to-red-800 rounded-full flex items-center justify-center">
+                <User className="w-8 h-8 text-white" />
               </div>
-              
-              <div className="bg-red-600/10 border border-red-600/30 rounded-lg p-4">
-                <h3 className="text-lg font-semibold mb-2 text-red-500">Subscription Status</h3>
-                <p className="text-gray-300 text-xl">{userData.subscription}</p>
-              </div>
-              
-              <div className="bg-red-600/10 border border-red-600/30 rounded-lg p-4">
-                <h3 className="text-lg font-semibold mb-4 text-red-500">Transaction History</h3>
-                {userData.transactions.length === 0 ? (
-                  <p className="text-gray-500">No transactions yet</p>
-                ) : (
-                  <div className="space-y-3">
-                    {userData.transactions.map((transaction, index) => (
-                      <div key={index} className="border-b border-red-600/20 pb-3 last:border-0">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <p className="font-medium text-white">{transaction.items}</p>
-                            <p className="text-sm text-gray-400">{transaction.date}</p>
-                          </div>
-                          <p className="font-bold text-red-600 text-lg">${transaction.total}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+              <div>
+                <h2 className="text-3xl font-bold text-red-600">Profile</h2>
+                <p className="text-gray-400">User #{user?.uid}</p>
               </div>
             </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="bg-red-600/10 border border-red-600/30 rounded-xl p-4">
+                <h3 className="text-sm font-semibold mb-1 text-red-500 uppercase tracking-wide">User ID</h3>
+                <p className="text-gray-300 text-2xl font-bold">#{user?.uid}</p>
+              </div>
+              
+              <div className="bg-red-600/10 border border-red-600/30 rounded-xl p-4">
+                <h3 className="text-sm font-semibold mb-1 text-red-500 uppercase tracking-wide">Username</h3>
+                <p className="text-gray-300 text-2xl font-bold">{user?.displayName}</p>
+              </div>
+              
+              <div className="bg-red-600/10 border border-red-600/30 rounded-xl p-4">
+                <h3 className="text-sm font-semibold mb-1 text-red-500 uppercase tracking-wide">Subscription</h3>
+                <p className="text-gray-300 text-2xl font-bold">{userData.subscription}</p>
+              </div>
+            </div>
+            
+            <div className="bg-red-600/10 border border-red-600/30 rounded-xl p-6">
+              <h3 className="text-xl font-bold mb-4 text-red-500 flex items-center gap-2">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                Transaction History
+              </h3>
+              {userData.transactions.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">No transactions yet</p>
+                  <button
+                    onClick={() => { setShowProfileModal(false); setShowShopModal(true); }}
+                    className="mt-4 px-6 py-2 bg-gradient-to-r from-red-600 to-red-800 rounded-lg hover:shadow-lg hover:shadow-red-600/50 transition-all font-semibold uppercase tracking-wide text-sm"
+                    type="button"
+                  >
+                    Start Shopping
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {userData.transactions.map((transaction, index) => (
+                    <div key={index} className="bg-black/30 border border-red-600/20 rounded-lg p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex-1">
+                          <p className="font-semibold text-white text-lg">{transaction.items}</p>
+                          <p className="text-sm text-gray-400 mt-1">
+                            <svg className="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            {transaction.date}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-red-600 text-xl">${transaction.total}</p>
+                          <span className="inline-block mt-1 px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs font-semibold">
+                            Completed
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={handleLogout}
+              className="w-full mt-6 py-3 border-2 border-red-600 text-red-600 rounded-lg hover:bg-red-600/10 transition-all font-semibold uppercase tracking-wide flex items-center justify-center gap-2"
+              type="button"
+            >
+              <LogOut className="w-5 h-5" />
+              Logout
+            </button>
           </div>
         </div>
       )}
 
       {/* Google Form Modal */}
       {showFormModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md">
           <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-red-600/50 rounded-3xl w-full max-w-4xl h-[90vh] shadow-2xl shadow-red-600/40 overflow-hidden flex flex-col"
                style={{ animation: 'modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
-            <div className="flex justify-between items-center p-6 border-b border-red-600/30 bg-black/50">
+            <div className="flex justify-between items-center p-6 border-b border-red-600/30">
               <h2 className="text-2xl font-bold text-red-600">Kirk Media Application</h2>
               <button
                 onClick={() => setShowFormModal(false)}
-                className="w-9 h-9 flex items-center justify-center bg-red-600/20 hover:bg-red-600/30 rounded-full text-red-600 transition-all hover:rotate-90"
+                className="w-9 h-9 flex items-center justify-center bg-red-600/20 hover:bg-red-600/30 rounded-full text-red-600 transition-all hover:rotate-90 cursor-pointer"
+                type="button"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -518,12 +570,12 @@ const KirkClientApp = () => {
       )}
 
       <style>{`
-        @keyframes breathing {
+        @keyframes breathingGlow {
           0%, 100% {
-            background: radial-gradient(circle at 40% 35%, rgba(220, 20, 60, 0.18) 0%, rgba(139, 0, 0, 0.09) 28%, transparent 58%);
+            background: radial-gradient(circle at 40% 35%, rgba(220, 20, 60, 0.15) 0%, rgba(139, 0, 0, 0.07) 28%, transparent 58%);
           }
           50% {
-            background: radial-gradient(circle at 60% 65%, rgba(220, 20, 60, 0.20) 0%, rgba(139, 0, 0, 0.10) 30%, transparent 60%);
+            background: radial-gradient(circle at 60% 65%, rgba(220, 20, 60, 0.16) 0%, rgba(139, 0, 0, 0.075) 30%, transparent 60%);
           }
         }
         
@@ -546,3 +598,5 @@ const KirkClientApp = () => {
     </div>
   );
 };
+
+export default KirkClientApp;
