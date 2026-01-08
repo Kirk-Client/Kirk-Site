@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Kirk Client</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(220, 20, 60, 0.12) 0%, rgba(139, 0, 0, 0.06) 30%, transparent 60%);
+            animation: breathingGlow 10s ease-in-out infinite;
+        }
+
+        @keyframes breathingGlow {
+            0%, 100% {
+                background: radial-gradient(circle at 40% 35%, rgba(220, 20, 60, 0.15) 0%, rgba(139, 0, 0, 0.07) 28%, transparent 58%);
+            }
+            50% {
+                background: radial-gradient(circle at 50% 65%, rgba(220, 20, 60, 0.16) 0%, rgba(139, 0, 0, 0.075) 30%, transparent 60%);
+            }
+        }
+
+        nav {
+            position: relative;
+            z-index: 100;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(220, 20, 60, 0.2);
+        }
+
+        .nav-brand {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #dc143c;
+            letter-spacing: 1px;
+        }
+
+        .back-btn {
+            padding: 0.7rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            background: transparent;
+            border: 2px solid #dc143c;
+            color: #dc143c;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: rgba(220, 20, 60, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .checkout-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2rem;
+            width: 100%;
+        }
+
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .checkout-section {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+            border: 2px solid rgba(220, 20, 60, 0.5);
+            border-radius: 24px;
+            padding: 2rem;
+        }
+
+        .section-title {
+            color: #dc143c;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cart-item {
+            background: rgba(220, 20, 60, 0.1);
+            border: 1px solid rgba(220, 20, 60, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-item-name {
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .cart-item-price {
+            color: #dc143c;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .cart-total {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid rgba(220, 20, 60, 0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-total-label {
+            color: #dc143c;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .cart-total-amount {
+            color: #fff;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .payment-option {
+            background: rgba(220, 20, 60, 0.1);
+            border: 2px solid rgba(220, 20, 60, 0.3);
+            border-radius: 12px;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .payment-option:hover {
+            border-color: #dc143c;
+            background: rgba(220, 20, 60, 0.2);
+            transform: translateX(5px);
+        }
+
+        .payment-option.selected {
+            border-color: #dc143c;
+            background: rgba(220, 20, 60, 0.3);
+            box-shadow: 0 0 20px rgba(220, 20, 60, 0.4);
+        }
+
+        .processing-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 300;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .processing-overlay.active {
+            display: flex;
+        }
+
+        .processing-content {
+            text-align: center;
+            animation: fadeInScale 0.4s ease;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .processing-spinner {
+            width: 80px;
+            height: 80px;
+            border: 4px solid rgba(220, 20, 60, 0.3);
+            border-top-color: #dc143c;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 2rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .processing-text {
+            font-size: 1.5rem;
+            color: #dc143c;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .card-details-section {
+            display: none;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid rgba(220, 20, 60, 0.3);
+        }
+
+        .card-details-section.active {
+            display: block;
+        }
+
+        .details-title {
+            color: #dc143c;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .api-input {
+            width: 100%;
+            background: rgba(220, 20, 60, 0.1);
+            border: 2px solid rgba(220, 20, 60, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            color: #fff;
+            font-size: 1rem;
+            font-family: monospace;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .api-input:focus {
+            outline: none;
+            border-color: #dc143c;
+            box-shadow: 0 0 0 3px rgba(220, 20, 60, 0.2);
+        }
+
+        .api-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .complete-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+            border: none;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 1rem;
+        }
+
+        .complete-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.6);
+        }
+
+        .complete-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .checkout-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .checkout-container {
+                padding: 1rem;
+            }
+
+            .checkout-section {
+                padding: 1.5rem;
+            }
+
+            nav {
+                padding: 1rem;
+            }
+
+            .nav-brand {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.2rem;
+            }
+
+            .cart-total-label {
+                font-size: 1.2rem;
+            }
+
+            .cart-total-amount {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <nav>
+        <div class="nav-brand">KIRK CLIENT</div>
+        <a href="index.html" class="back-btn">Back to Home</a>
+    </nav>
+
+    <div class="checkout-container">
+        <div class="checkout-grid">
+            <!-- Left Side - Cart -->
+            <div class="checkout-section">
+                <h2 class="section-title">Cart:</h2>
+                <div id="cartItems"></div>
+                <div class="cart-total">
+                    <span class="cart-total-label">Total:</span>
+                    <span class="cart-total-amount" id="totalAmount">$0.00</span>
+                </div>
+            </div>
+
+            <!-- Right Side - Payment Options -->
+            <div class="checkout-section">
+                <h2 class="section-title">Payment Options</h2>
+                <div class="payment-options">
+                    <div class="payment-option" id="paypalOption">
+                        PayPal
+                    </div>
+                    <div class="payment-option" id="stripeOption">
+                        Stripe
+                    </div>
+                    <div class="payment-option" id="cardOption">
+                        Credit / Debit Card
+                    </div>
+                </div>
+
+                <!-- Card Details Section -->
+                <div class="card-details-section" id="cardDetails">
+                    <h3 class="details-title">Enter Details</h3>
+                    <input 
+                        type="text" 
+                        class="api-input" 
+                        id="apiKey" 
+                        placeholder="Enter API Key..."
+                    >
+                    <button class="complete-btn" id="completeBtn">
+                        Complete Purchase
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Processing Overlay -->
+    <div class="processing-overlay" id="processingOverlay">
+        <div class="processing-content">
+            <div class="processing-spinner"></div>
+            <div class="processing-text" id="processingText">Opening PayPal...</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-functions.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDnppB7CXp0eZLNhvXeyKNDvO0R1YVsf2I",
+            authDomain: "kirkclient.firebaseapp.com",
+            projectId: "kirkclient",
+            storageBucket: "kirkclient.firebasestorage.app",
+            messagingSenderId: "324941983054",
+            appId: "1:324941983054:web:2976a14fc5cc05d89d021f",
+            measurementId: "G-E0ZPPKNBD8"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const functions = getFunctions(app);
+
+        let cart = [];
+        let currentUser = null;
+        let selectedPaymentMethod = null;
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                loadCart();
+                setupEventListeners();
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
+
+        function setupEventListeners() {
+            document.getElementById('paypalOption').addEventListener('click', () => selectPayment('paypal'));
+            document.getElementById('stripeOption').addEventListener('click', () => selectPayment('stripe'));
+            document.getElementById('cardOption').addEventListener('click', () => selectPayment('card'));
+            document.getElementById('completeBtn').addEventListener('click', processCardPayment);
+        }
+
+        function loadCart() {
+            const cartData = sessionStorage.getItem('kirkClientCart');
+            if (cartData) {
+                cart = JSON.parse(cartData);
+                displayCart();
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
+        function displayCart() {
+            const cartItemsContainer = document.getElementById('cartItems');
+            let total = 0;
+
+            cartItemsContainer.innerHTML = cart.map(item => {
+                total += item.price;
+                return `
+                    <div class="cart-item">
+                        <span class="cart-item-name">${item.name}</span>
+                        <span class="cart-item-price">$${item.price.toFixed(2)}</span>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('totalAmount').textContent = `$${total.toFixed(2)}`;
+        }
+
+        function selectPayment(method) {
+            selectedPaymentMethod = method;
+            
+            // Remove selected class from all options
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            if (method === 'paypal') {
+                document.getElementById('paypalOption').classList.add('selected');
+            } else if (method === 'stripe') {
+                document.getElementById('stripeOption').classList.add('selected');
+            } else if (method === 'card') {
+                document.getElementById('cardOption').classList.add('selected');
+            }
+
+            // Hide card details by default
+            document.getElementById('cardDetails').classList.remove('active');
+
+            if (method === 'paypal') {
+                showProcessingScreen('Opening PayPal...');
+                setTimeout(() => {
+                    processPayPalPayment();
+                }, 2000);
+            } else if (method === 'stripe') {
+                showProcessingScreen('Opening Stripe...');
+                setTimeout(() => {
+                    processStripePayment();
+                }, 2000);
+            } else if (method === 'card') {
+                document.getElementById('cardDetails').classList.add('active');
+            }
+        }
+
+        function showProcessingScreen(text) {
+            document.getElementById('processingText').textContent = text;
+            document.getElementById('processingOverlay').classList.add('active');
+        }
+
+        function hideProcessingScreen() {
+            document.getElementById('processingOverlay').classList.remove('active');
+        }
+
+        async function processPayPalPayment() {
+            try {
+                // Your PayPal integration logic here
+                // For now, we'll simulate it
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Redirect to PayPal or handle payment
+                alert('PayPal payment processing would happen here');
+                hideProcessingScreen();
+                
+            } catch (error) {
+                console.error('PayPal error:', error);
+                alert('PayPal payment failed');
+                hideProcessingScreen();
+            }
+        }
+
+        async function processStripePayment() {
+            try {
+                const lineItems = cart.map(item => ({
+                    price_data: {
+                        currency: 'usd',
+                        product_data: {
+                            name: item.name,
+                        },
+                        unit_amount: item.priceInCents,
+                    },
+                    quantity: 1,
+                }));
+
+                const createCheckoutSession = httpsCallable(functions, 'createCheckoutSession');
+                const result = await createCheckoutSession({
+                    lineItems: lineItems,
+                    customerEmail: currentUser.email,
+                    userId: currentUser.uid
+                });
+
+                const stripe = Stripe('pk_live_51Smqfp88HpBl6MXX1uooT67De9HgP6ERhfzpI4sLzMbgSLHr4fCzfqp5lZiCtHaiupf3p4tEXCfwWISEraebp2ki00ytftKEuG');
+                const { error } = await stripe.redirectToCheckout({
+                    sessionId: result.data.sessionId
+                });
+
+                if (error) {
+                    throw new Error(error.message);
+                }
+
+            } catch (error) {
+                console.error('Stripe error:', error);
+                alert('Stripe payment failed: ' + error.message);
+                hideProcessingScreen();
+            }
+        }
+
+        async function processCardPayment() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            
+            if (!apiKey) {
+                alert('Please enter an API key');
+                return;
+            }
+
+            showProcessingScreen('Processing Payment...');
+
+            try {
+                // Your custom card payment logic here using the API key
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                alert('Card payment processing would happen here with API key: ' + apiKey);
+                hideProcessingScreen();
+                
+                // Clear cart and redirect on success
+                // sessionStorage.removeItem('kirkClientCart');
+                // window.location.href = 'index.html';
+                
+            } catch (error) {
+                console.error('Card payment error:', error);
+                alert('Card payment failed');
+                hideProcessingScreen();
+            }
+        }
+    </script>
+</body>
+</html>
