@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ShoppingCart, User, LogOut, Menu } from 'lucide-react';
+import { X, ShoppingCart, User, LogOut } from 'lucide-react';
 
 const KirkClientApp = () => {
   const [user, setUser] = useState(null);
@@ -14,8 +14,7 @@ const KirkClientApp = () => {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [authError, setAuthError] = useState('');
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [userCount, setUserCount] = useState(1); // Track user count for UIDs
+  const [userCount, setUserCount] = useState(1);
 
   const [userData, setUserData] = useState({
     transactions: [],
@@ -32,7 +31,6 @@ const KirkClientApp = () => {
     setAuthError('');
     if (authMode === 'login') {
       if (email && password) {
-        // For login, use existing UID (in production, get from database)
         setUser({ uid: 1, email: email, displayName: username || email.split('@')[0] });
         setShowAuthModal(false);
         setEmail(''); setPassword(''); setUsername('');
@@ -41,13 +39,11 @@ const KirkClientApp = () => {
       }
     } else {
       if (email && password && username) {
-        // For signup, assign new numerical UID based on order
         const newUID = userCount;
         setUser({ uid: newUID, email: email, displayName: username });
-        setUserCount(userCount + 1); // Increment for next user
+        setUserCount(userCount + 1);
         setShowAuthModal(false);
         setEmail(''); setPassword(''); setUsername('');
-        console.log(`New user created with UID: ${newUID}`);
       } else {
         setAuthError('Please fill all fields');
       }
@@ -129,38 +125,34 @@ const KirkClientApp = () => {
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="text-xl font-bold text-red-600 tracking-wider">KIRK CLIENT</div>
           
-          <div className="flex gap-3 items-center">
-            {user && (
-              <>
-                <button
-                  onClick={() => setShowCartModal(true)}
-                  className="relative px-4 py-2 bg-gradient-to-r from-red-600 to-red-800 rounded-lg hover:shadow-lg hover:shadow-red-600/50 transition-all font-semibold uppercase tracking-wide text-sm flex items-center gap-2"
-                  type="button"
-                >
-                  <ShoppingCart className="w-4 h-4" />
-                  <span className="hidden sm:inline">Cart</span>
-                  {cart.length > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-white text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
-                      {cart.length}
-                    </span>
-                  )}
-                </button>
-                <button
-                  onClick={() => setShowProfileModal(true)}
-                  className="px-4 py-2 bg-gradient-to-r from-red-600 to-red-800 rounded-lg hover:shadow-lg hover:shadow-red-600/50 transition-all font-semibold uppercase tracking-wide text-sm flex items-center gap-2"
-                  type="button"
-                >
-                  <User className="w-4 h-4" />
-                  <span className="hidden sm:inline">Profile</span>
-                </button>
-              </>
-            )}
-          </div>
+          {user && (
+            <div className="flex gap-3 items-center">
+              <button
+                onClick={() => setShowCartModal(true)}
+                className="relative px-4 py-2 bg-gradient-to-r from-red-600 to-red-800 rounded-lg hover:shadow-lg hover:shadow-red-600/50 transition-all font-semibold uppercase tracking-wide text-sm flex items-center gap-2"
+              >
+                <ShoppingCart className="w-4 h-4" />
+                <span className="hidden sm:inline">Cart</span>
+                {cart.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-white text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
+                    {cart.length}
+                  </span>
+                )}
+              </button>
+              <button
+                onClick={() => setShowProfileModal(true)}
+                className="px-4 py-2 bg-gradient-to-r from-red-600 to-red-800 rounded-lg hover:shadow-lg hover:shadow-red-600/50 transition-all font-semibold uppercase tracking-wide text-sm flex items-center gap-2"
+              >
+                <User className="w-4 h-4" />
+                <span className="hidden sm:inline">Profile</span>
+              </button>
+            </div>
+          )}
         </div>
       </nav>
 
       {/* Main Content */}
-      <main className="relative z-[10] flex flex-col items-center justify-center min-h-screen px-6 pt-24 pb-12">
+      <main className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 pt-24 pb-12">
         <div className="text-center space-y-8" style={{ animation: 'floatIn 1.2s ease-out' }}>
           <div>
             <img
@@ -216,12 +208,10 @@ const KirkClientApp = () => {
       {/* Auth Modal */}
       {showAuthModal && (
         <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black backdrop-blur-md">
-          <div className="relative bg-gradient-to-br from-gray-900 to-black border-2 border-red-600/50 rounded-3xl p-8 w-full max-w-md shadow-2xl shadow-red-600/40 z-[100000]"
-               style={{ animation: 'modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
+          <div className="relative bg-gradient-to-br from-gray-900 to-black border-2 border-red-600/50 rounded-3xl p-8 w-full max-w-md shadow-2xl shadow-red-600/40 z-[100000]">
             <button
               onClick={() => setShowAuthModal(false)}
-              className="absolute top-6 right-6 w-9 h-9 flex items-center justify-center bg-red-600/20 hover:bg-red-600/30 rounded-full text-red-600 transition-all hover:rotate-90 z-[100001] cursor-pointer"
-              type="button"
+              className="absolute top-6 right-6 w-9 h-9 flex items-center justify-center bg-red-600/20 hover:bg-red-600/30 rounded-full text-red-600 transition-all hover:rotate-90 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -260,7 +250,6 @@ const KirkClientApp = () => {
               <button
                 onClick={handleAuth}
                 className="w-full py-3 bg-gradient-to-r from-red-600 to-red-800 rounded-lg font-semibold hover:shadow-lg hover:shadow-red-600/50 transition-all uppercase tracking-wide"
-                type="button"
               >
                 {authMode === 'login' ? 'Login' : 'Sign Up'}
               </button>
@@ -268,7 +257,6 @@ const KirkClientApp = () => {
               <button
                 onClick={() => setAuthMode(authMode === 'login' ? 'signup' : 'login')}
                 className="w-full text-red-600 text-sm hover:underline"
-                type="button"
               >
                 {authMode === 'login' ? "Don't have an account? Sign up" : 'Already have an account? Login'}
               </button>
@@ -279,13 +267,11 @@ const KirkClientApp = () => {
 
       {/* Shop Modal */}
       {showShopModal && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md overflow-y-auto">
-          <div className="relative bg-gradient-to-br from-gray-900 to-black border-2 border-red-600/50 rounded-3xl p-8 w-full max-w-4xl shadow-2xl shadow-red-600/40 my-8"
-               style={{ animation: 'modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black backdrop-blur-md overflow-y-auto">
+          <div className="relative bg-gradient-to-br from-gray-900 to-black border-2 border-red-600/50 rounded-3xl p-8 w-full max-w-4xl shadow-2xl shadow-red-600/40 my-8 z-[100000]">
             <button
               onClick={() => setShowShopModal(false)}
-              className="absolute top-6 right-6 w-9 h-9 flex items-center justify-center bg-red-600/20 hover:bg-red-600/30 rounded-full text-red-600 transition-all hover:rotate-90 z-10 cursor-pointer"
-              type="button"
+              className="absolute top-6 right-6 w-9 h-9 flex items-center justify-center bg-red-600/20 hover:bg-red-600/30 rounded-full text-red-600 transition-all hover:rotate-90 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -316,12 +302,10 @@ const KirkClientApp = () => {
       {/* Cart Modal */}
       {showCartModal && (
         <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black backdrop-blur-md overflow-y-auto">
-          <div className="relative bg-gradient-to-br from-gray-900 to-black border-2 border-red-600/50 rounded-3xl p-8 w-full max-w-2xl shadow-2xl shadow-red-600/40 my-8 z-[100000]"
-               style={{ animation: 'modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
+          <div className="relative bg-gradient-to-br from-gray-900 to-black border-2 border-red-600/50 rounded-3xl p-8 w-full max-w-2xl shadow-2xl shadow-red-600/40 my-8 z-[100000]">
             <button
               onClick={() => setShowCartModal(false)}
-              className="absolute top-6 right-6 w-9 h-9 flex items-center justify-center bg-red-600/20 hover:bg-red-600/30 rounded-full text-red-600 transition-all hover:rotate-90 z-[100001] cursor-pointer"
-              type="button"
+              className="absolute top-6 right-6 w-9 h-9 flex items-center justify-center bg-red-600/20 hover:bg-red-600/30 rounded-full text-red-600 transition-all hover:rotate-90 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -335,7 +319,6 @@ const KirkClientApp = () => {
                 <button
                   onClick={() => { setShowCartModal(false); setShowShopModal(true); }}
                   className="mt-6 px-6 py-3 bg-gradient-to-r from-red-600 to-red-800 rounded-lg hover:shadow-lg hover:shadow-red-600/50 transition-all font-semibold uppercase tracking-wide"
-                  type="button"
                 >
                   Start Shopping
                 </button>
@@ -351,7 +334,6 @@ const KirkClientApp = () => {
                     <button
                       onClick={() => removeFromCart(index)}
                       className="px-4 py-2 bg-red-600 rounded-lg hover:bg-red-700 transition-all"
-                      type="button"
                     >
                       Remove
                     </button>
@@ -366,7 +348,6 @@ const KirkClientApp = () => {
                   <button
                     onClick={handleCheckout}
                     className="w-full py-4 bg-gradient-to-r from-red-600 to-red-800 rounded-lg font-bold text-lg hover:shadow-lg hover:shadow-red-600/50 transition-all uppercase tracking-wide"
-                    type="button"
                   >
                     Proceed to Checkout
                   </button>
@@ -381,12 +362,10 @@ const KirkClientApp = () => {
       {/* Profile Modal */}
       {showProfileModal && (
         <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black backdrop-blur-md overflow-y-auto">
-          <div className="relative bg-gradient-to-br from-gray-900 to-black border-2 border-red-600/50 rounded-3xl p-8 w-full max-w-3xl shadow-2xl shadow-red-600/40 my-8 z-[100000]"
-               style={{ animation: 'modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
+          <div className="relative bg-gradient-to-br from-gray-900 to-black border-2 border-red-600/50 rounded-3xl p-8 w-full max-w-3xl shadow-2xl shadow-red-600/40 my-8 z-[100000]">
             <button
               onClick={() => setShowProfileModal(false)}
-              className="absolute top-6 right-6 w-9 h-9 flex items-center justify-center bg-red-600/20 hover:bg-red-600/30 rounded-full text-red-600 transition-all hover:rotate-90 z-[100001] cursor-pointer"
-              type="button"
+              className="absolute top-6 right-6 w-9 h-9 flex items-center justify-center bg-red-600/20 hover:bg-red-600/30 rounded-full text-red-600 transition-all hover:rotate-90 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -419,19 +398,13 @@ const KirkClientApp = () => {
             </div>
             
             <div className="bg-red-600/10 border border-red-600/30 rounded-xl p-6">
-              <h3 className="text-xl font-bold mb-4 text-red-500 flex items-center gap-2">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-                Transaction History
-              </h3>
+              <h3 className="text-xl font-bold mb-4 text-red-500">Transaction History</h3>
               {userData.transactions.length === 0 ? (
                 <div className="text-center py-8">
                   <p className="text-gray-500">No transactions yet</p>
                   <button
                     onClick={() => { setShowProfileModal(false); setShowShopModal(true); }}
                     className="mt-4 px-6 py-2 bg-gradient-to-r from-red-600 to-red-800 rounded-lg hover:shadow-lg hover:shadow-red-600/50 transition-all font-semibold uppercase tracking-wide text-sm"
-                    type="button"
                   >
                     Start Shopping
                   </button>
@@ -443,12 +416,7 @@ const KirkClientApp = () => {
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex-1">
                           <p className="font-semibold text-white text-lg">{transaction.items}</p>
-                          <p className="text-sm text-gray-400 mt-1">
-                            <svg className="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            {transaction.date}
-                          </p>
+                          <p className="text-sm text-gray-400 mt-1">{transaction.date}</p>
                         </div>
                         <div className="text-right">
                           <p className="font-bold text-red-600 text-xl">${transaction.total}</p>
@@ -466,7 +434,6 @@ const KirkClientApp = () => {
             <button
               onClick={handleLogout}
               className="w-full mt-6 py-3 border-2 border-red-600 text-red-600 rounded-lg hover:bg-red-600/10 transition-all font-semibold uppercase tracking-wide flex items-center justify-center gap-2"
-              type="button"
             >
               <LogOut className="w-5 h-5" />
               Logout
@@ -477,15 +444,13 @@ const KirkClientApp = () => {
 
       {/* Google Form Modal */}
       {showFormModal && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md">
-          <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-red-600/50 rounded-3xl w-full max-w-4xl h-[90vh] shadow-2xl shadow-red-600/40 overflow-hidden flex flex-col"
-               style={{ animation: 'modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' }}>
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black backdrop-blur-md">
+          <div className="bg-gradient-to-br from-gray-900 to-black border-2 border-red-600/50 rounded-3xl w-full max-w-4xl h-[90vh] shadow-2xl shadow-red-600/40 overflow-hidden flex flex-col z-[100000]">
             <div className="flex justify-between items-center p-6 border-b border-red-600/30">
               <h2 className="text-2xl font-bold text-red-600">Kirk Media Application</h2>
               <button
                 onClick={() => setShowFormModal(false)}
                 className="w-9 h-9 flex items-center justify-center bg-red-600/20 hover:bg-red-600/30 rounded-full text-red-600 transition-all hover:rotate-90 cursor-pointer"
-                type="button"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -526,12 +491,9 @@ const KirkClientApp = () => {
           from { opacity: 0; transform: translateY(-40px) scale(0.95); }
           to { opacity: 1; transform: translateY(0) scale(1); }
         }
-        
-        @keyframes modalSlideIn {
-          from { opacity: 0; transform: translateY(-40px) scale(0.92); }
-          to { opacity: 1; transform: translateY(0) scale(1); }
-        }
       `}</style>
     </div>
   );
 };
+
+export default KirkClientApp;
