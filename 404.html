@@ -1,33 +1,445 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Page Not Found</title>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Kirk Client</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px 16px; border-radius: 3px; }
-      #message h3 { color: #888; font-weight: normal; font-size: 16px; margin: 16px 0 12px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
-      }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 8vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(220, 20, 60, 0.12) 0%, rgba(139, 0, 0, 0.06) 30%, transparent 60%);
+            animation: breathingGlow 10s ease-in-out infinite;
+        }
+
+        @keyframes breathingGlow {
+            0%, 100% {
+                background: radial-gradient(circle at 40% 35%, rgba(220, 20, 60, 0.15) 0%, rgba(139, 0, 0, 0.07) 28%, transparent 58%);
+            }
+            50% {
+                background: radial-gradient(circle at 50% 65%, rgba(220, 20, 60, 0.16) 0%, rgba(139, 0, 0, 0.075) 30%, transparent 60%);
+            }
+        }
+
+        .utah-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            opacity: 0.5;
+        }
+        
+        .utah-svg {
+            width: 260px;
+            height: auto;
+            transform: scale(1, -1);
+        }
+        
+        .utah-path {
+            fill: none;
+            stroke: #dc143c;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawUtah 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 15px #dc143c);
+        }
+        
+        @keyframes drawUtah {
+            0% { stroke-dashoffset: 1000; }
+            50% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: -1000; }
+        }
+
+        .glitch-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0;
+            animation: glitchOverlay 0.3s ease-in 2s forwards, continuousGlitch 8s ease-in-out 2.3s infinite;
+            mix-blend-mode: screen;
+        }
+
+        @keyframes glitchOverlay {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes continuousGlitch {
+            0%, 90%, 100% {
+                transform: translate(0, 0);
+                filter: hue-rotate(0deg);
+            }
+            5% {
+                transform: translate(-2px, 2px);
+                filter: hue-rotate(90deg);
+            }
+            10% {
+                transform: translate(2px, -2px);
+                filter: hue-rotate(-90deg);
+            }
+            15% {
+                transform: translate(-1px, -1px);
+                filter: hue-rotate(180deg);
+            }
+            20% {
+                transform: translate(1px, 1px);
+                filter: hue-rotate(0deg);
+            }
+        }
+
+        .glitch-overlay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                transparent 0%,
+                rgba(220, 20, 60, 0.03) 2%,
+                transparent 4%,
+                transparent 8%,
+                rgba(220, 20, 60, 0.02) 10%,
+                transparent 12%
+            );
+            background-size: 100% 3px;
+            animation: scanlines 8s linear infinite;
+        }
+
+        @keyframes scanlines {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100%); }
+        }
+
+        .glitch-overlay::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            animation: glitchNoise 0.5s steps(2) infinite;
+        }
+
+        @keyframes glitchNoise {
+            0% { transform: translateX(0); opacity: 0.05; }
+            25% { transform: translateX(-2px); opacity: 0.1; }
+            50% { transform: translateX(2px); opacity: 0.05; }
+            75% { transform: translateX(-1px); opacity: 0.08; }
+            100% { transform: translateX(0); opacity: 0.05; }
+        }
+
+        .melty-filter {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 998;
+            opacity: 0;
+            animation: meltyFadeIn 1s ease-in 2.5s forwards;
+        }
+
+        @keyframes meltyFadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .melty-filter svg {
+            position: absolute;
+            width: 0;
+            height: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 998;
+            opacity: 0;
+            animation: meltyFadeIn 1s ease-in 2.5s forwards, meltyWave 6s ease-in-out 3.5s infinite;
+            filter: url(#melty-filter);
+        }
+
+        @keyframes meltyWave {
+            0%, 100% {
+                transform: translateY(0) scaleY(1);
+            }
+            25% {
+                transform: translateY(5px) scaleY(1.02);
+            }
+            50% {
+                transform: translateY(-5px) scaleY(0.98);
+            }
+            75% {
+                transform: translateY(3px) scaleY(1.01);
+            }
+        }
+
+        .error-container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .error-404 {
+            font-size: 10rem;
+            font-weight: 900;
+            color: #dc143c;
+            text-shadow: 0 0 40px rgba(220, 20, 60, 0.8);
+            letter-spacing: 10px;
+            margin-bottom: 2rem;
+            animation: glitchBloat 2s ease-in-out;
+            position: relative;
+        }
+
+        @keyframes glitchBloat {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) translateX(-100px);
+                filter: blur(10px);
+            }
+            10% {
+                transform: scale(0.5) translateX(-50px);
+                filter: blur(8px);
+            }
+            20% {
+                transform: scale(0.6) translateX(20px);
+                opacity: 0.5;
+            }
+            25% {
+                transform: scale(0.7) translateX(-10px);
+                text-shadow: 5px 0 #dc143c, -5px 0 #8b0000;
+            }
+            30% {
+                transform: scale(0.8) translateX(15px);
+                filter: blur(5px);
+            }
+            35% {
+                transform: scale(0.85) translateX(-8px);
+                text-shadow: -3px 0 #dc143c, 3px 0 #8b0000;
+            }
+            40% {
+                transform: scale(0.9) translateX(5px);
+            }
+            45% {
+                transform: scale(0.95) translateX(-3px);
+                text-shadow: 2px 0 #dc143c, -2px 0 #8b0000;
+            }
+            50% {
+                transform: scale(1.15) translateX(0);
+                filter: blur(3px);
+                text-shadow: 10px 0 #dc143c, -10px 0 #8b0000;
+            }
+            55% {
+                transform: scale(1.1) translateX(5px);
+            }
+            60% {
+                transform: scale(1.05) translateX(-5px);
+                text-shadow: 5px 0 #dc143c, -5px 0 #8b0000;
+            }
+            70% {
+                transform: scale(1.02) translateX(2px);
+                filter: blur(1px);
+            }
+            80% {
+                transform: scale(0.98) translateX(-2px);
+                text-shadow: 2px 0 #dc143c, -2px 0 #8b0000;
+            }
+            90% {
+                transform: scale(1.01) translateX(0);
+                filter: blur(0);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateX(0);
+                filter: blur(0);
+                text-shadow: 0 0 40px rgba(220, 20, 60, 0.8);
+            }
+        }
+
+        .error-404::before {
+            content: '404';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            color: #dc143c;
+            opacity: 0.3;
+            animation: glitchClone 2s ease-in-out;
+            z-index: -1;
+        }
+
+        @keyframes glitchClone {
+            0%, 100% {
+                transform: translate(0, 0);
+                opacity: 0;
+            }
+            20%, 40%, 60% {
+                transform: translate(-5px, 3px);
+                opacity: 0.3;
+            }
+            30%, 50%, 70% {
+                transform: translate(5px, -3px);
+                opacity: 0.3;
+            }
+        }
+
+        .error-message {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease-out 1.5s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 1.8s both;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(220, 20, 60, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(220, 20, 60, 0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid #dc143c;
+            color: #dc143c;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(220, 20, 60, 0.1);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .error-404 {
+                font-size: 6rem;
+                letter-spacing: 5px;
+            }
+
+            .error-message {
+                font-size: 1.2rem;
+                padding: 0 1rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+                width: 100%;
+                padding: 0 2rem;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .utah-container {
+                transform: translate(-50%, -50%) scale(0.6);
+            }
+        }
     </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>404</h2>
-      <h1>Page Not Found</h1>
-      <p>The specified file was not found on this website. Please check the URL for mistakes and try again.</p>
-      <h3>Why am I seeing this?</h3>
-      <p>This page was generated by the Firebase Command-Line Interface. To modify it, edit the <code>404.html</code> file in your project's configured <code>public</code> directory.</p>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <div class="utah-container">
+        <svg class="utah-svg" viewBox="0 0 200 240">
+            <path class="utah-path" d="M150 180 L120 180 L120 220 L40 220 L40 50 L150 50 Z"/>
+        </svg>
     </div>
-  </body>
+
+    <div class="error-container">
+        <div class="error-404">404</div>
+        <div class="error-message">
+            Hold up, shit ain't adding up lol<br>
+            try again or go to main page lol
+        </div>
+        <div class="button-group">
+            <a href="index.html" class="btn btn-primary">Go to Main Page</a>
+            <button onclick="history.back()" class="btn btn-secondary">Go Back</button>
+        </div>
+    </div>
+</body>
 </html>
