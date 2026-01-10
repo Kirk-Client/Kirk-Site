@@ -1340,9 +1340,14 @@
         }
 
         window.checkout = () => {
-            if (cart.length === 0) return;
-            alert('Checkout coming soon with beta release!');
-        };
+    if (cart.length === 0) return;
+    
+    // Store cart data in sessionStorage so checkout.html can access it
+    sessionStorage.setItem('kirkClientCart', JSON.stringify(cart));
+    
+    // Redirect to checkout page
+    window.location.href = 'checkout.html';
+};
 
         // Close modals when clicking outside
         document.getElementById('shopModal').addEventListener('click', function(e) {
