@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Version Application - Kirk Client</title>
+    <link rel="icon" type="image/png" href="https://iili.io/fkPS4Yg.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background animation */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(220, 20, 60, 0.12) 0%, rgba(139, 0, 0, 0.06) 30%, transparent 60%);
+            animation: breathingGlow 10s ease-in-out infinite;
+        }
+
+        @keyframes breathingGlow {
+            0%, 100% {
+                background: radial-gradient(circle at 40% 35%, rgba(220, 20, 60, 0.15) 0%, rgba(139, 0, 0, 0.07) 28%, transparent 58%);
+            }
+            50% {
+                background: radial-gradient(circle at 50% 65%, rgba(220, 20, 60, 0.16) 0%, rgba(139, 0, 0, 0.075) 30%, transparent 60%);
+            }
+        }
+
+        /* Utah shape */
+        .utah-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            opacity: 0.5;
+        }
+        
+        .utah-svg {
+            width: 260px;
+            height: auto;
+            transform: scale(1, -1);
+        }
+        
+        .utah-path {
+            fill: none;
+            stroke: #dc143c;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawUtah 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 15px #dc143c);
+        }
+        
+        @keyframes drawUtah {
+            0% { stroke-dashoffset: 1000; }
+            50% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: -1000; }
+        }
+
+        /* Navigation bar */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(220, 20, 60, 0.2);
+        }
+
+        .nav-brand {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #dc143c;
+            letter-spacing: 1px;
+        }
+
+        .back-btn {
+            padding: 0.7rem 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            background: transparent;
+            border: 2px solid #dc143c;
+            color: #dc143c;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: rgba(220, 20, 60, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Main content */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            min-height: 100vh;
+            padding-top: 100px;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #dc143c;
+            text-shadow: 0 0 30px rgba(220, 20, 60, 0.6);
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+            text-align: center;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2rem;
+            text-align: center;
+            animation: fadeInDown 0.6s ease-out 0.2s both;
+        }
+
+        .form-container {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+            border: 2px solid rgba(220, 20, 60, 0.5);
+            border-radius: 24px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: 0 25px 70px rgba(220, 20, 60, 0.4);
+            animation: fadeInUp 0.6s ease-out 0.3s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        iframe {
+            width: 100%;
+            min-height: 1200px;
+            border: none;
+            border-radius: 12px;
+        }
+
+        /* Footer */
+        .footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 2rem;
+            color: rgba(255, 255, 255, 0.4);
+            border-top: 1px solid rgba(220, 20, 60, 0.2);
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem;
+            }
+
+            .nav-brand {
+                font-size: 1rem;
+            }
+
+            .main-content {
+                padding: 1.5rem;
+                padding-top: 100px;
+            }
+
+            .page-title {
+                font-size: 1.8rem;
+            }
+
+            .page-subtitle {
+                font-size: 1rem;
+            }
+
+            .form-container {
+                padding: 1rem;
+            }
+
+            iframe {
+                min-height: 1400px;
+            }
+
+            .utah-container {
+                transform: translate(-50%, -50%) scale(0.6);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background animation -->
+    <div class="bg-animation"></div>
+
+    <!-- Utah shape -->
+    <div class="utah-container">
+        <svg class="utah-svg" viewBox="0 0 200 240">
+            <path class="utah-path" d="M150 180 L120 180 L120 220 L40 220 L40 50 L150 50 Z"/>
+        </svg>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-brand">KIRK CLIENT</div>
+        <a href="index.html" class="back-btn">Back to Home</a>
+    </nav>
+
+    <!-- Main content -->
+    <div class="main-content">
+        <h1 class="page-title">Media Version Application</h1>
+        <p class="page-subtitle">Apply for free access to Kirk Client Media Version</p>
+        
+        <div class="form-container">
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdSoZuS83jbbuLXM8plM3XhTxRTwv5fGyj-4JnHAXGXM5GPTQ/viewform?embedded=true" width="640" height="1157" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>KirkCEO &copy;2025</p>
+    </div>
+</body>
+</html>
