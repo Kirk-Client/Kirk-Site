@@ -14,6 +14,217 @@ const SUBSCRIPTION_MAP = {
   'Merch': 'free'
 };
 
+// ============================================
+// AUTO-CREATE USER DOCUMENT ON SIGNUP
+// ============================================
+exports.onUserCreate = functions.auth.user().onCreate(async (user) => {
+  try {
+    const userRef = admin.firestore().collection('users').doc(user.uid);
+    
+    // Check if document already exists (shouldn't happen, but just in case)
+    const doc = await userRef.get();
+    if (doc.exists) {
+      console.log('⚠️ User document already exists for:', user.uid);
+      return null;
+    }
+    
+    // Extract username from email or displayName
+    const username = user.displayName || user.email.split('@')[0];
+    
+    // Create user document with all required fields
+    await userRef.set({
+      uid: user.uid,
+      username: username,
+      email: user.email,
+      hwid: 'N/A',
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      lastLogin: admin.firestore.FieldValue.serverTimestamp(),
+      accountStatus: 'active',
+      subscriptionType: 'free',
+      purchases: []
+    });
+    
+    console.log('✅ User document auto-created for:', user.email, 'UID:', user.uid);
+    return null;
+  } catch (error) {
+    console.error('❌ Error auto-creating user document:', error);
+    // Don't throw error - let user creation succeed even if Firestore write fails
+    return null;
+  }
+});
+
+// ============================================
+// CLEANUP: DELETE USER DOCUMENT ON ACCOUNT DELETION
+// ============================================
+exports.onUserDelete = functions.auth.user().onDelete(async (user) => {
+  try {
+    const userRef = admin.firestore().collection('users').doc(user.uid);
+    await userRef.delete();
+    
+    console.log('✅ User document deleted for:', user.uid);
+    return null;
+  } catch (error) {
+    console.error('❌ Error deleting user document:', error);
+    return null;
+  }
+});
+
+// ============================================
+// FIX ALL EXISTING USERS WITHOUT DOCUMENTS
+// ============================================
+exports.fixExistingUsers = functions.https.onRequest(async (req, res) => {
+  // Add CORS headers
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'GET, POST');
+  res.set('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.status(204).send('');
+    return;
+  }
+
+  try {
+    const results = [];
+    
+    // Get all Firebase Auth users
+    const listUsersResult = await admin.auth().listUsers();
+    
+    // Check each user
+    for (const userRecord of listUsersResult.users) {
+      const userRef = admin.firestore().collection('users').doc(userRecord.uid);
+      const doc = await userRef.get();
+      
+      // If user document doesn't exist, create it
+      if (!doc.exists) {
+        const username = userRecord.displayName || userRecord.email.split('@')[0];
+        
+        await userRef.set({
+          uid: userRecord.uid,
+          username: username,
+          email: userRecord.email,
+          hwid: 'N/A',
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          lastLogin: admin.firestore.FieldValue.serverTimestamp(),
+          accountStatus: 'active',
+          subscriptionType: 'free',
+          purchases: []
+        });
+        
+        results.push({
+          status: 'created',
+          uid: userRecord.uid,
+          email: userRecord.email,
+          username: username
+        });
+        
+        console.log('✅ Created missing document for:', userRecord.email);
+      } else {
+        results.push({
+          status: 'already_exists',
+          uid: userRecord.uid,
+          email: userRecord.email
+        });
+      }
+    }
+    
+    res.status(200).json({
+      success: true,
+      message: 'User document check/creation complete',
+      totalUsers: listUsersResult.users.length,
+      created: results.filter(r => r.status === 'created').length,
+      alreadyExisted: results.filter(r => r.status === 'already_exists').length,
+      results: results
+    });
+    
+  } catch (error) {
+    console.error('❌ Error fixing users:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// ============================================
+// FIX SPECIFIC USERS BY UID
+// ============================================
+exports.fixSpecificUsers = functions.https.onRequest(async (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'GET, POST');
+  res.set('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.status(204).send('');
+    return;
+  }
+
+  try {
+    // The two broken accounts
+    const brokenAccounts = [
+      {
+        uid: 'rd1OTlVUqWbabBsc9MK6ABtcXBC3',
+        email: 'logan131whaley@gmail.com',
+        username: 'logan131'
+      },
+      {
+        uid: 'C3o6ceZdjIPK1yfVM252MVLSCGJ2',
+        email: 'clpziscoollmao@gmail.com',
+        username: 'clpziscoollmao'
+      }
+    ];
+
+    const results = [];
+
+    for (const account of brokenAccounts) {
+      const userRef = admin.firestore().collection('users').doc(account.uid);
+      const doc = await userRef.get();
+      
+      if (!doc.exists) {
+        await userRef.set({
+          uid: account.uid,
+          username: account.username,
+          email: account.email,
+          hwid: 'N/A',
+          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          lastLogin: admin.firestore.FieldValue.serverTimestamp(),
+          accountStatus: 'active',
+          subscriptionType: 'free',
+          purchases: []
+        });
+        
+        results.push({
+          status: 'created',
+          uid: account.uid,
+          email: account.email
+        });
+        
+        console.log('✅ Fixed account:', account.email);
+      } else {
+        results.push({
+          status: 'already_exists',
+          uid: account.uid,
+          email: account.email
+        });
+        
+        console.log('⚠️ Document already exists for:', account.email);
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Specific users fixed',
+      results: results
+    });
+
+  } catch (error) {
+    console.error('❌ Error fixing specific users:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 // Helper function to update user subscription
 async function updateUserSubscription(userId, items) {
   const tierPriority = { 'free': 0, 'media': 1, 'lite': 2, 'lifetime': 3 };
@@ -263,6 +474,13 @@ exports.coinbaseWebhook = functions.https.onRequest(async (req, res) => {
       
       await Promise.all(updatePromises);
 
+      // Get cryptocurrency type safely
+      let cryptocurrency = 'unknown';
+      if (charge.payments && charge.payments[0] && charge.payments[0].value && 
+          charge.payments[0].value.crypto && charge.payments[0].value.crypto.currency) {
+        cryptocurrency = charge.payments[0].value.crypto.currency;
+      }
+
       await admin.firestore().collection('orders').add({
         chargeId: charge.id,
         chargeCode: charge.code,
@@ -272,7 +490,7 @@ exports.coinbaseWebhook = functions.https.onRequest(async (req, res) => {
         items: items,
         status: 'completed',
         paymentMethod: 'crypto_coinbase',
-        cryptocurrency: charge.payments[0]?.value?.crypto?.currency || 'unknown',
+        cryptocurrency: cryptocurrency,
         createdAt: admin.firestore.FieldValue.serverTimestamp()
       });
       
