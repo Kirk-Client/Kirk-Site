@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kirk Client - Changing The World Of PVP Everyday</title>
+    <title>Kirk Client - Coming Soon</title>
     <link rel="icon" type="image/png" href="https://iili.io/fkPS4Yg.png">
     <style>
         * {
@@ -846,7 +846,7 @@
                 <span>New to Kirk Client?</span>
             </div>
             <div class="auth-switch">
-                <a onclick="switchToSignup()">Create an account â†’</a>
+                <a onclick="switchToSignup()">Create an account →</a>
             </div>
         </div>
     </div>
@@ -898,7 +898,7 @@
                 <span>Already have an account?</span>
             </div>
             <div class="auth-switch">
-                <a onclick="switchToLogin()">Sign in instead â†’</a>
+                <a onclick="switchToLogin()">Sign in instead →</a>
             </div>
         </div>
     </div>
@@ -910,9 +910,9 @@
             <h2>Shop Kirk Client</h2>
             <div class="product-grid">
                 <div class="product-card" onclick="window.location.href='MediaApplication.html'">
-    <h3>Apply For Media Version</h3>
-    <p>Free</p>
-</div>
+                    <h3>Apply For Media Version</h3>
+                    <p>Free</p>
+                </div>
                 <div class="product-card" onclick="addToCart('KirkLite', 4.99)">
                     <h3>KirkLite</h3>
                     <p>$4.99</p>
@@ -921,7 +921,7 @@
                     <h3>Kirk Client</h3>
                     <p>$14.99</p>
                 </div>
-                <div class="product-card" onclick="addToCart('Merch', Click To Site)">
+                <div class="product-card" onclick="window.open('https://your-merch-site.com', '_blank')">
                     <h3>Merch</h3>
                     <p>Click For Site</p>
                 </div>
@@ -948,7 +948,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-analytics.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile, sendEmailVerification } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -969,10 +969,15 @@
         let currentUser = null;
         let cart = [];
 
+        const SUBSCRIPTION_MAP = {
+            'Media Version': 'media',
+            'KirkLite': 'lite',
+            'Kirk Client': 'lifetime',
+            'Merch': 'free'
+        };
+
         // Generate unique HWID (set to N/A for new accounts)
         function generateHWID() {
-            // For new accounts, we return N/A
-            // The actual HWID will be set when they first open the client
             return 'N/A';
         }
 
@@ -984,7 +989,6 @@
                 const userDoc = await getDoc(userDocRef);
                 
                 if (!userDoc.exists() || isNewUser) {
-                    // Create new user with N/A HWID
                     await setDoc(userDocRef, {
                         uid: user.uid,
                         username: username,
@@ -996,32 +1000,24 @@
                         subscriptionType: 'free',
                         purchases: []
                     });
-                    console.log('âœ… User document created');
-                    console.log('ðŸ“ User Data:', {
-                        uid: user.uid,
-                        username: username,
-                        email: email,
-                        hwid: 'N/A',
-                        accountStatus: 'active'
-                    });
+                    console.log('✅ User document created');
                 } else {
-                    // Update last login only
                     await setDoc(userDocRef, {
                         lastLogin: serverTimestamp()
                     }, { merge: true });
-                    console.log('âœ… User document updated');
+                    console.log('✅ User document updated');
                 }
                 
                 return { success: true };
             } catch (error) {
-                console.error('âŒ Error with user document:', error);
+                console.error('❌ Error with user document:', error);
                 return { success: false, error: error.message };
             }
         }
 
         // Auth state observer
         onAuthStateChanged(auth, async (user) => {
-            if (user) {
+            if (user && user.emailVerified) {
                 currentUser = user;
                 const userDocRef = doc(db, 'users', user.uid);
                 const userDoc = await getDoc(userDocRef);
@@ -1034,9 +1030,8 @@
                 await loadCartFromFirestore();
                 updateUIForLogin();
                 
-                console.log('ðŸ” Logged in:', user.email);
-                console.log('ðŸ†” User ID:', user.uid);
-                console.log('ðŸ’» HWID:', userDoc.exists() ? userDoc.data().hwid : 'N/A');
+                console.log('🔐 Logged in:', user.email);
+                console.log('📧 Email verified:', user.emailVerified);
             } else {
                 currentUser = null;
                 cart = [];
@@ -1059,6 +1054,7 @@
             successEl.className = 'success-message';
             successEl.style.display = 'block';
         }
+
         window.openLoginModal = () => {
             document.getElementById('loginModal').classList.add('active');
             document.getElementById('loginError').style.display = 'none';
@@ -1094,7 +1090,7 @@
             openLoginModal();
         };
 
-        // Login handler
+        // Login handler with email verification check
         window.handleLoginSubmit = async (event) => {
             event.preventDefault();
             
@@ -1109,6 +1105,15 @@
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
                 
+                // Check if email is verified
+                if (!user.emailVerified) {
+                    await signOut(auth);
+                    showError('loginError', 'Please verify your email before logging in. Check your inbox for the verification link.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Sign In';
+                    return;
+                }
+                
                 const userDocRef = doc(db, 'users', user.uid);
                 const userDoc = await getDoc(userDocRef);
                 
@@ -1120,7 +1125,7 @@
                 closeLoginModal();
                 showSuccess('loginError', 'Login successful!');
             } catch (error) {
-                console.error('âŒ Login error:', error);
+                console.error('❌ Login error:', error);
                 let errorMessage = 'Login failed. Please try again.';
                 
                 if (error.code === 'auth/user-not-found') {
@@ -1138,11 +1143,11 @@
                 showError('loginError', errorMessage);
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Login';
+                submitBtn.textContent = 'Sign In';
             }
         };
 
-        // Signup handler
+        // Signup handler with email verification
         window.handleSignupSubmit = async (event) => {
             event.preventDefault();
             
@@ -1167,20 +1172,26 @@
                     displayName: username
                 });
 
+                // Send email verification
+                await sendEmailVerification(user);
+
                 const result = await createUserDocument(user, username, email, true);
                 
                 if (result.success) {
-                    showSuccess('signupError', 'Account created successfully! HWID will be set when you open the client.');
+                    showSuccess('signupError', 'Account created! Please check your email to verify your account before logging in.');
+                    
+                    // Sign out the user immediately so they must verify before accessing
+                    await signOut(auth);
                     
                     setTimeout(() => {
                         closeSignupModal();
-                    }, 2000);
+                    }, 4000);
                 } else {
                     showError('signupError', 'Account created but failed to save user data: ' + result.error);
                 }
 
             } catch (error) {
-                console.error('âŒ Signup error:', error);
+                console.error('❌ Signup error:', error);
                 let errorMessage = 'Signup failed. Please try again.';
                 
                 if (error.code === 'auth/email-already-in-use') {
@@ -1202,9 +1213,9 @@
         window.handleLogout = async () => {
             try {
                 await signOut(auth);
-                console.log('âœ… Logged out successfully');
+                console.log('✅ Logged out successfully');
             } catch (error) {
-                console.error('âŒ Logout error:', error);
+                console.error('❌ Logout error:', error);
                 alert('Failed to logout. Please try again.');
             }
         };
@@ -1340,14 +1351,11 @@
         }
 
         window.checkout = () => {
-    if (cart.length === 0) return;
-    
-    // Store cart data in sessionStorage so checkout.html can access it
-    sessionStorage.setItem('kirkClientCart', JSON.stringify(cart));
-    
-    // Redirect to checkout page
-    window.location.href = 'checkout.html';
-};
+            if (cart.length === 0) return;
+            
+            sessionStorage.setItem('kirkClientCart', JSON.stringify(cart));
+            window.location.href = 'checkout.html';
+        };
 
         // Close modals when clicking outside
         document.getElementById('shopModal').addEventListener('click', function(e) {
