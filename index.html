@@ -1010,21 +1010,34 @@
         // Check if user can create account (rate limiting)
         async function canCreateAccount(fingerprint) {
             try {
-                // Check how many accounts were created with this fingerprint in last 24 hours
-                const oneDayAgo = new Date();
-                oneDayAgo.setHours(oneDayAgo.getHours() - 24);
-                
+                // Get all logs with this fingerprint
                 const accountCreationLogRef = collection(db, 'accountCreationLog');
                 const q = query(
                     accountCreationLogRef,
-                    where('fingerprint', '==', fingerprint),
-                    where('createdAt', '>', oneDayAgo)
+                    where('fingerprint', '==', fingerprint)
                 );
                 
                 const querySnapshot = await getDocs(q);
-                const accountCount = querySnapshot.size;
                 
-                console.log(`Accounts created from this device in last 24h: ${accountCount}`);
+                // Filter by timestamp manually (last 24 hours)
+                const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+                const recentAccounts = [];
+                
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    // Check if createdAt exists and is recent
+                    if (data.createdAt) {
+                        const createdTime = data.createdAt.toMillis ? data.createdAt.toMillis() : data.createdAt;
+                        if (createdTime > oneDayAgo) {
+                            recentAccounts.push(data);
+                        }
+                    }
+                });
+                
+                const accountCount = recentAccounts.length;
+                
+                console.log(`🔍 Accounts created from this device in last 24h: ${accountCount}`);
+                console.log(`📊 Recent accounts:`, recentAccounts);
                 
                 // Allow maximum 2 accounts per device per 24 hours
                 if (accountCount >= 2) {
@@ -1036,25 +1049,35 @@
                 
                 return { allowed: true };
             } catch (error) {
-                console.error('Error checking account creation limit:', error);
-                // If check fails, allow creation but log it
-                return { allowed: true };
+                console.error('❌ Error checking account creation limit:', error);
+                // If check fails, still enforce security by denying
+                return { 
+                    allowed: false, 
+                    message: 'Unable to verify account creation limit. Please try again later.' 
+                };
             }
         }
 
         // Log account creation attempt
         async function logAccountCreation(fingerprint, email, uid) {
             try {
-                await addDoc(collection(db, 'accountCreationLog'), {
+                const logData = {
                     fingerprint: fingerprint,
                     email: email,
                     uid: uid,
                     createdAt: serverTimestamp(),
                     userAgent: navigator.userAgent,
-                    flaggedAsSuspicious: false
-                });
+                    flaggedAsSuspicious: false,
+                    timestamp: Date.now() // Add raw timestamp as backup
+                };
+                
+                const docRef = await addDoc(collection(db, 'accountCreationLog'), logData);
+                console.log('✅ Account creation logged with ID:', docRef.id);
+                console.log('📝 Log data:', logData);
+                return true;
             } catch (error) {
-                console.error('Error logging account creation:', error);
+                console.error('❌ Error logging account creation:', error);
+                return false;
             }
         }
 
@@ -1296,15 +1319,16 @@
             }
 
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Checking...';
+            submitBtn.textContent = 'Checking device...';
+
+            // Generate browser fingerprint FIRST
+            const fingerprint = generateBrowserFingerprint();
+            console.log('🔍 Browser fingerprint generated:', fingerprint);
 
             try {
-                // Generate browser fingerprint
-                const fingerprint = generateBrowserFingerprint();
-                console.log('🔍 Browser fingerprint:', fingerprint);
-
-                // Check if this device can create an account
+                // Check rate limit BEFORE creating account
                 const rateCheck = await canCreateAccount(fingerprint);
+                console.log('⚖️ Rate check result:', rateCheck);
                 
                 if (!rateCheck.allowed) {
                     showError('signupError', rateCheck.message);
@@ -1323,8 +1347,10 @@
 
                 submitBtn.textContent = 'Creating account...';
 
+                // Create the Firebase Auth account
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
+                console.log('✅ Firebase Auth account created:', user.uid);
 
                 await updateProfile(user, {
                     displayName: username
@@ -1332,9 +1358,13 @@
 
                 // Send email verification
                 await sendEmailVerification(user);
+                console.log('📧 Verification email sent');
 
-                // Log account creation
-                await logAccountCreation(fingerprint, email, user.uid);
+                // Log account creation IMMEDIATELY
+                const logged = await logAccountCreation(fingerprint, email, user.uid);
+                if (!logged) {
+                    console.warn('⚠️ Failed to log account creation - rate limiting may not work');
+                }
 
                 // Store pending user data in a temporary collection
                 await setDoc(doc(db, 'pendingUsers', user.uid), {
@@ -1345,6 +1375,7 @@
                     createdAt: serverTimestamp(),
                     verified: false
                 });
+                console.log('✅ Pending user document created');
                 
                 showSuccess('signupError', 'Verification email sent! Please check your inbox and verify your email to complete registration.');
                 
