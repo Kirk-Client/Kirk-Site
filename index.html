@@ -23,7 +23,6 @@
             position: relative;
         }
 
-        /* Background animation */
         .bg-animation {
             position: fixed;
             top: 0;
@@ -46,7 +45,6 @@
             }
         }
 
-        /* Utah shape */
         .utah-container {
             position: fixed;
             top: 50%;
@@ -80,7 +78,6 @@
             100% { stroke-dashoffset: -1000; }
         }
 
-        /* Navigation bar */
         nav {
             position: fixed;
             top: 0;
@@ -143,16 +140,6 @@
             box-shadow: 0 8px 24px rgba(220, 20, 60, 0.4);
         }
 
-        .btn-shop {
-            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
-            color: #fff;
-        }
-
-        .btn-shop:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.4);
-        }
-
         .btn-cart {
             background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
             color: #fff;
@@ -193,7 +180,6 @@
             transform: translateY(-2px);
         }
 
-        /* Main content */
         .main-content {
             position: relative;
             z-index: 1;
@@ -281,7 +267,6 @@
             box-shadow: 0 8px 32px rgba(220, 20, 60, 0.6);
         }
 
-        /* Modal overlay */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -324,10 +309,6 @@
                 opacity: 1;
                 transform: translateY(0) scale(1);
             }
-        }
-
-        .auth-modal {
-            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
         }
 
         .modal-close {
@@ -374,7 +355,6 @@
             font-weight: 400;
         }
 
-        /* Auth forms */
         .auth-form {
             display: flex;
             flex-direction: column;
@@ -477,10 +457,6 @@
             transform: none;
         }
 
-        .form-submit:disabled:hover {
-            box-shadow: 0 4px 15px rgba(220, 20, 60, 0.4);
-        }
-
         .auth-divider {
             text-align: center;
             margin: 1.5rem 0 1rem;
@@ -568,7 +544,6 @@
             color: #51cf66;
         }
 
-        /* Product grid */
         .product-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -604,7 +579,6 @@
             font-weight: 600;
         }
 
-        /* Cart */
         .cart-items {
             margin-top: 1rem;
         }
@@ -682,7 +656,6 @@
             box-shadow: 0 8px 24px rgba(220, 20, 60, 0.6);
         }
 
-        /* Footer */
         .footer {
             position: relative;
             z-index: 1;
@@ -694,7 +667,6 @@
             margin-top: auto;
         }
 
-        /* Mobile responsiveness */
         @media (max-width: 768px) {
             nav {
                 padding: 1rem;
@@ -767,17 +739,14 @@
     </style>
 </head>
 <body>
-    <!-- Background animation -->
     <div class="bg-animation"></div>
 
-    <!-- Utah shape -->
     <div class="utah-container">
         <svg class="utah-svg" viewBox="0 0 200 240">
             <path class="utah-path" d="M150 180 L120 180 L120 220 L40 220 L40 50 L150 50 Z"/>
         </svg>
     </div>
 
-    <!-- Navigation -->
     <nav>
         <div class="nav-brand">KIRK CLIENT</div>
         <div class="nav-buttons">
@@ -792,7 +761,6 @@
         </div>
     </nav>
 
-    <!-- Main content -->
     <div class="main-content">
         <div class="logo-section">
             <img src="https://iili.io/flUxhKB.jpg" alt="Kirk Client" class="logo">
@@ -805,14 +773,12 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <div class="footer">
         <p>KirkCEO ©2026</p>
     </div>
 
-    <!-- Login Modal -->
     <div class="modal-overlay" id="loginModal">
-        <div class="modal auth-modal">
+        <div class="modal">
             <button class="modal-close" onclick="closeLoginModal()">&times;</button>
             <div class="auth-header">
                 <h2>Welcome Back</h2>
@@ -822,57 +788,6 @@
             <form class="auth-form" onsubmit="handleLoginSubmit(event)">
                 <div class="form-group">
                     <label for="loginEmail">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383l-4.708 2.825L15 11.105V5.383zm-.034 6.876l-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741zM1 11.105l4.708-2.897L1 5.383v5.722z"/>
-                        </svg>
-                        Email Address
-                    </label>
-                    <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email">
-                </div>
-                <div class="form-group">
-                    <label for="loginPassword">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                            <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
-                        </svg>
-                        Password
-                    </label>
-                    <input type="password" id="loginPassword" placeholder="Enter your password" required autocomplete="current-password">
-                </div>
-                <button type="submit" class="form-submit" id="loginSubmitBtn">
-                    <span>Sign In</span>
-                </button>
-            </form>
-            <div class="auth-divider">
-                <span>New to Kirk Client?</span>
-            </div>
-            <div class="auth-switch">
-                <a onclick="switchToSignup()">Create an account →</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Signup Modal -->
-    <div class="modal-overlay" id="signupModal">
-        <div class="modal auth-modal">
-            <button class="modal-close" onclick="closeSignupModal()">&times;</button>
-            <div class="auth-header">
-                <h2>Create Account</h2>
-                <p class="auth-subtitle">Join Kirk Client today</p>
-            </div>
-            <div id="signupError" style="display: none;"></div>
-            <form class="auth-form" onsubmit="handleSignupSubmit(event)">
-                <div class="form-group">
-                    <label for="signupUsername">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
-                        </svg>
-                        Username
-                    </label>
-                    <input type="text" id="signupUsername" placeholder="Choose a username" required autocomplete="username" minlength="3" maxlength="20">
-                    <small class="input-hint">3-20 characters, letters and numbers only</small>
-                </div>
-                <div class="form-group">
-                    <label for="signupEmail">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                             <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383l-4.708 2.825L15 11.105V5.383zm-.034 6.876l-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741zM1 11.105l4.708-2.897L1 5.383v5.722z"/>
                         </svg>
@@ -903,7 +818,6 @@
         </div>
     </div>
 
-    <!-- Shop Modal -->
     <div class="modal-overlay" id="shopModal">
         <div class="modal">
             <button class="modal-close" onclick="closeShop()">&times;</button>
@@ -929,7 +843,6 @@
         </div>
     </div>
 
-    <!-- Cart Modal -->
     <div class="modal-overlay" id="cartModal">
         <div class="modal">
             <button class="modal-close" onclick="closeCart()">&times;</button>
@@ -944,7 +857,6 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-analytics.js";
@@ -969,34 +881,50 @@
         let currentUser = null;
         let cart = [];
 
-        const SUBSCRIPTION_MAP = {
-            'Media Version': 'media',
-            'KirkLite': 'lite',
-            'Kirk Client': 'lifetime',
-            'Merch': 'free'
-        };
-
-        // Generate browser fingerprint
-        function generateBrowserFingerprint() {
+        // Enhanced browser fingerprint with more data points
+        async function generateBrowserFingerprint() {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             ctx.textBaseline = 'top';
             ctx.font = '14px Arial';
+            ctx.fillStyle = '#f60';
+            ctx.fillRect(0, 0, 100, 100);
+            ctx.fillStyle = '#069';
             ctx.fillText('Browser fingerprint', 2, 2);
             const canvasData = canvas.toDataURL();
+            
+            // Get WebGL fingerprint
+            let webglFingerprint = 'unavailable';
+            try {
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (gl) {
+                    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    if (debugInfo) {
+                        webglFingerprint = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                    }
+                }
+            } catch (e) {
+                console.log('WebGL fingerprint unavailable');
+            }
             
             const fingerprint = {
                 userAgent: navigator.userAgent,
                 language: navigator.language,
+                languages: navigator.languages?.join(',') || 'unknown',
                 platform: navigator.platform,
-                screenResolution: `${screen.width}x${screen.height}`,
+                screenResolution: `${screen.width}x${screen.height}x${screen.colorDepth}`,
+                availableScreenSize: `${screen.availWidth}x${screen.availHeight}`,
                 timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                canvasFingerprint: canvasData.substring(0, 100),
-                hardwareConcurrency: navigator.hardwareConcurrency,
-                deviceMemory: navigator.deviceMemory || 'unknown'
+                timezoneOffset: new Date().getTimezoneOffset(),
+                canvasFingerprint: canvasData.substring(0, 150),
+                webglFingerprint: webglFingerprint,
+                hardwareConcurrency: navigator.hardwareConcurrency || 'unknown',
+                deviceMemory: navigator.deviceMemory || 'unknown',
+                cookieEnabled: navigator.cookieEnabled,
+                doNotTrack: navigator.doNotTrack || 'unknown',
+                plugins: Array.from(navigator.plugins || []).map(p => p.name).join(',').substring(0, 100)
             };
             
-            // Create a hash from fingerprint data
             const fingerprintString = JSON.stringify(fingerprint);
             let hash = 0;
             for (let i = 0; i < fingerprintString.length; i++) {
@@ -1004,13 +932,15 @@
                 hash = ((hash << 5) - hash) + char;
                 hash = hash & hash;
             }
-            return Math.abs(hash).toString(36);
+            
+            const fingerprintId = `fp_${Math.abs(hash).toString(36)}_${Date.now().toString(36)}`;
+            console.log('🔐 Generated fingerprint:', fingerprintId);
+            return fingerprintId;
         }
 
-        // Check if user can create account (rate limiting)
+        // Check if user can create account - LIMIT TO 1 ACCOUNT PER 24 HOURS
         async function canCreateAccount(fingerprint) {
             try {
-                // Get all logs with this fingerprint
                 const accountCreationLogRef = collection(db, 'accountCreationLog');
                 const q = query(
                     accountCreationLogRef,
@@ -1018,61 +948,74 @@
                 );
                 
                 const querySnapshot = await getDocs(q);
-                
-                // Filter by timestamp manually (last 24 hours)
                 const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
                 const recentAccounts = [];
                 
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    // Check if createdAt exists and is recent
-                    if (data.createdAt) {
-                        const createdTime = data.createdAt.toMillis ? data.createdAt.toMillis() : data.createdAt;
-                        if (createdTime > oneDayAgo) {
-                            recentAccounts.push(data);
-                        }
+                querySnapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    let createdTime;
+                    
+                    if (data.createdAt?.toMillis) {
+                        createdTime = data.createdAt.toMillis();
+                    } else if (data.timestamp) {
+                        createdTime = data.timestamp;
+                    } else {
+                        createdTime = 0;
+                    }
+                    
+                    if (createdTime > oneDayAgo) {
+                        recentAccounts.push({
+                            ...data,
+                            createdTime: createdTime
+                        });
                     }
                 });
                 
                 const accountCount = recentAccounts.length;
                 
-                console.log(`🔍 Accounts created from this device in last 24h: ${accountCount}`);
-                console.log(`📊 Recent accounts:`, recentAccounts);
+                console.log(`🔍 Accounts from this device in last 24h: ${accountCount}`);
+                console.log(`📊 Details:`, recentAccounts);
                 
-                // Allow maximum 2 accounts per device per 24 hours
-                if (accountCount >= 2) {
+                // STRICT LIMIT: Only 1 account per device per 24 hours
+                if (accountCount >= 1) {
+                    const lastAccount = recentAccounts[0];
+                    const hoursRemaining = Math.ceil((24 - (Date.now() - lastAccount.createdTime) / (1000 * 60 * 60)));
+                    
                     return {
                         allowed: false,
-                        message: 'Too many accounts created from this device. Please wait 24 hours or contact support if you believe this is an error.'
+                        message: `Account creation limit reached. You can create another account in approximately ${hoursRemaining} hour(s). If you believe this is an error, please contact support.`
                     };
                 }
                 
                 return { allowed: true };
             } catch (error) {
-                console.error('❌ Error checking account creation limit:', error);
-                // If check fails, still enforce security by denying
+                console.error('❌ Error checking account limit:', error);
                 return { 
                     allowed: false, 
-                    message: 'Unable to verify account creation limit. Please try again later.' 
+                    message: 'Unable to verify account creation limit. Please try again later or contact support.' 
                 };
             }
         }
 
-        // Log account creation attempt
+        // Log account creation
         async function logAccountCreation(fingerprint, email, uid) {
             try {
+                const now = Date.now();
                 const logData = {
                     fingerprint: fingerprint,
                     email: email,
                     uid: uid,
                     createdAt: serverTimestamp(),
+                    timestamp: now,
                     userAgent: navigator.userAgent,
-                    flaggedAsSuspicious: false,
-                    timestamp: Date.now() // Add raw timestamp as backup
+                    platform: navigator.platform,
+                    screenResolution: `${screen.width}x${screen.height}`,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    flaggedAsSuspicious: false
                 };
                 
                 const docRef = await addDoc(collection(db, 'accountCreationLog'), logData);
-                console.log('✅ Account creation logged with ID:', docRef.id);
+                console.log('✅ Account creation logged:', docRef.id);
                 console.log('📝 Log data:', logData);
                 return true;
             } catch (error) {
@@ -1089,8 +1032,10 @@
                     email: email,
                     reason: reason,
                     timestamp: serverTimestamp(),
+                    timestampRaw: Date.now(),
                     userAgent: navigator.userAgent,
-                    ipAddress: 'Logged by server'
+                    platform: navigator.platform,
+                    autoFlagged: true
                 });
                 console.warn('🚨 Suspicious activity flagged:', reason);
             } catch (error) {
@@ -1148,7 +1093,6 @@
                 updateUIForLogin();
                 
                 console.log('🔐 Logged in:', user.email);
-                console.log('📧 Email verified:', user.emailVerified);
             } else {
                 currentUser = null;
                 cart = [];
@@ -1156,7 +1100,6 @@
             }
         });
 
-        // Show error message
         function showError(elementId, message) {
             const errorEl = document.getElementById(elementId);
             errorEl.textContent = message;
@@ -1164,7 +1107,6 @@
             errorEl.style.display = 'block';
         }
 
-        // Show success message
         function showSuccess(elementId, message) {
             const successEl = document.getElementById(elementId);
             successEl.textContent = message;
@@ -1207,7 +1149,7 @@
             openLoginModal();
         };
 
-        // Login handler with email verification check
+        // Login handler
         window.handleLoginSubmit = async (event) => {
             event.preventDefault();
             
@@ -1222,12 +1164,9 @@
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
                 
-                // Check if email is verified
                 if (!user.emailVerified) {
-                    // Delete the unverified auth account
                     await user.delete();
                     
-                    // Also delete from pendingUsers if exists
                     try {
                         await deleteDoc(doc(db, 'pendingUsers', user.uid));
                     } catch (e) {
@@ -1240,19 +1179,16 @@
                     return;
                 }
                 
-                // Email is verified - check if user document exists
                 const userDocRef = doc(db, 'users', user.uid);
                 const userDoc = await getDoc(userDocRef);
                 
                 if (!userDoc.exists()) {
-                    // Move from pendingUsers to users
                     const pendingDocRef = doc(db, 'pendingUsers', user.uid);
                     const pendingDoc = await getDoc(pendingDocRef);
                     
                     if (pendingDoc.exists()) {
                         const pendingData = pendingDoc.data();
                         
-                        // Create full user document with fingerprint
                         await setDoc(userDocRef, {
                             uid: user.uid,
                             username: pendingData.username,
@@ -1266,14 +1202,11 @@
                             purchases: []
                         });
                         
-                        // Delete from pendingUsers
                         await deleteDoc(pendingDocRef);
                     } else {
-                        // Fallback: create new user document
                         await createUserDocument(user, user.displayName || 'User', user.email, true);
                     }
                 } else {
-                    // Update last login
                     await setDoc(userDocRef, {
                         lastLogin: serverTimestamp()
                     }, { merge: true });
@@ -1304,7 +1237,7 @@
             }
         };
 
-        // Signup handler with email verification and rate limiting
+        // Signup handler with strict 1 account per 24h limit
         window.handleSignupSubmit = async (event) => {
             event.preventDefault();
             
@@ -1321,70 +1254,70 @@
             submitBtn.disabled = true;
             submitBtn.textContent = 'Checking device...';
 
-            // Generate browser fingerprint FIRST
-            const fingerprint = generateBrowserFingerprint();
-            console.log('🔍 Browser fingerprint generated:', fingerprint);
+            const fingerprint = await generateBrowserFingerprint();
+            console.log('🔐 Fingerprint:', fingerprint);
 
             try {
-                // Check rate limit BEFORE creating account
+                // CRITICAL: Check rate limit BEFORE creating account
                 const rateCheck = await canCreateAccount(fingerprint);
-                console.log('⚖️ Rate check result:', rateCheck);
+                console.log('⚖️ Rate check:', rateCheck);
                 
                 if (!rateCheck.allowed) {
                     showError('signupError', rateCheck.message);
                     
-                    // Flag as suspicious
                     await flagSuspiciousActivity(
                         fingerprint,
                         email,
-                        'Exceeded account creation limit (3+ attempts in 24h)'
+                        'Exceeded account creation limit - attempted to create 2+ accounts in 24h'
                     );
                     
                     submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<span>Create Account</span>';
+                    submitBtn.textContent = 'Create Account';
                     return;
                 }
 
                 submitBtn.textContent = 'Creating account...';
 
-                // Create the Firebase Auth account
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
-                console.log('✅ Firebase Auth account created:', user.uid);
+                console.log('✅ Auth account created:', user.uid);
 
                 await updateProfile(user, {
                     displayName: username
                 });
 
-                // Send email verification
                 await sendEmailVerification(user);
                 console.log('📧 Verification email sent');
 
-                // Log account creation IMMEDIATELY
+                // CRITICAL: Log account creation IMMEDIATELY after creation
                 const logged = await logAccountCreation(fingerprint, email, user.uid);
                 if (!logged) {
-                    console.warn('⚠️ Failed to log account creation - rate limiting may not work');
+                    console.error('⚠️ CRITICAL: Failed to log account creation!');
+                    await flagSuspiciousActivity(
+                        fingerprint,
+                        email,
+                        'Account created but logging failed - potential bypass attempt'
+                    );
                 }
 
-                // Store pending user data in a temporary collection
                 await setDoc(doc(db, 'pendingUsers', user.uid), {
                     uid: user.uid,
                     username: username,
                     email: email,
                     fingerprint: fingerprint,
                     createdAt: serverTimestamp(),
+                    timestamp: Date.now(),
                     verified: false
                 });
-                console.log('✅ Pending user document created');
+                console.log('✅ Pending user created');
                 
-                showSuccess('signupError', 'Verification email sent! Please check your inbox and verify your email to complete registration.');
+                showSuccess('signupError', 'Verification email sent! Please check your inbox and verify your email to complete registration. You may close this window.');
                 
-                // Sign out the user immediately
                 await signOut(auth);
                 
                 setTimeout(() => {
                     closeSignupModal();
-                }, 4000);
+                }, 5000);
 
             } catch (error) {
                 console.error('❌ Signup error:', error);
@@ -1392,6 +1325,12 @@
                 
                 if (error.code === 'auth/email-already-in-use') {
                     errorMessage = 'An account with this email already exists.';
+                    
+                    await flagSuspiciousActivity(
+                        fingerprint,
+                        email,
+                        'Attempted to create account with existing email'
+                    );
                 } else if (error.code === 'auth/invalid-email') {
                     errorMessage = 'Invalid email address.';
                 } else if (error.code === 'auth/weak-password') {
@@ -1401,15 +1340,14 @@
                 showError('signupError', errorMessage);
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = '<span>Create Account</span>';
+                submitBtn.textContent = 'Create Account';
             }
         };
 
-        // Logout handler
         window.handleLogout = async () => {
             try {
                 await signOut(auth);
-                console.log('✅ Logged out successfully');
+                console.log('✅ Logged out');
             } catch (error) {
                 console.error('❌ Logout error:', error);
                 alert('Failed to logout. Please try again.');
@@ -1553,7 +1491,6 @@
             window.location.href = 'checkout.html';
         };
 
-        // Close modals when clicking outside
         document.getElementById('shopModal').addEventListener('click', function(e) {
             if (e.target === this) closeShop();
         });
@@ -1571,4 +1508,54 @@
         });
     </script>
 </body>
-</html>
+</html>a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383l-4.708 2.825L15 11.105V5.383zm-.034 6.876l-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741zM1 11.105l4.708-2.897L1 5.383v5.722z"/>
+                        </svg>
+                        Email Address
+                    </label>
+                    <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                        </svg>
+                        Password
+                    </label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="form-submit" id="loginSubmitBtn">
+                    <span>Sign In</span>
+                </button>
+            </form>
+            <div class="auth-divider">
+                <span>New to Kirk Client?</span>
+            </div>
+            <div class="auth-switch">
+                <a onclick="switchToSignup()">Create an account →</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="signupModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeSignupModal()">&times;</button>
+            <div class="auth-header">
+                <h2>Create Account</h2>
+                <p class="auth-subtitle">Join Kirk Client today</p>
+            </div>
+            <div id="signupError" style="display: none;"></div>
+            <form class="auth-form" onsubmit="handleSignupSubmit(event)">
+                <div class="form-group">
+                    <label for="signupUsername">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                        </svg>
+                        Username
+                    </label>
+                    <input type="text" id="signupUsername" placeholder="Choose a username" required autocomplete="username" minlength="3" maxlength="20">
+                    <small class="input-hint">3-20 characters, letters and numbers only</small>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2
