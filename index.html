@@ -976,9 +976,102 @@
             'Merch': 'free'
         };
 
-        // Generate unique HWID (set to N/A for new accounts)
-        function generateHWID() {
-            return 'N/A';
+        // Generate browser fingerprint
+        function generateBrowserFingerprint() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.textBaseline = 'top';
+            ctx.font = '14px Arial';
+            ctx.fillText('Browser fingerprint', 2, 2);
+            const canvasData = canvas.toDataURL();
+            
+            const fingerprint = {
+                userAgent: navigator.userAgent,
+                language: navigator.language,
+                platform: navigator.platform,
+                screenResolution: `${screen.width}x${screen.height}`,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                canvasFingerprint: canvasData.substring(0, 100),
+                hardwareConcurrency: navigator.hardwareConcurrency,
+                deviceMemory: navigator.deviceMemory || 'unknown'
+            };
+            
+            // Create a hash from fingerprint data
+            const fingerprintString = JSON.stringify(fingerprint);
+            let hash = 0;
+            for (let i = 0; i < fingerprintString.length; i++) {
+                const char = fingerprintString.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return Math.abs(hash).toString(36);
+        }
+
+        // Check if user can create account (rate limiting)
+        async function canCreateAccount(fingerprint) {
+            try {
+                // Check how many accounts were created with this fingerprint in last 24 hours
+                const oneDayAgo = new Date();
+                oneDayAgo.setHours(oneDayAgo.getHours() - 24);
+                
+                const q = query(
+                    collection(db, 'accountCreationLog'),
+                    where('fingerprint', '==', fingerprint),
+                    where('createdAt', '>', oneDayAgo)
+                );
+                
+                const querySnapshot = await getDocs(q);
+                const accountCount = querySnapshot.size;
+                
+                console.log(`Accounts created from this device in last 24h: ${accountCount}`);
+                
+                // Allow maximum 2 accounts per device per 24 hours
+                if (accountCount >= 2) {
+                    return {
+                        allowed: false,
+                        message: 'Too many accounts created from this device. Please wait 24 hours or contact support if you believe this is an error.'
+                    };
+                }
+                
+                return { allowed: true };
+            } catch (error) {
+                console.error('Error checking account creation limit:', error);
+                // If check fails, allow creation but log it
+                return { allowed: true };
+            }
+        }
+
+        // Log account creation attempt
+        async function logAccountCreation(fingerprint, email, uid) {
+            try {
+                await addDoc(collection(db, 'accountCreationLog'), {
+                    fingerprint: fingerprint,
+                    email: email,
+                    uid: uid,
+                    createdAt: serverTimestamp(),
+                    userAgent: navigator.userAgent,
+                    flaggedAsSuspicious: false
+                });
+            } catch (error) {
+                console.error('Error logging account creation:', error);
+            }
+        }
+
+        // Flag suspicious activity
+        async function flagSuspiciousActivity(fingerprint, email, reason) {
+            try {
+                await addDoc(collection(db, 'suspiciousActivity'), {
+                    fingerprint: fingerprint,
+                    email: email,
+                    reason: reason,
+                    timestamp: serverTimestamp(),
+                    userAgent: navigator.userAgent,
+                    ipAddress: 'Logged by server'
+                });
+                console.warn('🚨 Suspicious activity flagged:', reason);
+            } catch (error) {
+                console.error('Error flagging suspicious activity:', error);
+            }
         }
 
         // Create/update user document
@@ -1107,19 +1200,59 @@
                 
                 // Check if email is verified
                 if (!user.emailVerified) {
-                    await signOut(auth);
-                    showError('loginError', 'Please verify your email before logging in. Check your inbox for the verification link.');
+                    // Delete the unverified auth account
+                    await user.delete();
+                    
+                    // Also delete from pendingUsers if exists
+                    try {
+                        await deleteDoc(doc(db, 'pendingUsers', user.uid));
+                    } catch (e) {
+                        console.log('No pending user to delete');
+                    }
+                    
+                    showError('loginError', 'Email not verified. Your account has been removed. Please sign up again and verify your email.');
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Sign In';
                     return;
                 }
                 
+                // Email is verified - check if user document exists
                 const userDocRef = doc(db, 'users', user.uid);
                 const userDoc = await getDoc(userDocRef);
                 
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    await createUserDocument(user, userData.username, user.email, false);
+                if (!userDoc.exists()) {
+                    // Move from pendingUsers to users
+                    const pendingDocRef = doc(db, 'pendingUsers', user.uid);
+                    const pendingDoc = await getDoc(pendingDocRef);
+                    
+                    if (pendingDoc.exists()) {
+                        const pendingData = pendingDoc.data();
+                        
+                        // Create full user document with fingerprint
+                        await setDoc(userDocRef, {
+                            uid: user.uid,
+                            username: pendingData.username,
+                            email: user.email,
+                            fingerprint: pendingData.fingerprint,
+                            hwid: 'N/A',
+                            createdAt: pendingData.createdAt,
+                            lastLogin: serverTimestamp(),
+                            accountStatus: 'active',
+                            subscriptionType: 'free',
+                            purchases: []
+                        });
+                        
+                        // Delete from pendingUsers
+                        await deleteDoc(pendingDocRef);
+                    } else {
+                        // Fallback: create new user document
+                        await createUserDocument(user, user.displayName || 'User', user.email, true);
+                    }
+                } else {
+                    // Update last login
+                    await setDoc(userDocRef, {
+                        lastLogin: serverTimestamp()
+                    }, { merge: true });
                 }
                 
                 closeLoginModal();
@@ -1129,7 +1262,7 @@
                 let errorMessage = 'Login failed. Please try again.';
                 
                 if (error.code === 'auth/user-not-found') {
-                    errorMessage = 'No account found with this email.';
+                    errorMessage = 'No account found with this email. Please sign up first.';
                 } else if (error.code === 'auth/wrong-password') {
                     errorMessage = 'Incorrect password.';
                 } else if (error.code === 'auth/invalid-email') {
@@ -1147,7 +1280,7 @@
             }
         };
 
-        // Signup handler with email verification
+        // Signup handler with email verification and rate limiting
         window.handleSignupSubmit = async (event) => {
             event.preventDefault();
             
@@ -1162,9 +1295,33 @@
             }
 
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Creating account...';
+            submitBtn.textContent = 'Checking...';
 
             try {
+                // Generate browser fingerprint
+                const fingerprint = generateBrowserFingerprint();
+                console.log('🔍 Browser fingerprint:', fingerprint);
+
+                // Check if this device can create an account
+                const rateCheck = await canCreateAccount(fingerprint);
+                
+                if (!rateCheck.allowed) {
+                    showError('signupError', rateCheck.message);
+                    
+                    // Flag as suspicious
+                    await flagSuspiciousActivity(
+                        fingerprint,
+                        email,
+                        'Exceeded account creation limit (3+ attempts in 24h)'
+                    );
+                    
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<span>Create Account</span>';
+                    return;
+                }
+
+                submitBtn.textContent = 'Creating account...';
+
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
 
@@ -1175,20 +1332,27 @@
                 // Send email verification
                 await sendEmailVerification(user);
 
-                const result = await createUserDocument(user, username, email, true);
+                // Log account creation
+                await logAccountCreation(fingerprint, email, user.uid);
+
+                // Store pending user data in a temporary collection
+                await setDoc(doc(db, 'pendingUsers', user.uid), {
+                    uid: user.uid,
+                    username: username,
+                    email: email,
+                    fingerprint: fingerprint,
+                    createdAt: serverTimestamp(),
+                    verified: false
+                });
                 
-                if (result.success) {
-                    showSuccess('signupError', 'Account created! Please check your email to verify your account before logging in.');
-                    
-                    // Sign out the user immediately so they must verify before accessing
-                    await signOut(auth);
-                    
-                    setTimeout(() => {
-                        closeSignupModal();
-                    }, 4000);
-                } else {
-                    showError('signupError', 'Account created but failed to save user data: ' + result.error);
-                }
+                showSuccess('signupError', 'Verification email sent! Please check your inbox and verify your email to complete registration.');
+                
+                // Sign out the user immediately
+                await signOut(auth);
+                
+                setTimeout(() => {
+                    closeSignupModal();
+                }, 4000);
 
             } catch (error) {
                 console.error('❌ Signup error:', error);
