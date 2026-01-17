@@ -1014,8 +1014,9 @@
                 const oneDayAgo = new Date();
                 oneDayAgo.setHours(oneDayAgo.getHours() - 24);
                 
+                const accountCreationLogRef = collection(db, 'accountCreationLog');
                 const q = query(
-                    collection(db, 'accountCreationLog'),
+                    accountCreationLogRef,
                     where('fingerprint', '==', fingerprint),
                     where('createdAt', '>', oneDayAgo)
                 );
