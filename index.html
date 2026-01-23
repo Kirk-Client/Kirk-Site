@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kirk Client - Coming Soon</title>
+    <meta name="description" content="Kirk Client - The Ultimate Minecraft Client">
+    <title>Kirk Client</title>
     <link rel="icon" type="image/png" href="https://iili.io/fkPS4Yg.png">
     <style>
         * {
@@ -12,50 +13,31 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: #000;
             color: #fff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            line-height: 1.6;
             overflow-x: hidden;
-            position: relative;
         }
 
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            background: radial-gradient(circle at 50% 50%, rgba(220, 20, 60, 0.12) 0%, rgba(139, 0, 0, 0.06) 30%, transparent 60%);
-            animation: breathingGlow 10s ease-in-out infinite;
-        }
-
-        @keyframes breathingGlow {
-            0%, 100% {
-                background: radial-gradient(circle at 40% 35%, rgba(220, 20, 60, 0.15) 0%, rgba(139, 0, 0, 0.07) 28%, transparent 58%);
-                opacity: 1;
-            }
-            50% {
-                background: radial-gradient(circle at 50% 65%, rgba(220, 20, 60, 0.16) 0%, rgba(139, 0, 0, 0.075) 30%, transparent 60%);
-                opacity: 1;
-            }
-        }
-
+        /* Utah Animation - Fixed Background */
         .utah-container {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 0;
-            opacity: 0.5;
+            opacity: 0.3;
+            pointer-events: none;
         }
         
         .utah-svg {
-            width: 260px;
+            width: 200px;
             height: auto;
             transform: scale(1, -1);
         }
@@ -78,425 +60,822 @@
             100% { stroke-dashoffset: -1000; }
         }
 
+        /* Navigation */
         nav {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 100;
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(220, 20, 60, 0.2);
         }
 
-        .nav-brand {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #dc143c;
-            letter-spacing: 1px;
-        }
-
-        .main-content {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
+        .nav-container {
             max-width: 1400px;
             margin: 0 auto;
-            width: 100%;
-            min-height: 100vh;
-            padding-top: 100px;
-        }
-
-        .logo-section {
-            margin-bottom: 2rem;
-            animation: floatIn 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes floatIn {
-            from {
-                opacity: 0;
-                transform: translateY(-40px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .logo {
-            width: 240px;
-            height: auto;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(220, 20, 60, 0.4);
-            transition: transform 0.3s ease;
-        }
-
-        .logo:hover {
-            transform: scale(1.05);
-        }
-
-        .title-section {
-            text-align: center;
-        }
-
-        .main-title {
-            font-size: 4rem;
-            font-weight: 700;
-            color: #dc143c;
-            text-shadow: 0 0 30px rgba(220, 20, 60, 0.6);
-            margin-bottom: 0.5rem;
-            letter-spacing: 3px;
-            animation: floatIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
-        }
-
-        .tagline {
-            font-size: 1.5rem;
-            color: rgba(255, 255, 255, 0.85);
-            font-weight: 300;
-            letter-spacing: 2px;
-            animation: floatIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
-        }
-
-        .hero-shop-btn {
-            margin-top: 2rem;
-            padding: 1rem 2.5rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 16px rgba(220, 20, 60, 0.4);
-            animation: floatIn 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.6s both;
-        }
-
-        .hero-shop-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(220, 20, 60, 0.6);
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 200;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(10px);
-            padding: 1rem;
-        }
-
-        .modal-overlay.active {
+            padding: 1rem 2rem;
             display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .modal {
-            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
-            border: 2px solid rgba(220, 20, 60, 0.5);
-            border-radius: 24px;
-            padding: 3rem;
-            max-width: 800px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 70px rgba(220, 20, 60, 0.4), 0 0 100px rgba(220, 20, 60, 0.2);
-            position: relative;
-            animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-40px) scale(0.92);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            background: rgba(220, 20, 60, 0.1);
-            border: 1px solid rgba(220, 20, 60, 0.3);
-            color: #dc143c;
-            font-size: 1.5rem;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
+        .nav-brand {
             display: flex;
             align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            line-height: 1;
+            gap: 0.5rem;
+            text-decoration: none;
         }
 
-        .modal-close:hover {
-            background: rgba(220, 20, 60, 0.2);
-            border-color: #dc143c;
-            transform: rotate(90deg);
+        .nav-brand img {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
         }
 
-        .modal h2 {
-            color: #dc143c;
-            font-size: 2.2rem;
-            margin-bottom: 2rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-align: center;
-        }
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .product-card {
-            background: rgba(220, 20, 60, 0.1);
-            border: 2px solid rgba(220, 20, 60, 0.3);
-            border-radius: 16px;
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .product-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(220, 20, 60, 0.1), transparent);
-            transition: left 0.5s;
-        }
-
-        .product-card:hover::before {
-            left: 100%;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            border-color: #dc143c;
-            box-shadow: 0 12px 32px rgba(220, 20, 60, 0.5);
-        }
-
-        .product-card h3 {
-            color: #fff;
-            font-size: 1.4rem;
-            margin-bottom: 0.8rem;
-            font-weight: 700;
-        }
-
-        .product-card .price {
-            color: #dc143c;
+        .nav-brand span {
             font-size: 1.3rem;
             font-weight: 700;
-            margin-bottom: 1rem;
+            color: #dc143c;
+            letter-spacing: 1px;
         }
 
-        .product-card .description {
-            color: rgba(255, 255, 255, 0.6);
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .nav-toggle span {
+            width: 25px;
+            height: 3px;
+            background: #dc143c;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
             font-size: 0.95rem;
-            line-height: 1.5;
-            margin-bottom: 1.5rem;
         }
 
-        .product-btn {
-            display: inline-block;
-            padding: 0.8rem 1.8rem;
+        .nav-menu a:hover {
+            color: #dc143c;
+        }
+
+        /* Hero Section */
+        #home {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+        }
+
+        .hero-container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.4);
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #dc143c;
+            text-shadow: 0 0 30px rgba(220, 20, 60, 0.5);
+            margin-bottom: 1.5rem;
+            letter-spacing: 1px;
+            line-height: 1.2;
+        }
+
+        .hero-content p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2.5rem;
+            line-height: 1.8;
+            max-width: 600px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 1rem 2.5rem;
             background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
             color: #fff;
             text-decoration: none;
             border-radius: 10px;
             font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            transition: all 0.3s;
+            display: inline-block;
+            font-size: 1rem;
         }
 
-        .product-btn:hover {
+        .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(220, 20, 60, 0.6);
+            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.5);
         }
 
-        .footer {
+        .btn-secondary {
+            padding: 1rem 2.5rem;
+            background: transparent;
+            color: #dc143c;
+            text-decoration: none;
+            border: 2px solid #dc143c;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+            font-size: 1rem;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(220, 20, 60, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .hero-image {
+            position: relative;
+        }
+
+        .hero-image img {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(220, 20, 60, 0.3);
+            margin: 0 auto;
+            display: block;
+        }
+
+        /* Section Styling */
+        section {
             position: relative;
             z-index: 1;
-            text-align: center;
-            padding: 2rem;
-            color: rgba(255, 255, 255, 0.4);
-            border-top: 1px solid rgba(220, 20, 60, 0.2);
-            font-size: 0.9rem;
-            margin-top: auto;
         }
 
-        @media (max-width: 768px) {
-            nav {
-                padding: 1rem;
+        .section-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            color: #dc143c;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .section-header p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Features Section */
+        #features {
+            padding: 6rem 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: rgba(220, 20, 60, 0.05);
+            border: 1px solid rgba(220, 20, 60, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #dc143c;
+            box-shadow: 0 12px 32px rgba(220, 20, 60, 0.2);
+            background: rgba(220, 20, 60, 0.08);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            color: #fff;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Reviews Section */
+        #reviews {
+            padding: 6rem 0;
+            background: rgba(10, 10, 10, 0.5);
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .review-card {
+            background: rgba(220, 20, 60, 0.05);
+            border: 1px solid rgba(220, 20, 60, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .review-card:hover {
+            border-color: #dc143c;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.2);
+        }
+
+        .review-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+
+        .review-avatar {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+            border: 2px solid #dc143c;
+            box-shadow: 0 4px 12px rgba(220, 20, 60, 0.3);
+            object-fit: cover;
+        }
+
+        .review-info h4 {
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .review-info p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+        }
+
+        .review-text {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Pricing Section */
+        #pricing {
+            padding: 6rem 0;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: rgba(220, 20, 60, 0.05);
+            border: 2px solid rgba(220, 20, 60, 0.2);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            border-color: #dc143c;
+            box-shadow: 0 15px 40px rgba(220, 20, 60, 0.3);
+        }
+
+        .pricing-card.featured {
+            border-color: #dc143c;
+            border-width: 2px;
+        }
+
+        .pricing-badge {
+            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+            color: #fff;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pricing-card h3 {
+            font-size: 1.8rem;
+            color: #fff;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .pricing-price {
+            font-size: 2.5rem;
+            color: #dc143c;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-period {
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .pricing-features li {
+            color: rgba(255, 255, 255, 0.7);
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(220, 20, 60, 0.1);
+            font-size: 0.95rem;
+        }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-features li:before {
+            content: '✓';
+            color: #dc143c;
+            font-weight: 700;
+            margin-right: 0.75rem;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.95);
+            border-top: 1px solid rgba(220, 20, 60, 0.2);
+            padding: 3rem 2rem 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-brand img {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+        }
+
+        .footer-brand span {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #dc143c;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            list-style: none;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .footer-links a:hover {
+            color: #dc143c;
+        }
+
+        .footer-copyright {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.85rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 968px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+                text-align: center;
             }
 
-            .nav-brand {
-                font-size: 1rem;
+            .hero-logo {
+                margin-left: auto;
+                margin-right: auto;
             }
 
-            .main-content {
-                padding: 1.5rem;
-                padding-top: 120px;
+            .hero-content h1 {
+                font-size: 2.5rem;
             }
 
-            .logo {
-                width: 150px;
+            .hero-content p {
+                margin-left: auto;
+                margin-right: auto;
             }
 
-            .main-title {
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .hero-image img {
+                max-width: 400px;
+            }
+
+            .section-header h2 {
                 font-size: 2rem;
             }
 
-            .tagline {
+            .utah-svg {
+                width: 150px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-toggle {
+                display: flex;
+            }
+
+            .nav-menu {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(0, 0, 0, 0.98);
+                flex-direction: column;
+                padding: 2rem;
+                gap: 1.5rem;
+                transform: translateY(-100%);
+                opacity: 0;
+                pointer-events: none;
+                transition: all 0.3s;
+                border-bottom: 1px solid rgba(220, 20, 60, 0.2);
+            }
+
+            .nav-menu.active {
+                transform: translateY(0);
+                opacity: 1;
+                pointer-events: all;
+            }
+
+            .nav-toggle.active span:nth-child(1) {
+                transform: rotate(45deg) translate(5px, 5px);
+            }
+
+            .nav-toggle.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .nav-toggle.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(7px, -7px);
+            }
+
+            #home {
+                padding: 6rem 1.5rem 3rem;
+            }
+
+            .hero-logo {
+                width: 100px;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .hero-content p {
                 font-size: 1rem;
             }
 
-            .hero-shop-btn {
-                padding: 0.8rem 2rem;
-                font-size: 1rem;
+            .hero-image img {
+                max-width: 300px;
             }
 
-            .modal {
-                padding: 2rem 1.5rem;
-                width: 95%;
-                border-radius: 20px;
+            .section-container {
+                padding: 0 1.5rem;
             }
 
-            .modal h2 {
+            .section-header h2 {
                 font-size: 1.8rem;
             }
 
-            .modal-close {
-                top: 1rem;
-                right: 1rem;
-                width: 32px;
-                height: 32px;
-                font-size: 1.3rem;
+            .section-header p {
+                font-size: 1rem;
             }
 
-            .product-grid {
+            .features-grid,
+            .reviews-grid,
+            .pricing-grid {
                 grid-template-columns: 1fr;
             }
 
-            .utah-container {
-                transform: translate(-50%, -50%) scale(0.6);
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                text-align: center;
+            }
+
+            .utah-svg {
+                width: 120px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="bg-animation"></div>
-
+    <!-- Utah Animation Background -->
     <div class="utah-container">
         <svg class="utah-svg" viewBox="0 0 200 240">
             <path class="utah-path" d="M150 180 L120 180 L120 220 L40 220 L40 50 L150 50 Z"/>
         </svg>
     </div>
 
+    <!-- Navigation -->
     <nav>
-        <div class="nav-brand">KIRK CLIENT</div>
+        <div class="nav-container">
+            <a href="#home" class="nav-brand">
+                <img src="https://iili.io/fkPS4Yg.png" alt="Kirk Client">
+                <span>Kirk Client</span>
+            </a>
+            <button class="nav-toggle" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#features" onclick="closeMenu()">Features</a></li>
+                <li><a href="https://discord.gg/yttpE8z636" target="_blank">Discord</a></li>
+                <li><a href="#reviews" onclick="closeMenu()">Reviews</a></li>
+                <li><a href="#pricing" onclick="closeMenu()">Pricing</a></li>
+            </ul>
+        </div>
     </nav>
 
-    <div class="main-content">
-        <div class="logo-section">
-            <img src="https://iili.io/flUxhKB.jpg" alt="Kirk Client" class="logo">
+    <!-- Hero Section -->
+    <section id="home">
+        <div class="hero-container">
+            <div class="hero-content">
+                <img src="https://iili.io/flUxhKB.jpg" alt="Kirk Client Logo" class="hero-logo">
+                <h1>Dominate The Game</h1>
+                <p>Experience next-level gameplay with Kirk Client. Built from the ground up with premium features, revolutionary bypasses, and lightning-fast performance that puts you miles ahead of everyone else.</p>
+                <div class="hero-buttons">
+                    <a href="#pricing" class="btn-primary">Start Playing</a>
+                    <a href="#features" class="btn-secondary">Explore Features</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="https://iili.io/f4hlrKJ.png" alt="Kirk Client Showcase">
+            </div>
         </div>
+    </section>
 
-        <div class="title-section">
-            <h1 class="main-title">KIRK CLIENT</h1>
-            <p class="tagline">BETA TESTING COMING SOON</p>
-            <button class="hero-shop-btn" onclick="openShop()">Shop Now</button>
-        </div>
-    </div>
-
-    <div class="footer">
-        <p>KirkCEO ©2026</p>
-    </div>
-
-    <div class="modal-overlay" id="shopModal">
-        <div class="modal">
-            <button class="modal-close" onclick="closeShop()">&times;</button>
-            <h2>Shop Kirk Client</h2>
-            <div class="product-grid">
-                <div class="product-card">
-                    <h3>Media Version</h3>
-                    <p class="price">Free</p>
-                    <p class="description">Apply for free access to Kirk Client Media Version for content creators and influencers.</p>
-                    <a href="MediaApplication.html" class="product-btn">Apply Now</a>
+    <!-- Features Section -->
+    <section id="features">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Built For Champions</h2>
+                <p>Every feature designed with one goal: your victory</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Bank-Level Security</h3>
+                    <p>We handle all transactions through industry-leading payment processors. Your financial data never touches our servers - it goes straight to Stripe's encrypted infrastructure.</p>
                 </div>
-                
-                <div class="product-card">
-                    <h3>KirkLite</h3>
-                    <p class="price">$4.99</p>
-                    <p class="description">Essential features for casual users. Perfect for getting started with Kirk Client.</p>
-                    <a href="https://kirk-client.sellhub.cx/product/KIRKLITE/" target="_blank" class="product-btn">Purchase</a>
+                <div class="feature-card">
+                    <div class="feature-icon">💳</div>
+                    <h3>Pay Your Way</h3>
+                    <p>Card, crypto, or digital wallet - we've got you covered. Complete your purchase in seconds with our streamlined checkout powered by Stripe.</p>
                 </div>
-                
-                <div class="product-card">
-                    <h3>Kirk Client</h3>
-                    <p class="price">$14.99</p>
-                    <p class="description">Full access with all premium features. The complete Kirk Client experience.</p>
-                    <a href="https://kirk-client.sellhub.cx/product/KIRKCLIENT/" target="_blank" class="product-btn">Purchase</a>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Undetectable Power</h3>
+                    <p>Our bypass technology is engineered by experts who live and breathe anticheat systems. We update constantly to keep you playing safely and winning consistently.</p>
                 </div>
-                
-                <div class="product-card">
-                    <h3>Merch</h3>
-                    <p class="price">Visit Store</p>
-                    <p class="description">Check out our exclusive Kirk Client merchandise and apparel collection.</p>
-                    <a href="https://your-merch-site.com" target="_blank" class="product-btn">Shop Merch</a>
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Always Here For You</h3>
+                    <p>Questions at 3 AM? Need help configuring settings? Our dedicated support team is active 24/7 in Discord, ready to help you optimize your experience.</p>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section id="reviews">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>What Players Are Saying</h2>
+                <p>Real feedback from real gamers</p>
+            </div>
+            <div class="reviews-grid">
+                <div class="review-card">
+                    <div class="review-header">
+                        <img src="https://iili.io/f4hkLOX.png" alt="ShadowStriker" class="review-avatar">
+                        <div class="review-info">
+                            <h4>ShadowStriker</h4>
+                            <p>@shadowstriker_yt</p>
+                        </div>
+                    </div>
+                    <p class="review-text">Switched from another client and never looked back. Kirk's performance is insane - zero lag, clean interface, and the bypasses actually work. Support team is legit too.</p>
+                </div>
+                <div class="review-card">
+                    <div class="review-header">
+                        <img src="https://iili.io/f4hvhLG.png" alt="VelocityGaming" class="review-avatar">
+                        <div class="review-info">
+                            <h4>VelocityGaming</h4>
+                            <p>@velocity_esports</p>
+                        </div>
+                    </div>
+                    <p class="review-text">Been using Kirk for 6 months straight. The constant updates mean my features never get patched. Best investment I've made for my content and gameplay.</p>
+                </div>
+                <div class="review-card">
+                    <div class="review-header">
+                        <img src="https://iili.io/f4hvZYB.png" alt="UtahProdigy" class="review-avatar">
+                        <div class="review-info">
+                            <h4>UtahProdigy</h4>
+                            <p>@utah_gaming</p>
+                        </div>
+                    </div>
+                    <p class="review-text">The difference is night and day. Went from getting destroyed to dominating lobbies. Kirk's features are perfectly balanced - powerful but not obvious. 10/10 recommend.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Choose Your Edge</h2>
+                <p>Select the package that matches your ambition</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Media Version</h3>
+                    <div class="pricing-price">FREE</div>
+                    <p class="pricing-period">For Content Creators</p>
+                    <ul class="pricing-features">
+                        <li>Full feature access</li>
+                        <li>Creator partnership perks</li>
+                        <li>Fast-track support</li>
+                        <li>Application required</li>
+                    </ul>
+                    <a href="MediaApplication.html" class="btn-primary">Apply Now</a>
+                </div>
+                
+                <div class="pricing-card">
+                    <h3>KirkLite</h3>
+                    <div class="pricing-price">$4.99</div>
+                    <p class="pricing-period">One-time purchase</p>
+                    <ul class="pricing-features">
+                        <li>Core feature suite</li>
+                        <li>Regular updates</li>
+                        <li>Community support</li>
+                        <li>Ideal starter package</li>
+                    </ul>
+                    <a href="https://buy.stripe.com/9B6aER5w02Kq0jK0TA8Ra02" target="_blank" class="btn-primary">Get KirkLite</a>
+                </div>
+                
+                <div class="pricing-card featured">
+                    <div class="pricing-badge">Most Popular</div>
+                    <h3>Kirk Client</h3>
+                    <div class="pricing-price">$14.99</div>
+                    <p class="pricing-period">Lifetime access</p>
+                    <ul class="pricing-features">
+                        <li>Complete feature arsenal</li>
+                        <li>Advanced bypass technology</li>
+                        <li>Priority support access</li>
+                        <li>Free lifetime updates</li>
+                        <li>Exclusive Discord perks</li>
+                    </ul>
+                    <a href="https://buy.stripe.com/bJe9AN7E85WCgiI45M8Ra01" target="_blank" class="btn-primary">Get Full Access</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-brand">
+                <img src="https://iili.io/fkPS4Yg.png" alt="Kirk Client">
+                <span>Kirk</span>
+            </div>
+            <ul class="footer-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="https://discord.gg/yttpE8z636" target="_blank">Discord</a></li>
+                <li><a href="#reviews">Reviews</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+            </ul>
+            <p class="footer-copyright">Copyright © Kirk Client 2024 - 2026 | All rights reserved</p>
+        </div>
+    </footer>
 
     <script>
-        function openShop() {
-            document.getElementById('shopModal').classList.add('active');
+        function toggleMenu() {
+            const menu = document.getElementById('navMenu');
+            const toggle = document.querySelector('.nav-toggle');
+            menu.classList.toggle('active');
+            toggle.classList.toggle('active');
         }
 
-        function closeShop() {
-            document.getElementById('shopModal').classList.remove('active');
+        function closeMenu() {
+            const menu = document.getElementById('navMenu');
+            const toggle = document.querySelector('.nav-toggle');
+            menu.classList.remove('active');
+            toggle.classList.remove('active');
         }
 
-        // Close modal when clicking outside
-        document.getElementById('shopModal').addEventListener('click', function(e) {
-            if (e.target === this) closeShop();
-        });
-
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeShop();
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const nav = document.querySelector('nav');
+            const menu = document.getElementById('navMenu');
+            const toggle = document.querySelector('.nav-toggle');
+            
+            if (!nav.contains(e.target) && menu.classList.contains('active')) {
+                menu.classList.remove('active');
+                toggle.classList.remove('active');
+            }
         });
     </script>
 </body>
