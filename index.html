@@ -336,49 +336,22 @@
             background: rgba(220, 20, 60, 0.05);
             border: 1px solid rgba(220, 20, 60, 0.2);
             border-radius: 16px;
-            padding: 2rem;
+            padding: 0;
             transition: all 0.3s;
+            overflow: hidden;
         }
 
         .review-card:hover {
             border-color: #dc143c;
             transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.2);
+            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.3);
         }
 
-        .review-header {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-            align-items: center;
-        }
-
-        .review-avatar {
-            width: 48px;
-            height: 48px;
-            min-width: 48px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
-            border: 2px solid #dc143c;
-            box-shadow: 0 4px 12px rgba(220, 20, 60, 0.3);
-            object-fit: cover;
-        }
-
-        .review-info h4 {
-            color: #fff;
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .review-info p {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.85rem;
-        }
-
-        .review-text {
-            color: rgba(255, 255, 255, 0.7);
-            line-height: 1.6;
-            font-size: 0.95rem;
+        .review-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 16px;
         }
 
         /* Pricing Section */
@@ -748,34 +721,13 @@
             </div>
             <div class="reviews-grid">
                 <div class="review-card">
-                    <div class="review-header">
-                        <img src="https://iili.io/f4hkLOX.png" alt="ShadowStriker" class="review-avatar">
-                        <div class="review-info">
-                            <h4>ShadowStriker</h4>
-                            <p>@shadowstriker_yt</p>
-                        </div>
-                    </div>
-                    <p class="review-text">Switched from another client and never looked back. Kirk's performance is insane - zero lag, clean interface, and the bypasses actually work. Support team is legit too.</p>
+                    <img src="https://iili.io/f4hkLOX.png" alt="Discord Review 1">
                 </div>
                 <div class="review-card">
-                    <div class="review-header">
-                        <img src="https://iili.io/f4hvhLG.png" alt="VelocityGaming" class="review-avatar">
-                        <div class="review-info">
-                            <h4>VelocityGaming</h4>
-                            <p>@velocity_esports</p>
-                        </div>
-                    </div>
-                    <p class="review-text">Been using Kirk for 6 months straight. The constant updates mean my features never get patched. Best investment I've made for my content and gameplay.</p>
+                    <img src="https://iili.io/f4hvhLG.png" alt="Discord Review 2">
                 </div>
                 <div class="review-card">
-                    <div class="review-header">
-                        <img src="https://iili.io/f4hvZYB.png" alt="UtahProdigy" class="review-avatar">
-                        <div class="review-info">
-                            <h4>UtahProdigy</h4>
-                            <p>@utah_gaming</p>
-                        </div>
-                    </div>
-                    <p class="review-text">The difference is night and day. Went from getting destroyed to dominating lobbies. Kirk's features are perfectly balanced - powerful but not obvious. 10/10 recommend.</p>
+                    <img src="https://iili.io/f4hvZYB.png" alt="Discord Review 3">
                 </div>
             </div>
         </div>
