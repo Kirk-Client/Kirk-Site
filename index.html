@@ -149,23 +149,21 @@
         }
 
         .hero-container {
-            max-width: 1400px;
+            max-width: 900px;
             width: 100%;
             margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
+            text-align: center;
             position: relative;
             z-index: 1;
         }
 
         .hero-logo {
-            width: 120px;
+            width: 200px;
             height: auto;
-            margin-bottom: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.4);
+            margin: 0 auto 2rem;
+            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(220, 20, 60, 0.5);
+            display: block;
         }
 
         .hero-content h1 {
@@ -181,15 +179,16 @@
         .hero-content p {
             font-size: 1.1rem;
             color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 2.5rem;
+            margin: 0 auto 2.5rem;
             line-height: 1.8;
-            max-width: 600px;
+            max-width: 700px;
         }
 
         .hero-buttons {
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
         .btn-primary {
@@ -229,6 +228,7 @@
 
         .hero-image {
             position: relative;
+            display: none;
         }
 
         .hero-image img {
@@ -279,7 +279,7 @@
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 2rem;
             max-width: 1200px;
             margin: 0 auto;
@@ -507,32 +507,12 @@
 
         /* Mobile Responsive */
         @media (max-width: 968px) {
-            .hero-container {
-                grid-template-columns: 1fr;
-                gap: 3rem;
-                text-align: center;
-            }
-
             .hero-logo {
-                margin-left: auto;
-                margin-right: auto;
+                width: 150px;
             }
 
             .hero-content h1 {
                 font-size: 2.5rem;
-            }
-
-            .hero-content p {
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            .hero-buttons {
-                justify-content: center;
-            }
-
-            .hero-image img {
-                max-width: 400px;
             }
 
             .section-header h2 {
@@ -601,6 +581,7 @@
 
             .hero-image img {
                 max-width: 300px;
+                display: none;
             }
 
             .section-container {
@@ -665,17 +646,14 @@
     <!-- Hero Section -->
     <section id="home">
         <div class="hero-container">
+            <img src="https://iili.io/flUxhKB.jpg" alt="Kirk Client Logo" class="hero-logo">
             <div class="hero-content">
-                <img src="https://iili.io/flUxhKB.jpg" alt="Kirk Client Logo" class="hero-logo">
                 <h1>Dominate The Game</h1>
                 <p>Experience next-level gameplay with Kirk Client. Built from the ground up with premium features, revolutionary bypasses, and lightning-fast performance that puts you miles ahead of everyone else.</p>
                 <div class="hero-buttons">
                     <a href="#pricing" class="btn-primary">Start Playing</a>
                     <a href="#features" class="btn-secondary">Explore Features</a>
                 </div>
-            </div>
-            <div class="hero-image">
-                <img src="https://iili.io/f4hlrKJ.png" alt="Kirk Client Showcase">
             </div>
         </div>
     </section>
@@ -703,11 +681,6 @@
                     <h3>Undetectable Power</h3>
                     <p>Our bypass technology is engineered by experts who live and breathe anticheat systems. We update constantly to keep you playing safely and winning consistently.</p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔍</div>
-                    <h3>Always Here For You</h3>
-                    <p>Questions at 3 AM? Need help configuring settings? Our dedicated support team is active 24/7 in Discord, ready to help you optimize your experience.</p>
-                </div>
             </div>
         </div>
     </section>
@@ -727,7 +700,7 @@
                     <img src="https://iili.io/f4hvhLG.png" alt="Discord Review 2">
                 </div>
                 <div class="review-card">
-                    <img src="https://iili.io/f4hriJ4.png" alt="Discord Review 3">
+                    <img src="https://iili.io/f4hvZYB.png" alt="Discord Review 3">
                 </div>
             </div>
         </div>
