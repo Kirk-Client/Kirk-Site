@@ -7,6 +7,8 @@
     <title>Kirk Client</title>
     <link rel="icon" type="image/png" href="https://iili.io/fkPS4Yg.png">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -18,11 +20,51 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #000;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0d0d0d;
             color: #fff;
             line-height: 1.6;
             overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 50%, rgba(220, 20, 60, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(139, 0, 0, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, rgba(220, 20, 60, 0.1) 0%, transparent 50%);
+            animation: bgFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes bgFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-5%, 5%) rotate(120deg); }
+            66% { transform: translate(5%, -5%) rotate(240deg); }
+        }
+
+        .mesh-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(220, 20, 60, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(220, 20, 60, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
         }
 
         /* Utah Animation - Fixed Background */
@@ -32,7 +74,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 0;
-            opacity: 0.3;
+            opacity: 0.2;
             pointer-events: none;
         }
         
@@ -67,9 +109,9 @@
             left: 0;
             right: 0;
             z-index: 100;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(220, 20, 60, 0.2);
+            background: rgba(13, 13, 13, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(220, 20, 60, 0.15);
         }
 
         .nav-container {
@@ -97,7 +139,10 @@
         .nav-brand span {
             font-size: 1.3rem;
             font-weight: 700;
-            color: #dc143c;
+            background: linear-gradient(135deg, #ff4757, #dc143c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             letter-spacing: 1px;
         }
 
@@ -127,7 +172,7 @@
         }
 
         .nav-menu a {
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s;
@@ -161,27 +206,31 @@
             width: 200px;
             height: auto;
             margin: 0 auto 2rem;
-            border-radius: 16px;
-            box-shadow: 0 12px 40px rgba(220, 20, 60, 0.5);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(220, 20, 60, 0.4);
             display: block;
+            border: 1px solid rgba(220, 20, 60, 0.2);
         }
 
         .hero-content h1 {
             font-size: 3.5rem;
-            font-weight: 700;
-            color: #dc143c;
-            text-shadow: 0 0 30px rgba(220, 20, 60, 0.5);
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff4757, #dc143c, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 1.5rem;
-            letter-spacing: 1px;
+            letter-spacing: -1px;
             line-height: 1.2;
         }
 
         .hero-content p {
             font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.6);
             margin: 0 auto 2.5rem;
             line-height: 1.8;
             max-width: 700px;
+            font-weight: 300;
         }
 
         .hero-buttons {
@@ -192,29 +241,49 @@
         }
 
         .btn-primary {
-            padding: 1rem 2.5rem;
-            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+            padding: 1.2rem 2.5rem;
+            background: linear-gradient(135deg, #dc143c, #ff4757);
             color: #fff;
             text-decoration: none;
-            border-radius: 10px;
+            border-radius: 16px;
             font-weight: 600;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: inline-block;
             font-size: 1rem;
+            border: none;
+            box-shadow: 0 8px 32px rgba(220, 20, 60, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.5);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 48px rgba(220, 20, 60, 0.6);
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
         }
 
         .btn-secondary {
-            padding: 1rem 2.5rem;
-            background: transparent;
+            padding: 1.2rem 2.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
             color: #dc143c;
             text-decoration: none;
-            border: 2px solid #dc143c;
-            border-radius: 10px;
+            border: 2px solid rgba(220, 20, 60, 0.3);
+            border-radius: 16px;
             font-weight: 600;
             transition: all 0.3s;
             display: inline-block;
@@ -223,22 +292,8 @@
 
         .btn-secondary:hover {
             background: rgba(220, 20, 60, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .hero-image {
-            position: relative;
-            display: none;
-        }
-
-        .hero-image img {
-            width: 100%;
-            max-width: 500px;
-            height: auto;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(220, 20, 60, 0.3);
-            margin: 0 auto;
-            display: block;
+            border-color: #dc143c;
+            transform: translateY(-3px);
         }
 
         /* Section Styling */
@@ -260,16 +315,21 @@
 
         .section-header h2 {
             font-size: 2.5rem;
-            color: #dc143c;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff4757, #dc143c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 1rem;
-            font-weight: 700;
+            letter-spacing: -1px;
         }
 
         .section-header p {
             font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.5);
             max-width: 600px;
             margin: 0 auto;
+            font-weight: 300;
         }
 
         /* Features Section */
@@ -286,42 +346,71 @@
         }
 
         .feature-card {
-            background: rgba(220, 20, 60, 0.05);
-            border: 1px solid rgba(220, 20, 60, 0.2);
-            border-radius: 16px;
-            padding: 2rem;
-            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(220, 20, 60, 0.5), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
         }
 
         .feature-card:hover {
-            transform: translateY(-5px);
-            border-color: #dc143c;
-            box-shadow: 0 12px 32px rgba(220, 20, 60, 0.2);
-            background: rgba(220, 20, 60, 0.08);
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(220, 20, 60, 0.3);
+            box-shadow: 0 20px 60px rgba(220, 20, 60, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
         }
 
         .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(220, 20, 60, 0.2), rgba(139, 0, 0, 0.2));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(220, 20, 60, 0.2);
         }
 
         .feature-card h3 {
             font-size: 1.3rem;
             color: #fff;
             margin-bottom: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .feature-card p {
-            color: rgba(255, 255, 255, 0.6);
-            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.7;
             font-size: 0.95rem;
+            font-weight: 300;
         }
 
         /* Reviews Section */
         #reviews {
             padding: 6rem 0;
-            background: rgba(10, 10, 10, 0.5);
+            background: rgba(0, 0, 0, 0.3);
         }
 
         .reviews-grid {
@@ -333,25 +422,26 @@
         }
 
         .review-card {
-            background: rgba(220, 20, 60, 0.05);
-            border: 1px solid rgba(220, 20, 60, 0.2);
-            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
             padding: 0;
             transition: all 0.3s;
             overflow: hidden;
         }
 
         .review-card:hover {
-            border-color: #dc143c;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(220, 20, 60, 0.3);
+            border-color: rgba(220, 20, 60, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(220, 20, 60, 0.3);
         }
 
         .review-card img {
             width: 100%;
             height: auto;
             display: block;
-            border-radius: 16px;
+            border-radius: 20px;
         }
 
         /* Pricing Section */
@@ -368,37 +458,57 @@
         }
 
         .pricing-card {
-            background: rgba(220, 20, 60, 0.05);
-            border: 2px solid rgba(220, 20, 60, 0.2);
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
             padding: 2.5rem 2rem;
             text-align: center;
-            transition: all 0.3s;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(220, 20, 60, 0.5), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
         }
 
         .pricing-card:hover {
-            transform: translateY(-5px);
-            border-color: #dc143c;
-            box-shadow: 0 15px 40px rgba(220, 20, 60, 0.3);
+            transform: translateY(-8px);
+            border-color: rgba(220, 20, 60, 0.3);
+            box-shadow: 0 20px 60px rgba(220, 20, 60, 0.3);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .pricing-card:hover::before {
+            opacity: 1;
         }
 
         .pricing-card.featured {
-            border-color: #dc143c;
-            border-width: 2px;
+            border-color: rgba(220, 20, 60, 0.4);
+            background: rgba(255, 255, 255, 0.03);
         }
 
         .pricing-badge {
-            background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);
+            background: linear-gradient(135deg, #dc143c, #ff4757);
             color: #fff;
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
             font-size: 0.75rem;
             font-weight: 600;
             display: inline-block;
             margin-bottom: 1rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            box-shadow: 0 4px 16px rgba(220, 20, 60, 0.3);
         }
 
         .pricing-card h3 {
@@ -410,15 +520,19 @@
 
         .pricing-price {
             font-size: 2.5rem;
-            color: #dc143c;
-            font-weight: 700;
+            background: linear-gradient(135deg, #ff4757, #dc143c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
             margin-bottom: 0.5rem;
         }
 
         .pricing-period {
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 255, 255, 0.4);
             margin-bottom: 2rem;
             font-size: 0.9rem;
+            font-weight: 300;
         }
 
         .pricing-features {
@@ -428,10 +542,11 @@
         }
 
         .pricing-features li {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.6);
             padding: 0.75rem 0;
-            border-bottom: 1px solid rgba(220, 20, 60, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             font-size: 0.95rem;
+            font-weight: 300;
         }
 
         .pricing-features li:last-child {
@@ -447,8 +562,9 @@
 
         /* Footer */
         footer {
-            background: rgba(0, 0, 0, 0.95);
-            border-top: 1px solid rgba(220, 20, 60, 0.2);
+            background: rgba(13, 13, 13, 0.8);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(220, 20, 60, 0.15);
             padding: 3rem 2rem 2rem;
             position: relative;
             z-index: 1;
@@ -477,7 +593,10 @@
         .footer-brand span {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #dc143c;
+            background: linear-gradient(135deg, #ff4757, #dc143c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .footer-links {
@@ -490,7 +609,7 @@
         }
 
         .footer-links a {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.5);
             text-decoration: none;
             transition: color 0.3s;
             font-size: 0.95rem;
@@ -501,8 +620,9 @@
         }
 
         .footer-copyright {
-            color: rgba(255, 255, 255, 0.4);
+            color: rgba(255, 255, 255, 0.3);
             font-size: 0.85rem;
+            font-weight: 300;
         }
 
         /* Mobile Responsive */
@@ -534,7 +654,8 @@
                 top: 100%;
                 left: 0;
                 right: 0;
-                background: rgba(0, 0, 0, 0.98);
+                background: rgba(13, 13, 13, 0.98);
+                backdrop-filter: blur(20px);
                 flex-direction: column;
                 padding: 2rem;
                 gap: 1.5rem;
@@ -568,7 +689,7 @@
             }
 
             .hero-logo {
-                width: 100px;
+                width: 120px;
             }
 
             .hero-content h1 {
@@ -577,11 +698,6 @@
 
             .hero-content p {
                 font-size: 1rem;
-            }
-
-            .hero-image img {
-                max-width: 300px;
-                display: none;
             }
 
             .section-container {
@@ -615,6 +731,12 @@
     </style>
 </head>
 <body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="bg-gradient"></div>
+        <div class="mesh-overlay"></div>
+    </div>
+
     <!-- Utah Animation Background -->
     <div class="utah-container">
         <svg class="utah-svg" viewBox="0 0 200 240">
