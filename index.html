@@ -3,16 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Kirk Client - The Ultimate Minecraft Client">
-    <title>Kirk Client</title>
+    <title>Kirk Client - Dominate The Game</title>
+    <meta name="description" content="Experience next-level gameplay with Kirk Client. Built from the ground up with premium features, revolutionary bypasses, and lightning-fast performance.">
+    <meta property="og:title" content="Kirk Client - Dominate The Game">
+    <meta property="og:description" content="Experience next-level gameplay with Kirk Client. Auto-built for the greatest combat protection modules, anti-cheat bypasses, and blurring your name in screenshots!">
+    <meta property="og:image" content="https://iili.io/flUxhKB.jpg">
+    <meta property="og:type" content="website">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="https://iili.io/fkPS4Yg.png">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #dc143c;
+            --primary-dark: #b01030;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #050505;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --glow: rgba(220, 20, 60, 0.4);
         }
 
         html {
@@ -20,104 +33,161 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #0d0d0d;
-            color: #fff;
-            line-height: 1.6;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-darker);
+            color: var(--text-primary);
+            min-height: 100vh;
             overflow-x: hidden;
+            position: relative;
         }
 
-        /* Animated Background */
-        .bg-animation {
+        /* 3D Room Background */
+        .room-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            overflow: hidden;
             z-index: 0;
+        }
+
+        .room {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+        }
+
+        /* Back Wall */
+        .wall-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, #1a0a0f 0%, #0a0a0a 50%, #050505 100%);
+            transform: translateZ(-500px);
+        }
+
+        /* Floor with subtle grid */
+        .floor {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            left: -50%;
+            bottom: -50%;
+            background: 
+                linear-gradient(to bottom, transparent 0%, var(--bg-darker) 100%),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 100px,
+                    rgba(220, 20, 60, 0.03) 100px,
+                    rgba(220, 20, 60, 0.03) 101px
+                ),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 100px,
+                    rgba(220, 20, 60, 0.03) 100px,
+                    rgba(220, 20, 60, 0.03) 101px
+                );
+            background-size: 100% 100%, 200px 200px, 200px 200px;
+            transform-origin: center top;
+            transform: rotateX(90deg) translateZ(-300px);
+            animation: floorMove 20s linear infinite;
+        }
+
+        @keyframes floorMove {
+            0% { background-position: 0 0, 0 0, 0 0; }
+            100% { background-position: 0 0, 0 200px, 200px 0; }
+        }
+
+        /* Ceiling */
+        .ceiling {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            left: -50%;
+            top: -50%;
+            background: radial-gradient(ellipse at center, rgba(220, 20, 60, 0.05) 0%, transparent 70%);
+            transform-origin: center bottom;
+            transform: rotateX(-90deg) translateZ(-300px);
+        }
+
+        /* Side Walls */
+        .wall-left, .wall-right {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(220, 20, 60, 0.02), transparent 30%, transparent 70%, rgba(220, 20, 60, 0.02));
+        }
+
+        .wall-left {
+            transform: rotateY(90deg) translateZ(-500px);
+            left: -50%;
+        }
+
+        .wall-right {
+            transform: rotateY(-90deg) translateZ(-500px);
+            right: -50%;
+        }
+
+        /* Ambient Particles */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
         }
 
-        .bg-gradient {
+        .particle {
             position: absolute;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 20% 50%, rgba(220, 20, 60, 0.15) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(139, 0, 0, 0.15) 0%, transparent 50%),
-                        radial-gradient(circle at 40% 20%, rgba(220, 20, 60, 0.1) 0%, transparent 50%);
-            animation: bgFloat 20s ease-in-out infinite;
+            width: 2px;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0;
+            animation: float 10s infinite;
+            box-shadow: 0 0 10px var(--primary);
         }
 
-        @keyframes bgFloat {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            33% { transform: translate(-5%, 5%) rotate(120deg); }
-            66% { transform: translate(5%, -5%) rotate(240deg); }
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateZ(-500px);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) translateZ(100px);
+                opacity: 0;
+            }
         }
 
-        .mesh-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(220, 20, 60, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(220, 20, 60, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            pointer-events: none;
-        }
-
-        /* Utah Animation - Fixed Background */
-        .utah-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 0;
-            opacity: 0.2;
-            pointer-events: none;
-        }
-        
-        .utah-svg {
-            width: 200px;
-            height: auto;
-            transform: scale(1, -1);
-        }
-        
-        .utah-path {
-            fill: none;
-            stroke: #dc143c;
-            stroke-width: 8;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            stroke-dasharray: 1000;
-            stroke-dashoffset: 1000;
-            animation: drawUtah 3s ease-in-out infinite;
-            filter: drop-shadow(0 0 15px #dc143c);
-        }
-        
-        @keyframes drawUtah {
-            0% { stroke-dashoffset: 1000; }
-            50% { stroke-dashoffset: 0; }
-            100% { stroke-dashoffset: -1000; }
+        /* Main Content */
+        .content {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
         /* Navigation */
         nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
+            position: relative;
             z-index: 100;
-            background: rgba(13, 13, 13, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(220, 20, 60, 0.15);
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1rem 2rem;
+            padding: 1rem 0;
+            margin-bottom: 3rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -130,38 +200,15 @@
             text-decoration: none;
         }
 
-        .nav-brand img {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-        }
-
         .nav-brand span {
-            font-size: 1.3rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #ff4757, #dc143c);
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             letter-spacing: 1px;
-        }
-
-        .nav-toggle {
-            display: none;
-            flex-direction: column;
-            gap: 4px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0.5rem;
-        }
-
-        .nav-toggle span {
-            width: 25px;
-            height: 3px;
-            background: #dc143c;
-            border-radius: 2px;
-            transition: all 0.3s;
         }
 
         .nav-menu {
@@ -180,132 +227,209 @@
         }
 
         .nav-menu a:hover {
-            color: #dc143c;
+            color: var(--primary);
         }
 
         /* Hero Section */
-        #home {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 8rem 2rem 4rem;
-            position: relative;
-        }
-
-        .hero-container {
-            max-width: 900px;
-            width: 100%;
-            margin: 0 auto;
+        .hero-section {
             text-align: center;
             position: relative;
-            z-index: 1;
+            margin: 3rem 0;
+            padding: 2rem 0;
         }
 
-        .hero-logo {
+        /* Spinning Utah Shape Container */
+        .shape-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            margin: 0 auto 3rem;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+
+        @media (max-width: 768px) {
+            .shape-container {
+                width: 300px;
+                height: 300px;
+            }
+        }
+
+        /* The Spinning Utah Shape */
+        .utah-loader {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotate3d 15s linear infinite;
+        }
+
+        @keyframes rotate3d {
+            0% { transform: rotateY(0deg) rotateX(10deg) rotate(180deg); }
+            100% { transform: rotateY(360deg) rotateX(10deg) rotate(180deg); }
+        }
+
+        .utah-shape {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            transform-style: preserve-3d;
+        }
+
+        /* Glowing Utah Shape */
+        .utah-glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, rgba(220, 20, 60, 0.8), transparent 50%);
+            filter: blur(40px);
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+
+        /* Utah SVG Shape (Flipped 180°) */
+        .utah-svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 30px rgba(220, 20, 60, 0.6));
+            transform: rotate(180deg);
+        }
+
+        .utah-svg path {
+            fill: none;
+            stroke: url(#utahGradient);
+            stroke-width: 6;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawUtah 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes drawUtah {
+            0% { stroke-dasharray: 0, 1000; opacity: 0.5; stroke-dashoffset: 1000; }
+            50% { stroke-dasharray: 500, 500; opacity: 1; stroke-dashoffset: 0; }
+            100% { stroke-dasharray: 1000, 0; opacity: 1; stroke-dashoffset: 0; }
+        }
+
+        /* Loading Bar Effect */
+        .loading-bar {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
             width: 200px;
-            height: auto;
-            margin: 0 auto 2rem;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(220, 20, 60, 0.4);
-            display: block;
-            border: 1px solid rgba(220, 20, 60, 0.2);
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
         }
 
-        .hero-content h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ff4757, #dc143c, #ff6b6b);
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #ff4d79);
+            width: 0%;
+            animation: loadProgress 3s ease-in-out infinite;
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        @keyframes loadProgress {
+            0% { width: 0%; left: 0; }
+            50% { width: 100%; left: 0; }
+            100% { width: 0%; left: 100%; }
+        }
+
+        /* Typography */
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 1.5rem;
-            letter-spacing: -1px;
-            line-height: 1.2;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+            animation: fadeInUp 1s ease-out 0.7s forwards;
+            opacity: 0;
         }
 
-        .hero-content p {
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.6);
-            margin: 0 auto 2.5rem;
-            line-height: 1.8;
-            max-width: 700px;
-            font-weight: 300;
+        .tagline {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            line-height: 1.6;
+            animation: fadeInUp 1s ease-out 0.9s forwards;
+            opacity: 0;
         }
 
-        .hero-buttons {
+        /* Buttons Container */
+        .button-group {
             display: flex;
             gap: 1rem;
-            flex-wrap: wrap;
             justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 4rem;
+            animation: fadeInUp 1s ease-out 1.1s forwards;
+            opacity: 0;
         }
 
-        .btn-primary {
-            padding: 1.2rem 2.5rem;
-            background: linear-gradient(135deg, #dc143c, #ff4757);
-            color: #fff;
-            text-decoration: none;
-            border-radius: 16px;
-            font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-block;
-            font-size: 1rem;
+        .btn {
+            padding: 1rem 2rem;
             border: none;
-            box-shadow: 0 8px 32px rgba(220, 20, 60, 0.4);
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
             position: relative;
             overflow: hidden;
         }
 
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s;
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 10px 40px rgba(220, 20, 60, 0.4);
         }
 
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 48px rgba(220, 20, 60, 0.6);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 60px rgba(220, 20, 60, 0.6);
         }
 
-        .btn-primary:hover::before {
-            left: 100%;
+        .btn-primary:active {
+            transform: translateY(0);
         }
 
         .btn-secondary {
-            padding: 1.2rem 2.5rem;
             background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            color: #dc143c;
-            text-decoration: none;
-            border: 2px solid rgba(220, 20, 60, 0.3);
-            border-radius: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: inline-block;
-            font-size: 1rem;
         }
 
         .btn-secondary:hover {
-            background: rgba(220, 20, 60, 0.1);
-            border-color: #dc143c;
-            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(220, 20, 60, 0.3);
+            transform: translateY(-2px);
         }
 
         /* Section Styling */
         section {
             position: relative;
             z-index: 1;
-        }
-
-        .section-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
+            padding: 4rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .section-header {
@@ -314,9 +438,10 @@
         }
 
         .section-header h2 {
+            font-family: 'Space Grotesk', sans-serif;
             font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ff4757, #dc143c);
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -326,23 +451,31 @@
 
         .section-header p {
             font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.5);
+            color: var(--text-secondary);
             max-width: 600px;
             margin: 0 auto;
             font-weight: 300;
         }
 
         /* Features Section */
-        #features {
-            padding: 6rem 0;
-        }
-
         .features-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 2rem;
             max-width: 1200px;
             margin: 0 auto;
+        }
+
+        @media (max-width: 968px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .feature-card {
@@ -409,7 +542,6 @@
 
         /* Reviews Section */
         #reviews {
-            padding: 6rem 0;
             background: rgba(0, 0, 0, 0.3);
         }
 
@@ -445,10 +577,6 @@
         }
 
         /* Pricing Section */
-        #pricing {
-            padding: 6rem 0;
-        }
-
         .pricing-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -498,7 +626,7 @@
         }
 
         .pricing-badge {
-            background: linear-gradient(135deg, #dc143c, #ff4757);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: #fff;
             padding: 0.5rem 1.2rem;
             border-radius: 50px;
@@ -520,7 +648,7 @@
 
         .pricing-price {
             font-size: 2.5rem;
-            background: linear-gradient(135deg, #ff4757, #dc143c);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -555,7 +683,7 @@
 
         .pricing-features li:before {
             content: '✓';
-            color: #dc143c;
+            color: var(--primary);
             font-weight: 700;
             margin-right: 0.75rem;
         }
@@ -568,6 +696,7 @@
             padding: 3rem 2rem 2rem;
             position: relative;
             z-index: 1;
+            margin-top: 4rem;
         }
 
         .footer-container {
@@ -584,16 +713,11 @@
             margin-bottom: 2rem;
         }
 
-        .footer-brand img {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-        }
-
         .footer-brand span {
-            font-size: 1.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #ff4757, #dc143c);
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -616,7 +740,7 @@
         }
 
         .footer-links a:hover {
-            color: #dc143c;
+            color: var(--primary);
         }
 
         .footer-copyright {
@@ -625,164 +749,169 @@
             font-weight: 300;
         }
 
-        /* Mobile Responsive */
-        @media (max-width: 968px) {
-            .hero-logo {
-                width: 150px;
-            }
-
-            .hero-content h1 {
-                font-size: 2.5rem;
-            }
-
-            .section-header h2 {
-                font-size: 2rem;
-            }
-
-            .utah-svg {
-                width: 150px;
-            }
+        /* Audio Control */
+        .audio-control {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
         }
 
+        .audio-control:hover {
+            background: rgba(220, 20, 60, 0.2);
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        /* Mobile Responsive */
         @media (max-width: 768px) {
-            .nav-toggle {
-                display: flex;
+            nav {
+                flex-direction: column;
+                gap: 1rem;
             }
 
             .nav-menu {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: rgba(13, 13, 13, 0.98);
-                backdrop-filter: blur(20px);
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .content {
+                padding: 1.5rem;
+            }
+
+            .button-group {
                 flex-direction: column;
-                padding: 2rem;
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
                 gap: 1.5rem;
-                transform: translateY(-100%);
-                opacity: 0;
-                pointer-events: none;
-                transition: all 0.3s;
-                border-bottom: 1px solid rgba(220, 20, 60, 0.2);
             }
 
-            .nav-menu.active {
-                transform: translateY(0);
-                opacity: 1;
-                pointer-events: all;
-            }
-
-            .nav-toggle.active span:nth-child(1) {
-                transform: rotate(45deg) translate(5px, 5px);
-            }
-
-            .nav-toggle.active span:nth-child(2) {
-                opacity: 0;
-            }
-
-            .nav-toggle.active span:nth-child(3) {
-                transform: rotate(-45deg) translate(7px, -7px);
-            }
-
-            #home {
-                padding: 6rem 1.5rem 3rem;
-            }
-
-            .hero-logo {
-                width: 120px;
-            }
-
-            .hero-content h1 {
-                font-size: 2rem;
-            }
-
-            .hero-content p {
-                font-size: 1rem;
-            }
-
-            .section-container {
-                padding: 0 1.5rem;
+            .shape-container {
+                margin-bottom: 2rem;
             }
 
             .section-header h2 {
-                font-size: 1.8rem;
+                font-size: 2rem;
             }
 
-            .section-header p {
-                font-size: 1rem;
+            .nav-brand span,
+            .footer-brand span {
+                font-size: 1.5rem;
             }
+        }
 
-            .features-grid,
-            .reviews-grid,
-            .pricing-grid {
-                grid-template-columns: 1fr;
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-darker);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(220, 20, 60, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(220, 20, 60, 0.5);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
             }
-
-            .btn-primary,
-            .btn-secondary {
-                width: 100%;
-                text-align: center;
-            }
-
-            .utah-svg {
-                width: 120px;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
     </style>
 </head>
 <body>
-    <!-- Animated Background -->
-    <div class="bg-animation">
-        <div class="bg-gradient"></div>
-        <div class="mesh-overlay"></div>
-    </div>
-
-    <!-- Utah Animation Background -->
-    <div class="utah-container">
-        <svg class="utah-svg" viewBox="0 0 200 240">
-            <path class="utah-path" d="M150 180 L120 180 L120 220 L40 220 L40 50 L150 50 Z"/>
-        </svg>
-    </div>
-
-    <!-- Navigation -->
-    <nav>
-        <div class="nav-container">
-            <a href="#home" class="nav-brand">
-                <img src="https://iili.io/fkPS4Yg.png" alt="Kirk Client">
-                <span>Kirk Client</span>
-            </a>
-            <button class="nav-toggle" onclick="toggleMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="#features" onclick="closeMenu()">Features</a></li>
-                <li><a href="https://discord.gg/yttpE8z636" target="_blank">Discord</a></li>
-                <li><a href="#reviews" onclick="closeMenu()">Reviews</a></li>
-                <li><a href="#pricing" onclick="closeMenu()">Pricing</a></li>
-            </ul>
+    <!-- 3D Room Background -->
+    <div class="room-container">
+        <div class="room">
+            <div class="wall-back"></div>
+            <div class="floor"></div>
+            <div class="ceiling"></div>
+            <div class="wall-left"></div>
+            <div class="wall-right"></div>
+            <div class="particles" id="particles"></div>
         </div>
-    </nav>
+    </div>
 
-    <!-- Hero Section -->
-    <section id="home">
-        <div class="hero-container">
-            <img src="https://iili.io/flUxhKB.jpg" alt="Kirk Client Logo" class="hero-logo">
-            <div class="hero-content">
-                <h1>Dominate The Game</h1>
-                <p>Experience next-level gameplay with Kirk Client. Built from the ground up with premium features, revolutionary bypasses, and lightning-fast performance that puts you miles ahead of everyone else.</p>
-                <div class="hero-buttons">
-                    <a href="#pricing" class="btn-primary">Start Playing</a>
-                    <a href="#features" class="btn-secondary">Explore Features</a>
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Navigation -->
+        <nav>
+            <a href="#home" class="nav-brand">
+                <span>KIRK CLIENT</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="#features">Features</a></li>
+                <li><a href="https://discord.gg/yttpE8z636" target="_blank">Discord</a></li>
+                <li><a href="#reviews">Reviews</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+            </ul>
+        </nav>
+
+        <!-- Hero Section -->
+        <section id="home" class="hero-section">
+            <!-- Spinning Utah Shape (Flipped 180°) -->
+            <div class="shape-container">
+                <div class="utah-loader">
+                    <div class="utah-glow"></div>
+                    <svg class="utah-svg" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="utahGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:var(--primary);stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:var(--primary-dark);stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <!-- Utah Shape Path (Flipped 180°) -->
+                        <path d="M150 180 L120 180 L120 220 L40 220 L40 50 L150 50 Z"/>
+                    </svg>
+                </div>
+                <div class="loading-bar">
+                    <div class="loading-progress"></div>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Features Section -->
-    <section id="features">
-        <div class="section-container">
+            <h1>DOMINATE THE GAME</h1>
+            <p class="tagline">Experience next-level gameplay with Kirk Client. Auto-built for the greatest combat protection modules, anti-cheat bypasses, and blurring your name in screenshots!</p>
+
+            <div class="button-group">
+                <a href="#pricing" class="btn btn-primary">Start Playing</a>
+                <a href="#features" class="btn btn-secondary">Explore Features</a>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features">
             <div class="section-header">
                 <h2>Built For Champions</h2>
                 <p>Every feature designed with one goal: your victory</p>
@@ -804,12 +933,10 @@
                     <p>Our bypass technology is engineered by experts who live and breathe anticheat systems. We update constantly to keep you playing safely and winning consistently.</p>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Reviews Section -->
-    <section id="reviews">
-        <div class="section-container">
+        <!-- Reviews Section -->
+        <section id="reviews">
             <div class="section-header">
                 <h2>What Players Are Saying</h2>
                 <p>Real feedback from real gamers</p>
@@ -825,12 +952,10 @@
                     <img src="https://iili.io/f4hriJ4.png" alt="Discord Review 3">
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Pricing Section -->
-    <section id="pricing">
-        <div class="section-container">
+        <!-- Pricing Section -->
+        <section id="pricing">
             <div class="section-header">
                 <h2>Choose Your Edge</h2>
                 <p>Select the package that matches your ambition</p>
@@ -846,7 +971,7 @@
                         <li>Fast-track support</li>
                         <li>Application required</li>
                     </ul>
-                    <a href="MediaApplication.html" class="btn-primary">Apply Now</a>
+                    <a href="MediaApplication.html" target="_blank" class="btn btn-primary">Apply Now</a>
                 </div>
                 
                 <div class="pricing-card">
@@ -859,7 +984,7 @@
                         <li>Community support</li>
                         <li>Ideal starter package</li>
                     </ul>
-                    <a href="https://buy.stripe.com/9B6aER5w02Kq0jK0TA8Ra02" target="_blank" class="btn-primary">Get KirkLite</a>
+                    <a href="https://buy.stripe.com/9B6aER5w02Kq0jK0TA8Ra02" target="_blank" class="btn btn-primary">Get KirkLite</a>
                 </div>
                 
                 <div class="pricing-card featured">
@@ -874,18 +999,17 @@
                         <li>Free lifetime updates</li>
                         <li>Exclusive Discord perks</li>
                     </ul>
-                    <a href="https://buy.stripe.com/bJe9AN7E85WCgiI45M8Ra01" target="_blank" class="btn-primary">Get Full Access</a>
+                    <a href="https://buy.stripe.com/bJe9AN7E85WCgiI45M8Ra01" target="_blank" class="btn btn-primary">Get Full Access</a>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
 
     <!-- Footer -->
     <footer>
         <div class="footer-container">
             <div class="footer-brand">
-                <img src="https://iili.io/fkPS4Yg.png" alt="Kirk Client">
-                <span>Kirk</span>
+                <span>KIRK CLIENT</span>
             </div>
             <ul class="footer-links">
                 <li><a href="#home">Home</a></li>
@@ -898,31 +1022,90 @@
         </div>
     </footer>
 
+    <!-- Audio Control -->
+    <div class="audio-control" onclick="toggleAudio()" title="Toggle Music">
+        <span id="audioIcon">🔊</span>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="bgMusic" loop>
+        <source src="KC.wav" type="audio/wav">
+    </audio>
+
     <script>
-        function toggleMenu() {
-            const menu = document.getElementById('navMenu');
-            const toggle = document.querySelector('.nav-toggle');
-            menu.classList.toggle('active');
-            toggle.classList.toggle('active');
-        }
-
-        function closeMenu() {
-            const menu = document.getElementById('navMenu');
-            const toggle = document.querySelector('.nav-toggle');
-            menu.classList.remove('active');
-            toggle.classList.remove('active');
-        }
-
-        // Close menu when clicking outside
-        document.addEventListener('click', function(e) {
-            const nav = document.querySelector('nav');
-            const menu = document.getElementById('navMenu');
-            const toggle = document.querySelector('.nav-toggle');
-            
-            if (!nav.contains(e.target) && menu.classList.contains('active')) {
-                menu.classList.remove('active');
-                toggle.classList.remove('active');
+        // Generate floating particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+                container.appendChild(particle);
             }
+        }
+        createParticles();
+
+        // Audio Control
+        let audioPlaying = false;
+        const audio = document.getElementById('bgMusic');
+        const audioIcon = document.getElementById('audioIcon');
+
+        function playAudio() {
+            audio.volume = 0.5;
+            audio.play().then(() => {
+                audioPlaying = true;
+                audioIcon.textContent = '🔊';
+            }).catch(err => {
+                console.log('Audio autoplay blocked:', err);
+            });
+        }
+
+        function toggleAudio() {
+            if (audioPlaying) {
+                audio.pause();
+                audioIcon.textContent = '🔇';
+            } else {
+                audio.play();
+                audioIcon.textContent = '🔊';
+            }
+            audioPlaying = !audioPlaying;
+        }
+
+        // Smooth scroll for better UX
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Parallax effect on mouse move
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+            
+            const room = document.querySelector('.room');
+            room.style.transform = `rotateY(${x * 0.5}deg) rotateX(${-y * 0.5}deg)`;
+        });
+
+        // Auto-play audio after user interaction
+        document.addEventListener('click', function initAudio() {
+            if (!audioPlaying) {
+                playAudio();
+            }
+            document.removeEventListener('click', initAudio);
+        });
+
+        // Initialize animations on page load
+        window.addEventListener('load', function() {
+            document.body.classList.add('loaded');
         });
     </script>
 </body>
