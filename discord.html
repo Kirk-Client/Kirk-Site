@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Joining Discord...</title>
+
+<!-- Redirect after 3 seconds -->
+<meta http-equiv="refresh" content="3; url=https://discord.gg/yttpE8z636">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+    --primary:#dc143c;
+    --bg:#050505;
+    --bg2:#0a0a0a;
+    --text:#ffffff;
+    --muted:#aaaaaa;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    font-family:Inter, sans-serif;
+    background:radial-gradient(circle at center,#14060a 0%,#050505 70%);
+    color:white;
+    height:100vh;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* Particles */
+.particle{
+    position:absolute;
+    width:2px;
+    height:2px;
+    background:var(--primary);
+    border-radius:50%;
+    opacity:.5;
+    animation:float 10s linear infinite;
+}
+
+@keyframes float{
+    from{transform:translateY(100vh)}
+    to{transform:translateY(-10vh)}
+}
+
+/* Card */
+.card{
+    text-align:center;
+    padding:60px 80px;
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:20px;
+    backdrop-filter:blur(15px);
+    box-shadow:0 0 80px rgba(220,20,60,.25);
+}
+
+h1{
+    font-family:"Space Grotesk",sans-serif;
+    font-size:2.5rem;
+    background:linear-gradient(135deg,#fff,var(--primary));
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    margin-bottom:15px;
+}
+
+p{
+    color:var(--muted);
+    margin-bottom:40px;
+}
+
+/* Loader */
+.loader{
+    width:260px;
+    height:4px;
+    background:rgba(255,255,255,.1);
+    border-radius:10px;
+    overflow:hidden;
+    margin:auto;
+}
+
+.bar{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,var(--primary),#ff4d79);
+    animation:load 3s ease forwards;
+    box-shadow:0 0 20px var(--primary);
+}
+
+@keyframes load{
+    from{width:0%}
+    to{width:100%}
+}
+
+.small{
+    margin-top:20px;
+    font-size:.85rem;
+}
+
+a{color:var(--primary);text-decoration:none}
+</style>
+</head>
+<body>
+
+<div id="particles"></div>
+
+<div class="card">
+    <h1>Joining Discord</h1>
+    <p>Redirecting you to the community…</p>
+
+    <div class="loader">
+        <div class="bar"></div>
+    </div>
+
+    <div class="small">
+        Not redirected? <a href="https://discord.gg/yttpE8z636">Click here</a>
+    </div>
+</div>
+
+<script>
+// particles
+for(let i=0;i<60;i++){
+    const p=document.createElement("div");
+    p.className="particle";
+    p.style.left=Math.random()*100+"%";
+    p.style.animationDuration=(6+Math.random()*10)+"s";
+    p.style.opacity=Math.random();
+    document.getElementById("particles").appendChild(p);
+}
+
+// JS fallback redirect
+setTimeout(()=>{
+    window.location.href="https://discord.gg/yttpE8z636";
+},3000);
+</script>
+
+</body>
+</html>
